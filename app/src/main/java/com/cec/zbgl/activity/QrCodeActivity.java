@@ -22,6 +22,9 @@ import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.thirdLibs.zxing.encoding.EncodingUtils;
 import com.cec.zbgl.util.LogUtil;
 
+/**
+ * 二维码测试activity
+ */
 public class QrCodeActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView mTvResult;
     private EditText mInput;
