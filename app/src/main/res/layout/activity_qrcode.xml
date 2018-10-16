@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.QrCodeActivity" >
+
+    <Button
+        android:id="@+id/scan_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Scan" />
+
+    <TextView
+        android:id="@+id/tv_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_below="@+id/scan_btn"
+        android:text="Result:"/>
+
+    <!--<TextView-->
+        <!--android:id="@+id/tv_result"-->
+        <!--android:textSize="20sp"-->
+        <!--android:layout_below="@id/tv_1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--/>-->
+
+    <EditText
+        android:id="@+id/et_qc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_1"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/view1"
+        android:background="@drawable/transparent"
+        android:ems="19"
+        android:hint="请输入二维码信息:"
+        android:inputType="none"
+        android:padding="1dp"
+        android:textSize="12sp" >
+
+        <requestFocus />
+    </EditText>
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_qc"/>
+    <CheckBox
+        android:id="@+id/cb_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_text"
+        android:text="Logo"/>
+    <Button
+        android:id="@+id/qc_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Make QRCode"
+        android:layout_below="@id/cb_logo" />
+
+    <ImageView
+        android:id="@+id/iv_qc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/qc_btn"
+        android:layout_centerInParent="true"
+        android:background="@mipmap/ic_launcher_round"
+        />
+
+
+</RelativeLayout>

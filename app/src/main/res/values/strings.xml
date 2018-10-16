@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">zbgl</string>
+    <string name="home_zbgl">备品管理</string>
+    <string name="home_mine">我的</string>
+</resources>
