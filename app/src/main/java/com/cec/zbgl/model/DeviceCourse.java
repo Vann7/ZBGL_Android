@@ -1,9 +1,10 @@
 package com.cec.zbgl.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /** 备品备件_设备教程 */
-public class DeviceCourse {
+public class DeviceCourse implements Serializable {
     private String id;
     private String deviceId;
     private String sysId;

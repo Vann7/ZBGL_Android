@@ -2,7 +2,6 @@ package com.cec.zbgl.activity;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,8 +11,6 @@ import android.widget.RadioButton;
 import com.cec.zbgl.R;
 import com.cec.zbgl.fragment.MineFragment;
 import com.cec.zbgl.fragment.ZbglFragment;
-import com.cec.zbgl.model.User;
-import com.cec.zbgl.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button login_btn;

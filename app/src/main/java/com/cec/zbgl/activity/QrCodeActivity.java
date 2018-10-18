@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.cec.zbgl.R;
 import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.thirdLibs.zxing.encoding.EncodingUtils;
-import com.cec.zbgl.util.LogUtil;
+import com.cec.zbgl.utils.LogUtil;
 
 /**
  * 二维码测试activity

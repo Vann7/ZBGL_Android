@@ -1,9 +1,14 @@
 package com.cec.zbgl.model;
 
+import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
+
+import java.io.Serializable;
 import java.util.Date;
 
 /** 装备管理_设备库存信息 */
-public class DeviceInfo {
+public class DeviceInfo extends LitePalSupport implements Serializable {
+    @Column(nullable = false)
     private java.lang.String id;
     private java.lang.String name;
     private int type;

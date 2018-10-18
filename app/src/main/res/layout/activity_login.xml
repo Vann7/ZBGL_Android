@@ -74,7 +74,8 @@
                 android:hint="请输入账户名"
                 android:inputType="none"
                 android:padding="1dp"
-                android:textSize="12sp" >
+                android:textSize="12sp"
+                android:text="haha">
 
                 <requestFocus />
             </EditText>
@@ -126,7 +127,7 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_toRightOf="@+id/textView2"
-                android:background="#EEEFFF" />
+                android:background="#EEEFFF"/>
 
             <EditText
                 android:id="@+id/password"
@@ -140,7 +141,8 @@
                 android:hint="请输入密码"
                 android:inputType="textPassword"
                 android:padding="1dp"
-                android:textSize="12sp" >
+                android:textSize="12sp"
+                android:text="123">
 
                 <requestFocus />
             </EditText>
@@ -163,8 +165,8 @@
         android:layout_height="80dip"
         android:layout_below="@+id/top"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:src="@mipmap/touxiang" />
+        android:layout_marginTop="60dp"
+        android:src="@mipmap/ic_launcher" />
 
     <Button
         android:id="@+id/loginButton"
@@ -180,6 +182,20 @@
         android:textColor="@color/white"
         android:textSize="21sp" />
 
+    <Button
+        android:id="@+id/createDb_btn"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_alignLeft="@+id/relativeLayout2"
+        android:layout_alignRight="@+id/relativeLayout2"
+        android:layout_below="@+id/loginButton"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/login_button_selector"
+        android:padding="1dp"
+        android:text="插入数据"
+        android:textColor="@color/white"
+        android:textSize="21sp" />
+
     <RelativeLayout
         android:id="@+id/relativeLayoutaotu"
         android:layout_width="80dp"
@@ -190,12 +206,12 @@
         android:padding="1dp" >
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:text="" />
+    <!--<TextView-->
+        <!--android:id="@+id/textView4"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="30dp"-->
+        <!--android:text="" />-->
 
 </RelativeLayout>

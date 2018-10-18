@@ -1,11 +1,16 @@
 package com.cec.zbgl.model;
 
+import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
+
 import java.io.Serializable;
 
 /**
  * 用户信息
  */
-public class User implements Serializable {
+public class User extends LitePalSupport implements Serializable {
+    @Column(unique = true)
+    private int id;
     private String name;
     private String password;
 
@@ -13,15 +18,25 @@ public class User implements Serializable {
 
     public User(String name, String password) {
         this.name = name;
-        this.password = name;
+        this.password = password;
     }
+
 
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

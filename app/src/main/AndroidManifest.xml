@@ -3,28 +3,35 @@
     package="com.cec.zbgl">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".BaseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="备品管理"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity android:name=".activity.LoginActivity">-->
-        <activity android:name=".activity.QrCodeActivity">
+        <activity android:name=".activity.LoginActivity">
+
+            <!-- <activity android:name=".activity.QrCodeActivity"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginActivity" />
-        <!--<activity android:name=".activity.QrCodeActivity" />-->
-        <activity android:name=".activity.MainActivity"></activity>
-        <activity android:name=".thirdLibs.zxing.activity.CaptureActivity"></activity>
+        <!-- <activity android:name=".activity.LoginActivity" /> -->
+        <activity android:name=".activity.QrCodeActivity" />
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".thirdLibs.zxing.activity.CaptureActivity" />
+        <activity
+            android:name=".activity.WXActivity"
+            android:label="@string/title_activity_wx"
+            android:theme="@style/AppTheme"></activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 </manifest>

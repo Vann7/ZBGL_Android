@@ -1,9 +1,10 @@
 package com.cec.zbgl.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /** 装备管理_（系统）组织结构  */
-public class SpOrgnization {
+public class SpOrgnization implements Serializable {
     private java.lang.String id;
     private java.lang.String code;
     private java.lang.String parentCode;

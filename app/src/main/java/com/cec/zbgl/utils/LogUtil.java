@@ -1,4 +1,4 @@
-package com.cec.zbgl.util;
+package com.cec.zbgl.utils;
 
 import android.util.Log;
 

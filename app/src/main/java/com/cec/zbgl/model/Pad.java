@@ -1,7 +1,9 @@
 package com.cec.zbgl.model;
 
+import java.io.Serializable;
+
 /** 终端pad信息  */
-public class Pad {
+public class Pad implements Serializable {
     private java.lang.String id;
     private java.lang.String name;
     private java.lang.String code;
