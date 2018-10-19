@@ -6,6 +6,7 @@
     <string name="home_contact">通讯录</string>
     <string name="home_discovery">发现</string>
     <string name="title_activity_wx">WXActivity</string>
+    <string name="refresh">下拉刷新！</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -5,12 +5,12 @@
     android:gravity="center"
     android:orientation="vertical">
 
-  <!--  <TextView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:text="This is Second tab"/>-->
+        android:text="This is Second tab"/>
 
 
 </LinearLayout>

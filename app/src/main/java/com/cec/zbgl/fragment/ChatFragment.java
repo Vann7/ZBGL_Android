@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.utils.ToastUtils;
 import com.cec.zbgl.utils.tree.Node;
 import com.cec.zbgl.utils.tree.adapter.TreeListViewAdapter;
+import com.cec.zbgl.view.DeviceListView;
 
 import org.litepal.parser.LitePalAttr;
 
@@ -33,10 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements DeviceListView.IReflashListener {
 
-    private ListView mTree;
-    private ListView cList;
+    private ListView mTreeView;
+    private DeviceListView dListView;
     private List<SpOrgnization> orgs;
     private List<DeviceInfo> devices;
     private SimpleTreeListViewAdapter<SpOrgnization> mAdapter;
@@ -52,17 +54,16 @@ public class ChatFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mTree = (ListView) getView().findViewById(R.id.id_lv_tree);
-        cList = (ListView) getView().findViewById(R.id.id_lv_content);
+        mTreeView = (ListView) getView().findViewById(R.id.id_lv_tree);
+        dListView = (DeviceListView) getView().findViewById(R.id.id_lv_content);
         initDatas();
         try
         {
-            mAdapter = new SimpleTreeListViewAdapter<SpOrgnization>(mTree, getContext(),
+            mAdapter = new SimpleTreeListViewAdapter<SpOrgnization>(mTreeView, getContext(),
                     orgs, 0);
-            mTree.setAdapter(mAdapter);
+            mTreeView.setAdapter(mAdapter);
 
-            dAdapter = new DeviceAdapter(getContext(),R.layout.content_wx,devices);
-            cList.setAdapter(dAdapter);
+           showList(devices);
 
         } catch (IllegalAccessException e)
         {
@@ -113,6 +114,41 @@ public class ChatFragment extends Fragment {
 
     }
 
+    private void showList(List<DeviceInfo> devices) {
+        if (dAdapter == null) {
+            dListView = (DeviceListView) getView().findViewById(R.id.id_lv_content);
+            dAdapter = new DeviceAdapter(getContext(),R.layout.content_wx,devices);
+            dListView.setInterface(this);
+            dListView.setAdapter(dAdapter);
+        }else {
+            dAdapter.onDateChange(devices);
+        }
 
 
+
+
+    }
+
+    private void setReflashData() {
+        DeviceInfo device;
+            devices.removeAll(devices);
+        for (int i=100; i< 180; i++) {
+            device = new DeviceInfo("GiGi "+i,i,"Ice Land"+i);
+            devices.add(device);
+        }
+    }
+
+    @Override
+    public void onReflash() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                setReflashData();
+                showList(devices);
+                dListView.reflashComplete();
+            }
+        }, 2000);
+    }
 }

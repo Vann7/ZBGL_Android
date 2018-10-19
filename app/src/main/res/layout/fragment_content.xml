@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
 
-    <ListView
+    <com.cec.zbgl.view.DeviceListView
         android:id="@+id/id_lv_content"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

@@ -13,6 +13,7 @@ import com.cec.zbgl.R;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.utils.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeviceAdapter  extends ArrayAdapter<DeviceInfo> {
@@ -52,10 +53,24 @@ public class DeviceAdapter  extends ArrayAdapter<DeviceInfo> {
         return convertView;
     }
 
+    public void onDateChange(List<DeviceInfo> devices) {
+        this.list = devices;
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
        count = list.size();
-        LogUtil.d("count",String.valueOf(count));
         return count;
+    }
+
+    @Override
+    public DeviceInfo getItem(int position) {
+        return list.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 }
