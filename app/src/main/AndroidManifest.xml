@@ -26,12 +26,11 @@
         </activity>
         <!-- <activity android:name=".activity.LoginActivity" /> -->
         <activity android:name=".activity.QrCodeActivity" />
-        <activity android:name=".activity.MainActivity" />
         <activity android:name=".thirdLibs.zxing.activity.CaptureActivity" />
         <activity
             android:name=".activity.WXActivity"
             android:label="@string/title_activity_wx"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

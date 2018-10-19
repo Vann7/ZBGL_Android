@@ -22,6 +22,15 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
     private java.util.Date createTime;
     private boolean isValid;
 
+    public DeviceInfo() {
+    }
+
+    public DeviceInfo(String name, int type, String location) {
+        this.name = name;
+        this.type = type;
+        this.location = location;
+    }
+
     @Override
     public String toString() {
         return "DeviceInfo{" +

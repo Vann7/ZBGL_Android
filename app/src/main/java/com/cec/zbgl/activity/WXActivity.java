@@ -58,8 +58,14 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         initTabLine();
         initView();
         initEvent();
+        initDatas();
     }
 
+
+
+    /**
+     * 初始化下划线
+     */
     private void initTabLine() {
         mTabline = (ImageView) findViewById(R.id.id_iv_tabline);
         Display display = getWindow().getWindowManager().getDefaultDisplay();
@@ -71,6 +77,9 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         mTabline.setLayoutParams(lp);
     }
 
+    /**
+     * 绑定点击事件
+     */
     private void initEvent() {
         tv_chart.setOnClickListener(this);
         tv_friend.setOnClickListener(this);
@@ -78,6 +87,9 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         tv_mine.setOnClickListener(this);
     }
 
+    /**
+     * 初始化各View控件
+     */
     private void initView() {
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
         mChatTextView = (TextView) findViewById(R.id.id_tv_chat);
@@ -215,4 +227,11 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         }
         mCurrentPageIndex = position;
     }
+
+    /**
+     * 初始化模拟数据
+     */
+    private void initDatas() {
+    }
+
 }

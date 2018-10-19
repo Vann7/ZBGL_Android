@@ -1,19 +1,34 @@
 package com.cec.zbgl.model;
 
+import com.cec.zbgl.utils.tree.annotation.TreeNodeId;
+import com.cec.zbgl.utils.tree.annotation.TreeNodeLabel;
+import com.cec.zbgl.utils.tree.annotation.TreeNodePid;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /** 装备管理_（系统）组织结构  */
 public class SpOrgnization implements Serializable {
     private java.lang.String id;
+    @TreeNodeId
     private java.lang.String code;
+    @TreeNodePid
     private java.lang.String parentCode;
     private java.lang.String value;
+    @TreeNodeLabel
     private java.lang.String name;
     private boolean isSys;
     private java.util.Date createTime;
     private java.lang.String createrId;
     private boolean isValid;
+
+    public SpOrgnization() {}
+
+    public SpOrgnization(String code, String parentCode, String name) {
+        this.code = code;
+        this.parentCode = parentCode;
+        this.name = name;
+    }
 
     @Override
     public String toString() {
