@@ -58,7 +58,6 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         initTabLine();
         initView();
         initEvent();
-        initDatas();
     }
 
 
@@ -103,7 +102,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         tv_found = (TextView) findViewById(R.id.id_tv_found);
         tv_mine = (TextView) findViewById(R.id.id_tv_mine);
 
-        mDatas = new ArrayList<Fragment>();
+        mDatas = new ArrayList<>();
 
         ChatFragment tab01 = new ChatFragment();
         ContactFragment tab02 = new ContactFragment();
@@ -151,7 +150,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
                 {
                     lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_4 + ( positionOffset-1)
                             * mScreen1_4);
-                }  else if (mCurrentPageIndex == 2 && position == 2) {// 2>3
+                }  else if (mCurrentPageIndex == 2 && position == 2) {// 2->3
                     lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_4 + positionOffset
                             * mScreen1_4);
                 }  else if (mCurrentPageIndex == 3 && position == 2) {// 3->2
@@ -226,12 +225,6 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
 
         }
         mCurrentPageIndex = position;
-    }
-
-    /**
-     * 初始化模拟数据
-     */
-    private void initDatas() {
     }
 
 }

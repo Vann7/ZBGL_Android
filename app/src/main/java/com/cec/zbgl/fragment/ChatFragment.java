@@ -1,27 +1,18 @@
 package com.cec.zbgl.fragment;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.cec.zbgl.BaseApplication;
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.DeviceAdapter;
 import com.cec.zbgl.adapter.SimpleTreeListViewAdapter;
+import com.cec.zbgl.listener.ILoadListener;
+import com.cec.zbgl.listener.IReflashListener;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.utils.ToastUtils;
@@ -29,13 +20,11 @@ import com.cec.zbgl.utils.tree.Node;
 import com.cec.zbgl.utils.tree.adapter.TreeListViewAdapter;
 import com.cec.zbgl.view.DeviceListView;
 
-import org.litepal.parser.LitePalAttr;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChatFragment extends Fragment implements DeviceListView.IReflashListener {
+public class ChatFragment extends Fragment implements IReflashListener,ILoadListener {
 
     private ListView mTreeView;
     private DeviceListView dListView;
@@ -118,37 +107,57 @@ public class ChatFragment extends Fragment implements DeviceListView.IReflashLis
         if (dAdapter == null) {
             dListView = (DeviceListView) getView().findViewById(R.id.id_lv_content);
             dAdapter = new DeviceAdapter(getContext(),R.layout.content_wx,devices);
-            dListView.setInterface(this);
+            dListView.setFreshInterface(this);
+            dListView.setLoadInterface(this);
             dListView.setAdapter(dAdapter);
         }else {
             dAdapter.onDateChange(devices);
         }
-
-
-
-
     }
 
     private void setReflashData() {
         DeviceInfo device;
             devices.removeAll(devices);
-        for (int i=100; i< 180; i++) {
+        for (int i=100; i< 120; i++) {
             device = new DeviceInfo("GiGi "+i,i,"Ice Land"+i);
             devices.add(device);
         }
     }
 
+    private void getLoadData() {
+        DeviceInfo device;
+        for (int i=120; i< 140; i++) {
+            device = new DeviceInfo("Mix "+i,i,"Green Land"+i);
+            devices.add(device);
+        }
+    }
+
+    /**
+     * 刷新数据
+     */
     @Override
     public void onReflash() {
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        handler.postDelayed(() -> {
+            setReflashData();
+            showList(devices);
+            dListView.reflashComplete();
+        }, 2000);
+    }
 
-            @Override
-            public void run() {
-                setReflashData();
-                showList(devices);
-                dListView.reflashComplete();
-            }
+    /**
+     * 加载更多数据
+     */
+     @Override
+    public void onload() {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            //获取更多数据
+            getLoadData();
+            //更新listview显示；
+            showList(devices);
+            //通知listview加载完毕
+            dListView.loadComplete();
         }, 2000);
     }
 }

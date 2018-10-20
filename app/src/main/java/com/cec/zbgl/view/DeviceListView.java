@@ -14,6 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.listener.ILoadListener;
+import com.cec.zbgl.listener.IReflashListener;
 import com.cec.zbgl.utils.LogUtil;
 
 import java.text.SimpleDateFormat;
@@ -22,11 +24,15 @@ import java.util.Date;
 public class DeviceListView extends ListView implements AbsListView.OnScrollListener {
 
     private View header;// 顶部布局文件；
+    private View footer;//底部布局文件
     private int headerHeight;// 顶部布局文件的高度；
     private int firstVisibleItem;// 当前第一个可见的item的位置；
+    private int lastVisibleItem;// 最后一个可见的item的位置；
+    private int totalItemCount;// 总数量；
     private int scrollState;// listview 当前滚动状态；
     private boolean isRemark;// 标记，当前是在listview最顶端摁下的；
     private int startY;// 摁下时的Y值；
+    private boolean isLoading;// 正在加载；
     private int state;// 当前的状态；
     private final int NONE = 0;// 正常状态；
     private final int PULL = 1;// 提示下拉状态；
@@ -34,6 +40,7 @@ public class DeviceListView extends ListView implements AbsListView.OnScrollList
     private final int REFLASHING = 3;// 刷新状态；
 
     IReflashListener iReflashListener;//刷新数据的接口
+    ILoadListener iLoadListener; //加载更多数据的接口
 
 
     public DeviceListView(Context context) {
@@ -58,11 +65,18 @@ public class DeviceListView extends ListView implements AbsListView.OnScrollList
      */
     private void initView(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
+        //添加header
         header = inflater.inflate(R.layout.header_layout, null);
         measureView(header);
         headerHeight = header.getMeasuredHeight();
         topPadding(-headerHeight);
         this.addHeaderView(header);
+
+        //添加footer
+        footer = inflater.inflate(R.layout.footer_layout, null);
+        footer.findViewById(R.id.load_layout).setVisibility(View.GONE);
+        this.addFooterView(footer);
+
         this.setOnScrollListener(this);
     }
 
@@ -104,11 +118,23 @@ public class DeviceListView extends ListView implements AbsListView.OnScrollList
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         this.scrollState = scrollState;
+        if (totalItemCount == lastVisibleItem
+                && scrollState == SCROLL_STATE_IDLE) {
+            if (!isLoading) {
+                isLoading = true;
+                footer.findViewById(R.id.load_layout).setVisibility(
+                        View.VISIBLE);
+                // 加载更多
+                iLoadListener.onload();
+            }
+        }
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         this.firstVisibleItem = firstVisibleItem;
+        this.lastVisibleItem = firstVisibleItem + visibleItemCount;
+        this.totalItemCount = totalItemCount;
     }
 
     @Override
@@ -137,6 +163,17 @@ public class DeviceListView extends ListView implements AbsListView.OnScrollList
                 break;
         }
         return super.onTouchEvent(ev);
+    }
+
+
+
+    /**
+     * 加载完毕
+     */
+    public void loadComplete(){
+        isLoading = false;
+        footer.findViewById(R.id.load_layout).setVisibility(
+                View.GONE);
     }
 
     /**
@@ -236,21 +273,19 @@ public class DeviceListView extends ListView implements AbsListView.OnScrollList
         reflashViewByState();
         TextView lastupdatetime = (TextView) header
                 .findViewById(R.id.lastupdate_time);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy--MM--dd-- hh:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date date = new Date(System.currentTimeMillis());
         String time = format.format(date);
         lastupdatetime.setText(time);
     }
 
-    public void setInterface(IReflashListener iReflashListener){
+    public void setFreshInterface(IReflashListener iReflashListener){
         this.iReflashListener = iReflashListener;
     }
 
-    /**
-     * 刷新数据接口
-     */
-    public interface IReflashListener{
-        public void onReflash();
+    public void setLoadInterface(ILoadListener iLoadListener){
+        this.iLoadListener = iLoadListener;
     }
+
 
 }

@@ -5,6 +5,11 @@ import java.util.Date;
 
 /** 备品备件_设备教程 */
 public class DeviceCourse implements Serializable {
+    public static final int TYPE_ONE = 1;
+    public static final int TYPE_TWO = 2;
+    public static final int TYPE_THREE = 3;
+
+
     private String id;
     private String deviceId;
     private String sysId;
@@ -17,6 +22,17 @@ public class DeviceCourse implements Serializable {
     private String location;
     private String description;
     private boolean isValid;
+
+
+    public DeviceCourse() {
+    }
+
+    public DeviceCourse(String id, String name, int deviceType, String description) {
+        this.id = id;
+        this.name = name;
+        this.deviceType = deviceType;
+        this.description = description;
+    }
 
     @Override
     public String toString() {
