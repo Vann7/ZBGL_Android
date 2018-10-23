@@ -4,7 +4,6 @@ package com.cec.zbgl.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -18,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
-import com.cec.zbgl.adapter.DevicePagerAdapter;
+import com.cec.zbgl.adapter.PagerAdapter;
 import com.cec.zbgl.fragment.ChatFragment;
 import com.cec.zbgl.fragment.ContactFragment;
 import com.cec.zbgl.fragment.DiscoverFragment;
@@ -30,7 +29,7 @@ import java.util.List;
 public class WXActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
-    private DevicePagerAdapter mAdapter;
+    private PagerAdapter mAdapter;
     private List<Fragment> mDatas;
 
     private TextView mChatTextView;
@@ -121,7 +120,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         mDatas.add(tab03);
         mDatas.add(tab04);
 
-        mAdapter = new DevicePagerAdapter(getSupportFragmentManager(),mDatas);
+        mAdapter = new PagerAdapter(getSupportFragmentManager(),mDatas);
 
         mViewPager.setAdapter(mAdapter);
 
@@ -201,6 +200,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
     {
         setTab(i);
 //        mCurrentPageIndex = i;
+        System.out.println(mViewPager.getChildCount());
         mViewPager.setCurrentItem(i);
     }
 

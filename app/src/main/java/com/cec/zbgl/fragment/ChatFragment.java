@@ -19,6 +19,7 @@ import android.widget.ListView;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
+import com.cec.zbgl.activity.LoginActivity;
 import com.cec.zbgl.adapter.DeviceAdapter;
 import com.cec.zbgl.adapter.SimpleTreeListViewAdapter;
 import com.cec.zbgl.listener.ILoadListener;
@@ -228,7 +229,6 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
             case R.id.top_quit_btn :
                 logout();
                 break;
-
         }
 
     }
@@ -237,11 +237,14 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
      * 注销当前登录用户
      */
     public void logout() {
-
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle("退出登录")
                 .setMessage("退出登录后不会删除任何个人信息")
-                .setPositiveButton("确定", (dialog, which) -> getActivity().finish())
+                .setPositiveButton("确定", (dialog, which) -> {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                })
                 .setNegativeButton("取消", (dialog, which) -> {
 
                 })

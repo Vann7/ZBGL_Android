@@ -25,11 +25,20 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
     public DeviceInfo() {
     }
 
+    public DeviceInfo(String name, String belongSys, String location) {
+        this.name = name;
+        this.belongSys = belongSys;
+        this.location = location;
+    }
+
+    
     public DeviceInfo(String name, int type, String location) {
         this.name = name;
         this.type = type;
         this.location = location;
     }
+
+
 
     @Override
     public String toString() {

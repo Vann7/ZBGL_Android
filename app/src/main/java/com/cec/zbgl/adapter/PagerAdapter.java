@@ -11,14 +11,17 @@ import com.cec.zbgl.utils.LogUtil;
 
 import java.util.List;
 
-public class DevicePagerAdapter extends FragmentPagerAdapter {
+/**
+ * 首页滚动pager 适配器
+ */
+public class PagerAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
     private FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction;
 
 
-    public DevicePagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public PagerAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         this.mFragments = fragments;
         this.mFragmentManager = fm;
@@ -41,8 +44,10 @@ public class DevicePagerAdapter extends FragmentPagerAdapter {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
-
         mCurTransaction.detach((Fragment)object);
 
     }
+
+
+
 }

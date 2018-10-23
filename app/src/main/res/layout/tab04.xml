@@ -2,15 +2,148 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:background="#D3D3D3"
     android:orientation="vertical">
+    <TextView
+        android:id="@+id/mine_header_tv"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="@string/home_mine"
+        android:textSize="26dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="#D3D3D3"
+        android:layout_marginTop="10dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
+        android:id="@+id/mine_line_tv"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/mine_header_tv"
+        android:background="@color/black"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="用户名"/>
+
+        <TextView
+            android:id="@+id/mine_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginRight="20dp"
+            android:text="管理员"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="数据同步"/>
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:background="@mipmap/ic_launcher_round"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="清除缓存"/>
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:background="@mipmap/ic_launcher_round"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="账号与安全"/>
+
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:background="@mipmap/ic_launcher_round"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/mine_out_tv"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:text="退出当前账号"
+        android:gravity="center"
+        android:textSize="20dp"
         android:textStyle="bold"
-        android:text="This is Fourth tab"/>
+        android:textColor="@color/gray"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"/>
+
+
 
 
 </LinearLayout>
