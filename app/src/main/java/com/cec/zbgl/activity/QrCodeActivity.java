@@ -94,8 +94,6 @@ public class QrCodeActivity extends AppCompatActivity implements View.OnClickLis
                             CaptureActivity.class), 1);
                 }
 
-
-
                 break;
             case R.id.qc_btn:
                 String input = mInput.getText().toString();

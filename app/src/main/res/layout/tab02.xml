@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
+    <include layout="@layout/bar_top" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

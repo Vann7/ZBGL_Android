@@ -16,4 +16,9 @@ public class MyFragment extends Fragment {
     {
         return inflater.inflate(R.layout.tab04, container, false);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 }

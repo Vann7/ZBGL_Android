@@ -1,73 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="60dp"
     android:background="#9ea99e"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="37dp"
+        android:layout_height="70dp"
         android:orientation="horizontal"
         android:baselineAligned="false">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/id_ll_chat"
-            android:layout_width="3dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/id_iv_chat"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
+                android:background="@mipmap/ic_launcher_round" />
 
             <TextView
                 android:id="@+id/id_tv_chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
+                android:layout_below="@+id/id_iv_chat"
                 android:text="@string/home_chart"
                 android:textColor="#008000"/>
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="3dp"
+        <RelativeLayout
+            android:id="@+id/id_ll_contact"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/id_iv_contact"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
+                android:background="@mipmap/ic_launcher_round" />
 
             <TextView
                 android:id="@+id/id_tv_friend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/id_iv_contact"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="55dp"
                 android:text="@string/home_contact"
                 android:textColor="@color/black"/>
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="3dp"
+        <RelativeLayout
+            android:id="@+id/id_ll_discovery"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center" >
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/id_iv_discovery"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
+                android:background="@mipmap/ic_launcher_round" />
 
             <TextView
                 android:id="@+id/id_tv_found"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/id_iv_discovery"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
                 android:textColor="@color/black"
                 android:text="@string/home_discovery" />
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="3dp"
+        <RelativeLayout
+            android:id="@+id/id_ll_mine"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center" >
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/id_iv_mine"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
+                android:background="@mipmap/ic_launcher_round" />
 
             <TextView
                 android:id="@+id/id_tv_mine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/id_iv_mine"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="60dp"
                 android:textColor="@color/black"
                 android:text="@string/home_mine"/>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <ImageView

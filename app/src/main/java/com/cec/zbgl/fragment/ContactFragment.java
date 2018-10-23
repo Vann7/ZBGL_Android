@@ -1,5 +1,6 @@
 package com.cec.zbgl.fragment;
 
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,6 +31,12 @@ public class ContactFragment extends Fragment {
                              Bundle savedInstanceState)
     {
         return inflater.inflate(R.layout.tab02, container, false);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override
@@ -105,4 +112,5 @@ public class ContactFragment extends Fragment {
         mAdapter.addList(courses);
         mAdapter.notifyDataSetChanged();
     }
+
 }

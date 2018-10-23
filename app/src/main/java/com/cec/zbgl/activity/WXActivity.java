@@ -14,14 +14,15 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.adapter.DevicePagerAdapter;
 import com.cec.zbgl.fragment.ChatFragment;
 import com.cec.zbgl.fragment.ContactFragment;
 import com.cec.zbgl.fragment.DiscoverFragment;
 import com.cec.zbgl.fragment.MyFragment;
-import com.cec.zbgl.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,17 @@ import java.util.List;
 public class WXActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
-    private FragmentPagerAdapter mAdapter;
+    private DevicePagerAdapter mAdapter;
     private List<Fragment> mDatas;
 
     private TextView mChatTextView;
     private TextView mFriendTextView;
     private TextView mContactTextView;
     private TextView mMineTextView;
-    private LinearLayout mChatLinearLayout;
+    private RelativeLayout mChat_rl;
+    private RelativeLayout mContact_rl;
+    private RelativeLayout mDiscovery_rl;
+    private RelativeLayout mMine_rl;
 
     private TextView tv_chart;
     private TextView tv_friend;
@@ -54,7 +58,6 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_wx);
-
         initTabLine();
         initView();
         initEvent();
@@ -80,10 +83,10 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
      * 绑定点击事件
      */
     private void initEvent() {
-        tv_chart.setOnClickListener(this);
-        tv_friend.setOnClickListener(this);
-        tv_found.setOnClickListener(this);
-        tv_mine.setOnClickListener(this);
+        mMine_rl.setOnClickListener(this);
+        mDiscovery_rl.setOnClickListener(this);
+        mContact_rl.setOnClickListener(this);
+        mChat_rl.setOnClickListener(this);
     }
 
     /**
@@ -95,7 +98,11 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         mFriendTextView = (TextView) findViewById(R.id.id_tv_friend);
         mContactTextView = (TextView) findViewById(R.id.id_tv_found);
         mMineTextView = (TextView) findViewById(R.id.id_tv_mine);
-        mChatLinearLayout = (LinearLayout) findViewById(R.id.id_ll_chat);
+
+        mChat_rl = (RelativeLayout) findViewById(R.id.id_ll_chat);
+        mContact_rl = (RelativeLayout) findViewById(R.id.id_ll_contact);
+        mDiscovery_rl = (RelativeLayout) findViewById(R.id.id_ll_discovery);
+        mMine_rl = (RelativeLayout) findViewById(R.id.id_ll_mine);
 
         tv_chart = (TextView) findViewById(R.id.id_tv_chat);
         tv_friend = (TextView) findViewById(R.id.id_tv_friend);
@@ -114,19 +121,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         mDatas.add(tab03);
         mDatas.add(tab04);
 
-        mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()){
-            @Override
-            public int getCount()
-            {
-                return mDatas.size();
-            }
-
-            @Override
-            public Fragment getItem(int arg0)
-            {
-                return mDatas.get(arg0);
-            }
-        };
+        mAdapter = new DevicePagerAdapter(getSupportFragmentManager(),mDatas);
 
         mViewPager.setAdapter(mAdapter);
 
@@ -186,16 +181,17 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.id_tv_chat :
+
+            case R.id.id_ll_chat :
                 setSelect(0);
                 break;
-            case R.id.id_tv_friend:
+            case R.id.id_ll_contact:
                 setSelect(1);
                 break;
-            case R.id.id_tv_found:
+            case R.id.id_ll_discovery:
                 setSelect(2);
                 break;
-            case R.id.id_tv_mine:
+            case R.id.id_ll_mine:
                 setSelect(3);
                 break;
         }

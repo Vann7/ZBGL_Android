@@ -1,5 +1,6 @@
 package com.cec.zbgl.common;
 
+import android.Manifest;
 import android.support.annotation.StringDef;
 
 import com.cec.zbgl.db.DatabaseHelper;

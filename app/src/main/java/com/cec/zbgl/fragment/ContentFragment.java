@@ -20,4 +20,5 @@ public class ContentFragment extends Fragment {
     {
         return inflater.inflate(R.layout.fragment_content, container, false);
     }
+
 }

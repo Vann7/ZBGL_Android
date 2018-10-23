@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -33,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.fragment.ChatFragment;
 import com.cec.zbgl.thirdLibs.zxing.decode.DecodeThread;
 import com.cec.zbgl.thirdLibs.zxing.utils.BeepManager;
 import com.cec.zbgl.thirdLibs.zxing.utils.CaptureActivityHandler;
@@ -53,7 +55,7 @@ import java.lang.reflect.Field;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends Activity implements SurfaceHolder.Callback,View.OnClickListener {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -66,6 +68,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private RelativeLayout scanContainer;
     private RelativeLayout scanCropView;
     private ImageView scanLine;
+    private ImageView backImg;
 
     private Rect mCropRect = null;
     private boolean isHasSurface = false;
@@ -90,14 +93,16 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         scanContainer = (RelativeLayout) findViewById(R.id.capture_container);
         scanCropView = (RelativeLayout) findViewById(R.id.capture_crop_view);
         scanLine = (ImageView) findViewById(R.id.capture_scan_line);
+        backImg = (ImageView) findViewById(R.id.capture_back);
+        backImg.setOnClickListener(this);
 
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
 
         TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, 0.0f, Animation
                 .RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT,
-                0.9f);
-        animation.setDuration(4500);
+                0.95f);
+        animation.setDuration(2500);
         animation.setRepeatCount(-1);
         animation.setRepeatMode(Animation.RESTART);
         scanLine.startAnimation(animation);
@@ -301,5 +306,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.capture_back :
+                CaptureActivity.this.finish();
+        }
     }
 }
