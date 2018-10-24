@@ -1,50 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item01_ll"
-    android:layout_width="200dp"
-    android:layout_height="90dp"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/item01_img"
-        android:layout_width="80dp"
-        android:layout_height="79dp"
-        android:layout_marginLeft="10dp"
-        android:background="@mipmap/ic_launcher" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:layout_height="0dp"
         android:layout_marginLeft="10dp"
-        android:orientation="vertical">
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
 
-        <TextView
-            tools:text="教程名称"
-            android:id="@+id/item01_tv_name"
-            android:textColor="@color/red"
-            android:textStyle="bold"
+        <ImageView
+            android:id="@+id/item01_img"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="center"
+            android:layout_marginLeft="10dp"
+            android:background="@mipmap/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:orientation="vertical">
 
-        <TextView
-            tools:text="教程类别"
-            android:id="@+id/item01_tv_type"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/cadetblue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                tools:text="教程名称"
+                android:id="@+id/item01_tv_name"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp" />
 
-        <TextView
-            tools:text="教程描述"
-            android:id="@+id/item01_tv_desc"
-            android:layout_marginTop="5dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                tools:text="教程类别"
+                android:id="@+id/item01_tv_type"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/cadetblue"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"  />
+        </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        tools:text="教程描述"
+        android:id="@+id/item01_tv_desc"
+        android:layout_marginTop="5dp"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="10dp"/>
 
 
 

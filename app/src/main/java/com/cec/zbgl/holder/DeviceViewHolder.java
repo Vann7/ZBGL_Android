@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
@@ -11,6 +12,7 @@ import com.cec.zbgl.model.DeviceInfo;
 
 public class DeviceViewHolder extends RecyclerView.ViewHolder {
 
+    private LinearLayout item_ll;
     private ImageView imageView;
     private TextView name;
     private TextView type;
@@ -22,7 +24,10 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
         name = (TextView) itemView.findViewById(R.id.item01_tv_name);
         type = (TextView) itemView.findViewById(R.id.item01_tv_type);
         desc = (TextView) itemView.findViewById(R.id.item01_tv_desc);
-        itemView.setBackgroundColor(Color.GRAY);
+        item_ll = (LinearLayout) itemView.findViewById(R.id.item01_ll);
+        item_ll.layout(10,10,100 ,   100);
+        itemView.setBackgroundColor(Color.LTGRAY);
+
     }
 
     public void bindHolder(DeviceInfo device) {

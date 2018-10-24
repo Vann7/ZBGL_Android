@@ -43,7 +43,7 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
         inflate(R.layout.contact_item01,parent,false));
 
         //绑定点击事件
-        viewHolder.itemView.setOnClickListener((View.OnClickListener) v -> {
+        viewHolder.itemView.setOnClickListener(v -> {
             mListener.onItemClick(v);
         });
         //绑定长按事件

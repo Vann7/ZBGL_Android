@@ -26,7 +26,7 @@ public class TypeOneHolder extends RecyclerView.ViewHolder {
         name = (TextView) itemView.findViewById(R.id.item01_tv_name);
         type = (TextView) itemView.findViewById(R.id.item01_tv_type);
         desc = (TextView) itemView.findViewById(R.id.item01_tv_desc);
-        itemView.setBackgroundColor(Color.WHITE);
+        itemView.setBackgroundColor(Color.LTGRAY);
     }
 
     public void  bindHolder(DeviceCourse course) {

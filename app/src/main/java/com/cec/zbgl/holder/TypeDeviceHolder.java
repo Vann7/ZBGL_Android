@@ -22,7 +22,7 @@ public class TypeDeviceHolder extends RecyclerView.ViewHolder{
         name = (TextView) itemView.findViewById(R.id.item01_tv_name);
         type = (TextView) itemView.findViewById(R.id.item01_tv_type);
         desc = (TextView) itemView.findViewById(R.id.item01_tv_desc);
-        itemView.setBackgroundColor(Color.GRAY);
+        itemView.setBackgroundColor(Color.LTGRAY);
     }
 
     public void bindHolder(DeviceInfo device) {

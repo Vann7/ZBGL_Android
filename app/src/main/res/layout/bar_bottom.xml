@@ -13,7 +13,7 @@
 
         <RelativeLayout
             android:id="@+id/id_ll_chat"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
@@ -23,7 +23,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
+                android:layout_centerHorizontal="true"
                 android:background="@mipmap/ic_launcher_round" />
 
             <TextView
@@ -31,15 +31,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
                 android:layout_below="@+id/id_iv_chat"
+                android:layout_centerHorizontal="true"
                 android:text="@string/home_chart"
                 android:textColor="#008000"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/id_ll_contact"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
@@ -48,7 +48,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
+                android:layout_centerHorizontal="true"
                 android:background="@mipmap/ic_launcher_round" />
 
             <TextView
@@ -57,14 +57,14 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_iv_contact"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="55dp"
+                android:layout_centerHorizontal="true"
                 android:text="@string/home_contact"
                 android:textColor="@color/black"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/id_ll_discovery"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
@@ -73,7 +73,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
+                android:layout_centerHorizontal="true"
                 android:background="@mipmap/ic_launcher_round" />
 
             <TextView
@@ -82,14 +82,14 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_iv_discovery"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
+                android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
                 android:text="@string/home_discovery" />
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/id_ll_mine"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
@@ -98,7 +98,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
+                android:layout_centerHorizontal="true"
                 android:background="@mipmap/ic_launcher_round" />
 
             <TextView
@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_iv_mine"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="60dp"
+                android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
                 android:text="@string/home_mine"/>
         </RelativeLayout>
