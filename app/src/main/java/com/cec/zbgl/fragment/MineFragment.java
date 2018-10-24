@@ -13,7 +13,7 @@ import com.cec.zbgl.R;
 import com.cec.zbgl.activity.LoginActivity;
 
 
-public class MyFragment extends Fragment implements View.OnClickListener {
+public class MineFragment extends Fragment implements View.OnClickListener {
 
     private TextView logout_tv;
 

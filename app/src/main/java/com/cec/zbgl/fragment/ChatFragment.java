@@ -21,7 +21,7 @@ import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
 import com.cec.zbgl.activity.LoginActivity;
 import com.cec.zbgl.adapter.DeviceAdapter;
-import com.cec.zbgl.adapter.SimpleTreeListViewAdapter;
+import com.cec.zbgl.adapter.OrgsAdapter;
 import com.cec.zbgl.listener.ILoadListener;
 import com.cec.zbgl.listener.IReflashListener;
 import com.cec.zbgl.model.DeviceInfo;
@@ -43,7 +43,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
     private List<SpOrgnization> orgs;
     private List<DeviceInfo> devices;
     private DeviceInfo device;
-    private SimpleTreeListViewAdapter<SpOrgnization> mAdapter;
+    private OrgsAdapter<SpOrgnization> mAdapter;
     private DeviceAdapter dAdapter;
     private ImageView qc_iv;
     private ImageView quit_iv;
@@ -70,7 +70,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
         initDatas();
         try
         {
-            mAdapter = new SimpleTreeListViewAdapter<>(mTreeView, getContext(),
+            mAdapter = new OrgsAdapter<>(mTreeView, getContext(),
                     orgs, 0);
             mTreeView.setAdapter(mAdapter);
            showList(devices);
@@ -101,6 +101,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
             if (node.isLeaf())
             {
 //                ToastUtils.showShort(node.getName());
+
                 reloadData(node.getName());
 
             }

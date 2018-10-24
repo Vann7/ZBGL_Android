@@ -68,7 +68,6 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
     }
 
 
-
     @Override
     public int getItemCount() {
         return devices.size();

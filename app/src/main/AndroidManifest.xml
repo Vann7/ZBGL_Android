@@ -27,7 +27,6 @@
             </intent-filter>
         </activity>
         <!-- <activity android:name=".activity.LoginActivity" /> -->
-        <activity android:name=".activity.QrCodeActivity" />
         <activity android:name=".thirdLibs.zxing.activity.CaptureActivity" />
         <activity
             android:name=".activity.WXActivity"
@@ -35,6 +34,17 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.CourseActivity" />
         <activity android:name=".activity.ContentActivity"></activity>
+
+        <!-- FileProvider配置访问路径，适配7.0及其以上 -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
     </application>
 
 </manifest>

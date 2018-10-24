@@ -7,69 +7,86 @@
     android:background="@color/background_user"
     tools:context=".activity.ContentActivity">
 
-    <TextView
-        android:id="@+id/device_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:padding="8dp"
-        android:textSize="16dp"
-        android:text="名称:"/>
+    <RelativeLayout
+        android:id="@+id/device_ll_01"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/device_name_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/device_name_tv"
-        android:ems="19"
-        android:hint="请输入信息:"
-        android:textSize="16dp" />
+        <ImageView
+            android:id="@+id/id_device_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/gray"/>
 
-    <TextView
-        android:id="@+id/device_type_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/device_name_tv"
-        android:lines="1"
-        android:padding="8dp"
-        android:textSize="16dp"
-        android:text="类别:"/>
+            <TextView
+                android:id="@+id/device_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/id_device_image"
+                android:lines="1"
+                android:padding="8dp"
+                android:textSize="16dp"
+                android:text="名称:"/>
 
-    <EditText
-        android:id="@+id/device_type_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/device_name_tv"
-        android:layout_toRightOf="@id/device_type_tv"
-        android:ems="19"
-        android:hint="请输入信息:"
-        android:textSize="16dp" />
+            <EditText
+                android:id="@+id/device_name_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/device_name_tv"
+                android:ems="19"
+                android:hint="请输入信息:"
+                android:textSize="16dp" />
 
-    <TextView
-        android:id="@+id/device_location_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/device_type_tv"
-        android:lines="1"
-        android:padding="8dp"
-        android:textSize="16dp"
-        android:text="存放位置:"/>
+            <TextView
+                android:id="@+id/device_type_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/device_name_tv"
+                android:layout_toRightOf="@id/id_device_image"
+                android:lines="1"
+                android:padding="8dp"
+                android:textSize="16dp"
+                android:text="类别:"/>
 
-    <EditText
-        android:id="@+id/device_location_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/device_type_tv"
-        android:layout_toRightOf="@id/device_location_type"
-        android:ems="19"
-        android:hint="请输入信息:"
-        android:textSize="16dp" />
+            <EditText
+                android:id="@+id/device_type_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/device_name_tv"
+                android:layout_toRightOf="@id/device_type_tv"
+                android:ems="19"
+                android:hint="请输入信息:"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/device_location_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/device_type_tv"
+                android:layout_toRightOf="@id/id_device_image"
+                android:lines="1"
+                android:padding="8dp"
+                android:textSize="16dp"
+                android:text="存放位置:"/>
+
+            <EditText
+                android:id="@+id/device_location_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/device_type_tv"
+                android:layout_toRightOf="@id/device_location_type"
+                android:ems="19"
+                android:hint="请输入信息:"
+                android:textSize="16dp" />
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/device_count_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/device_location_type"
+        android:layout_below="@+id/device_ll_01"
         android:lines="1"
         android:padding="8dp"
         android:textSize="16sp"
@@ -79,7 +96,7 @@
         android:id="@+id/device_count_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/device_location_type"
+        android:layout_below="@+id/device_ll_01"
         android:layout_toRightOf="@id/device_count_tv"
         android:ems="19"
         android:hint="请输入信息:"
@@ -99,7 +116,7 @@
         android:id="@+id/device_status_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/device_status_tv"
+        android:layout_below="@+id/device_count_tv"
         android:layout_toRightOf="@id/device_status_tv"
         android:ems="19"
         android:hint="请输入信息:"

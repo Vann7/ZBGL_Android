@@ -3,6 +3,8 @@ package com.cec.zbgl.adapter;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,10 +19,10 @@ import com.cec.zbgl.utils.tree.TreeHelper;
 import com.cec.zbgl.utils.tree.adapter.TreeListViewAdapter;
 
 
-public class SimpleTreeListViewAdapter<T> extends TreeListViewAdapter<T>
+public class OrgsAdapter<T> extends TreeListViewAdapter<T>
 {
-	public SimpleTreeListViewAdapter(ListView tree, Context context,
-                                     List<T> datas, int defaultExpandLevel)
+	public OrgsAdapter(ListView tree, Context context,
+					   List<T> datas, int defaultExpandLevel)
 			throws IllegalArgumentException, IllegalAccessException
 	{
 		super(tree, context, datas, defaultExpandLevel);

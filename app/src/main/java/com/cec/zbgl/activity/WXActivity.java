@@ -21,7 +21,7 @@ import com.cec.zbgl.adapter.PagerAdapter;
 import com.cec.zbgl.fragment.ChatFragment;
 import com.cec.zbgl.fragment.ContactFragment;
 import com.cec.zbgl.fragment.DiscoverFragment;
-import com.cec.zbgl.fragment.MyFragment;
+import com.cec.zbgl.fragment.MineFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +113,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         ChatFragment tab01 = new ChatFragment();
         ContactFragment tab02 = new ContactFragment();
         DiscoverFragment tab03 = new DiscoverFragment();
-        MyFragment tab04 = new MyFragment();
+        MineFragment tab04 = new MineFragment();
 
         mDatas.add(tab01);
         mDatas.add(tab02);

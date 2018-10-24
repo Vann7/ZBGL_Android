@@ -15,8 +15,7 @@ import android.widget.ListView;
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
 import com.cec.zbgl.adapter.DeviceRecyclerAdapter;
-import com.cec.zbgl.adapter.SimpleTreeListViewAdapter;
-import com.cec.zbgl.model.DeviceCourse;
+import com.cec.zbgl.adapter.OrgsAdapter;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.utils.ToastUtils;
@@ -28,7 +27,7 @@ import java.util.List;
 public class DiscoverFragment extends Fragment {
 
     private ListView mTreeView;
-    private SimpleTreeListViewAdapter<SpOrgnization> mAdapter;
+    private OrgsAdapter<SpOrgnization> mAdapter;
     private List<SpOrgnization> orgs;
     private RecyclerView mRecyclerView;
     private DeviceRecyclerAdapter deviceAdapter;
@@ -73,7 +72,7 @@ public class DiscoverFragment extends Fragment {
         mTreeView = (ListView) getView().findViewById(R.id.id_lv_tree);
         try
         {
-            mAdapter = new SimpleTreeListViewAdapter<>(mTreeView, getContext(),
+            mAdapter = new OrgsAdapter<>(mTreeView, getContext(),
                     orgs, 0);
             mTreeView.setAdapter(mAdapter);
 
@@ -152,6 +151,33 @@ public class DiscoverFragment extends Fragment {
 
     }
 
+    /**
+     * 模拟重载数据
+     */
+    private void reloadData(String root) {
+        devices = new ArrayList<>();
+        for (int i=0; i< 40; i++) {
+            String name,typyName,sys;
+            int type;
+            if (i <15 ) {
+                name = root+"-服务器 " + i;
+                typyName = root+"-服务器设备";
+                sys = root+"-综保系统";
+            }else if (15<=i && i<= 31) {
+                name = root+"-路由器 " + i;
+                typyName = root+"-复制设备";
+                sys = root+"-业务系统";
+            } else {
+                name = root+"-笔记本电脑 "+ i;
+                typyName = root+"-便携设备";
+                sys = root+"-后勤系统";
+            }
+
+            DeviceInfo device = new DeviceInfo(name, sys, "设备描述为:root-"+typyName );
+            devices.add(device);
+        }
+        deviceAdapter.onDateChange(devices);
+    }
 
     /**
      * 点击左侧树节点，刷新右侧tableView
@@ -160,8 +186,8 @@ public class DiscoverFragment extends Fragment {
         mAdapter.setOnTreeNodeClickListener((node, position) -> {
             if (node.isLeaf())
             {
-//                reloadData(node.getName());
-                ToastUtils.showShort(node.getName());
+                reloadData(node.getName());
+//                ToastUtils.showShort(node.getName());
             }
         });
 
