@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 /**
+ *
  * 所有activity的基类，处理activity的共性内容和逻辑
  */
 public class BaseActivity extends AppCompatActivity {
