@@ -14,16 +14,18 @@ import android.view.ViewGroup;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.CourseAdapter;
+import com.cec.zbgl.adapter.CourseAdapter2;
 import com.cec.zbgl.model.DeviceCourse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class ContactFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private CourseAdapter mAdapter;
+    private CourseAdapter2 mAdapter;
     private List<DeviceCourse> courses;
 
     @Override
@@ -43,7 +45,7 @@ public class ContactFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),6);
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),
 //                LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -52,11 +54,11 @@ public class ContactFragment extends Fragment {
             public int getSpanSize(int position) {
                 int type = mRecyclerView.getAdapter().getItemViewType(position);
                 if (type == DeviceCourse.TYPE_ONE) {
-                    return 1;
-                }else if (type == DeviceCourse.TYPE_TWO){
                     return 2;
-                } else {
+                }else if (type == DeviceCourse.TYPE_TWO){
                     return 3;
+                } else {
+                    return 6;
                 }
              }
         });
@@ -77,7 +79,7 @@ public class ContactFragment extends Fragment {
             }
         });
 
-        mAdapter = new CourseAdapter(getContext());
+        mAdapter = new CourseAdapter2(getContext());
         mRecyclerView.setAdapter(mAdapter);
 
         initData();

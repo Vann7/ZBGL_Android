@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cec.zbgl.R;
@@ -45,6 +46,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private String mExtStorDir;
     private Uri mUriPath;
     private ImageUtil imageUtil;
+    private ImageView back_iv;
+    private TextView head_tv;
 
 
     @Override
@@ -54,7 +57,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         mExtStorDir = Environment.getExternalStorageDirectory().toString();
         initView();
         initData();
+        initEvent();
     }
+
+
 
     /**
      * 初始化界面
@@ -70,12 +76,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         createTime_Et = (EditText) findViewById(R.id.device_createrTime_et);
         description_Et = (EditText) findViewById(R.id.device_description_et);
         headImage = (ImageView) findViewById(R.id.id_device_image);
-        headImage.setOnClickListener(this);
-
         back_btn = (Button)findViewById(R.id.device_back_btn);
-        back_btn.setOnClickListener(this);
         course_btn = (Button) findViewById(R.id.check_course_btn);
-        course_btn.setOnClickListener(this);
+
+        back_iv = (ImageView) findViewById(R.id.bar_back_iv);
+        head_tv = (TextView) findViewById(R.id.bar_back_tv);
 
     }
 
@@ -94,6 +99,19 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         createName_Et.setText(device.getCreaterName());
 //        createTime_Et.setText(device.getCreateTime().toString());
         description_Et.setText(device.getDescription());
+
+        head_tv.setText(device.getName());
+    }
+
+    /**
+     * 初始化绑定事件
+     */
+    private void initEvent() {
+        back_btn.setOnClickListener(this);
+        course_btn.setOnClickListener(this);
+        headImage.setOnClickListener(this);
+        back_iv.setOnClickListener(this);
+
     }
 
 
@@ -112,6 +130,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 imageUtil = new ImageUtil(this);
 //                imageUtil.checkReadPermission();
                 imageUtil.checkStoragePermission();
+                break;
+            case R.id.bar_back_iv :
+                this.finish();
+                break;
         }
     }
 

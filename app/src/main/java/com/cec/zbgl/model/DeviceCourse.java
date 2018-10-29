@@ -8,6 +8,7 @@ public class DeviceCourse implements Serializable {
     public static final int TYPE_ONE = 1;
     public static final int TYPE_TWO = 2;
     public static final int TYPE_THREE = 3;
+    public static final int TYPE_ITEM = 101;
 
 
     private String id;
@@ -22,9 +23,20 @@ public class DeviceCourse implements Serializable {
     private String location;
     private String description;
     private boolean isValid;
+    private String message;
+    private String isTitle;
 
 
     public DeviceCourse() {
+    }
+
+    public DeviceCourse(String id, String name, int deviceType, String description,String isTitle,String message) {
+        this.id = id;
+        this.name = name;
+        this.deviceType = deviceType;
+        this.description = description;
+        this.isTitle = isTitle;
+        this.message = message;
     }
 
     public DeviceCourse(String id, String name, int deviceType, String description) {
@@ -32,6 +44,13 @@ public class DeviceCourse implements Serializable {
         this.name = name;
         this.deviceType = deviceType;
         this.description = description;
+    }
+
+
+    public DeviceCourse(String isTitle, String message,int type) {
+        this.message = message;
+        this.isTitle = isTitle;
+        this.deviceType = type;
     }
 
     @Override
@@ -146,5 +165,20 @@ public class DeviceCourse implements Serializable {
 
     public void setValid(boolean valid) {
         isValid = valid;
+    }
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getIsTitle() {
+        return isTitle;
+    }
+
+    public void setIsTitle(String isTitle) {
+        this.isTitle = isTitle;
     }
 }

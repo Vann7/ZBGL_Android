@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/salmon"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:orientation="horizontal">
+
+
+
+    <ImageView
+        android:id="@+id/bar_back_iv"
+        android:layout_gravity="center_vertical"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/ic_search"/>
+
+
+    <TextView
+        android:id="@+id/bar_back_tv"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:text="当前页面名称"
+        android:textColor="#d3d3d3"
+        android:textSize="18sp"/>
+
+</LinearLayout>

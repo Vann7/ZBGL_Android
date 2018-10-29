@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
-import com.cec.zbgl.common.Constant;
-import com.cec.zbgl.holder.TypeItemHolder;
 import com.cec.zbgl.holder.TypeOneHolder;
 import com.cec.zbgl.holder.TypeThreeHolder;
 import com.cec.zbgl.holder.TypeTwoHolder;
@@ -20,31 +18,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder>{
+public class CourseAdapter2 extends RecyclerView.Adapter <RecyclerView.ViewHolder>{
 
     private LayoutInflater mLayoutInflater;
-    private List<DeviceCourse> mData;
+    private List<DeviceCourse> courses;
 
     private static final int VIEW_TYPE_TITLE= 101;
     private static final int VIEW_TYPE_ITEM = 100;
     int IS_TITLE_OR_NOT =1;
     int MESSAGE = 2;
     int ColumnNum = 6;
-//    List<Map<Integer, DeviceCourse>> mData;
+    List<Map<Integer, String>> mData;
 
-
-    public CourseAdapter(Context context, List<DeviceCourse> mData) {
+    public CourseAdapter2(Context context, List<Map<Integer, String>> mData) {
         mLayoutInflater = LayoutInflater.from(context);
+        courses = new ArrayList<>();
         this.mData = mData;
 
     }
 
-    public CourseAdapter(Context context) {
+    public CourseAdapter2(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
+        courses = new ArrayList<>();
     }
 
     public void addList(List<DeviceCourse> list) {
-        mData.addAll(list);
+        courses.addAll(list);
     }
 
     @Override
@@ -58,31 +57,27 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             case   DeviceCourse.TYPE_THREE:
                 return new TypeThreeHolder(mLayoutInflater.inflate(R.layout.contact_item03,parent,false));
         }
-        return new TypeItemHolder(mLayoutInflater.inflate(R.layout.course_item,parent,false));
+        return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        DeviceCourse course = mData.get(position);
-        if("true".equals(course.getIsTitle())){
-            ((TypeItemHolder)holder).bindHolder(course.getMessage());
-        }else {
+
+
             int viewType = getItemViewType(position);
+//        ((TypeOneHolder)holder).bindHolder(courses.get(position));
             switch (viewType) {
                 case   DeviceCourse.TYPE_ONE :
-                    ((TypeOneHolder)holder).bindHolder(course);
+                    ((TypeOneHolder)holder).bindHolder(courses.get(position));
                     break;
                 case DeviceCourse.TYPE_TWO:
-                    ((TypeTwoHolder)holder).bindHolder(course);
+                    ((TypeTwoHolder)holder).bindHolder(courses.get(position));
                     break;
                 case DeviceCourse.TYPE_THREE:
-                    ((TypeThreeHolder)holder).bindHolder(course);
-                    break;
-                case DeviceCourse.TYPE_ITEM:
-                    ((TypeItemHolder)holder).bindHolder(course.getMessage());
+                    ((TypeThreeHolder)holder).bindHolder(courses.get(position));
                     break;
             }
-        }
+
 
 
 
@@ -93,40 +88,31 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     //判断RecyclerView的子项样式，返回一个int值表示
     @Override
     public int getItemViewType(int position) {
-        DeviceCourse course = mData.get(position);
-        if ("true".equals(course.getIsTitle())) {
-            return VIEW_TYPE_TITLE;
-        }else {
-
-            return course.getDeviceType();
-        }
+            return courses.get(position).getDeviceType();
     }
 
-    //判断是否是title，如果是，title占满一行的所有子项，则是ColumnNum个，如果是item，占满一个子项
-  /*  @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        //如果是title就占据2个单元格(重点)
-        GridLayoutManager manager = (GridLayoutManager) recyclerView.getLayoutManager();
-        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if("false".equals(mData.get(position).getIsTitle())){
-                    return 1;
-                }else {
-                    return ColumnNum;
-                }
-            }
-        });
-    }*/
+
 
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return courses.size();
     }
 
 
+    public class HolderItem extends RecyclerView.ViewHolder {
+        public TextView mTitle;
 
+        public HolderItem(View viewHolder) {
+            super(viewHolder);
+            mTitle= (TextView) viewHolder.findViewById(R.id.course_item_tv2);
+        }
+
+        public void  bindHolder(String title) {
+            mTitle.setText(title);
+
+        }
+    }
 
 
 

@@ -7,6 +7,8 @@
     android:background="@color/background_user"
     tools:context=".activity.UserActivity">
 
+    <include layout="@layout/bar_back"/>
+
     <RelativeLayout
         android:id="@+id/user_rl_01"
         android:layout_width="300dp"
@@ -126,7 +128,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/mine_out_tv"
+        android:id="@+id/user_submit_tv"
         android:layout_width="400dp"
         android:layout_height="60dp"
         android:layout_below="@+id/user_rl_02"

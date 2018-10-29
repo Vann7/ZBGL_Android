@@ -4,13 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_user"
     tools:context=".activity.ContentActivity">
+
+    <include layout="@layout/bar_back"/>
+
+
 
     <RelativeLayout
         android:id="@+id/device_ll_01"
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:layout_marginTop="70dp"
         android:orientation="horizontal">
 
         <ImageView
