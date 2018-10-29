@@ -25,8 +25,6 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
         type = (TextView) itemView.findViewById(R.id.item01_tv_type);
         desc = (TextView) itemView.findViewById(R.id.item01_tv_desc);
         item_ll = (LinearLayout) itemView.findViewById(R.id.item01_ll);
-        item_ll.layout(10,10,100 ,   100);
-        itemView.setBackgroundColor(Color.LTGRAY);
 
     }
 
@@ -35,4 +33,6 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
         type.setText(device.getBelongSys());
         desc.setText(device.getLocation());
     }
+
+
 }

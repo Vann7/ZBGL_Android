@@ -62,7 +62,7 @@
         tools:text="教程描述"
         android:id="@+id/item01_tv_desc"
         android:layout_marginTop="5dp"
-        android:textSize="18dp"
+        android:textSize="16dp"
         android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_weight="1"

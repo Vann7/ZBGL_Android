@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.holder.TypeOneHolder;
 import com.cec.zbgl.holder.TypeThreeHolder;
 import com.cec.zbgl.holder.TypeTwoHolder;
@@ -30,6 +31,8 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
         switch (viewType) {
             case  DeviceCourse.TYPE_ONE :
                 return new TypeOneHolder(mLayoutInflater.inflate(R.layout.contact_item01,parent,false));
@@ -37,7 +40,6 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
                 return new TypeTwoHolder(mLayoutInflater.inflate(R.layout.contact_item02,parent,false));
             case   DeviceCourse.TYPE_THREE:
                 return new TypeThreeHolder(mLayoutInflater.inflate(R.layout.contact_item03,parent,false));
-
         }
         return null;
     }
@@ -62,11 +64,16 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
+        if (position + 1 == courses.size() + 1) {
+            return Constant.TYPE_FOOTER_VIEW;
+        }
         return courses.get(position).getDeviceType();
     }
 
     @Override
     public int getItemCount() {
-        return courses.size();
+        return courses.size() + 1;
     }
+
+
 }

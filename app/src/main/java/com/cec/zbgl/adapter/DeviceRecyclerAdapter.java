@@ -1,18 +1,15 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.holder.DeviceViewHolder;
-import com.cec.zbgl.holder.TypeDeviceHolder;
-import com.cec.zbgl.holder.TypeOneHolder;
-import com.cec.zbgl.holder.TypeThreeHolder;
-import com.cec.zbgl.holder.TypeTwoHolder;
-import com.cec.zbgl.model.DeviceCourse;
 import com.cec.zbgl.model.DeviceInfo;
 
 import java.util.ArrayList;
@@ -27,6 +24,7 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
     private List<DeviceInfo> devices;
     private OnItemClickListener mListener;
 
+
     public DeviceRecyclerAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
         devices = new ArrayList<>();
@@ -34,6 +32,10 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
 
     public void addList(List<DeviceInfo> list) {
         devices.addAll(list);
+    }
+
+    public void pre_addList(List<DeviceInfo> list) {
+         devices = list;
     }
 
     @Override
@@ -44,13 +46,15 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
 
         //绑定点击事件
         viewHolder.itemView.setOnClickListener(v -> {
-            mListener.onItemClick(v);
+                mListener.onItemClick(v, viewHolder.getLayoutPosition());
         });
         //绑定长按事件
         viewHolder.itemView.setOnLongClickListener(v -> {
-            mListener.onItemLongClick(v);
+            mListener.onItemLongClick(v, viewHolder.getLayoutPosition());
             return true;
         });
+
+
         return viewHolder;
     }
 
@@ -87,7 +91,7 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
      * 自定义item点击接口
      */
     public interface OnItemClickListener {
-        void onItemClick(View view); //单击事件
-        void onItemLongClick(View view); //长按事件
+        void onItemClick(View v, int position); //单击事件
+        void onItemLongClick(View v, int position); //长按事件
     }
 }

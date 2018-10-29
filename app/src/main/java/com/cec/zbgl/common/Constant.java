@@ -32,4 +32,6 @@ public class Constant {
 
     public static final int PERMISSION_READ_AND_CAMERA =0;//读和相机权限
     public static final int PERMISSION_READ =1;//读取权限
+
+    public static final int TYPE_FOOTER_VIEW = 1;
 }

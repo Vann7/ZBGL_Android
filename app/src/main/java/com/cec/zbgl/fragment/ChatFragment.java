@@ -45,8 +45,8 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
     private DeviceInfo device;
     private OrgsAdapter<SpOrgnization> mAdapter;
     private DeviceAdapter dAdapter;
-    private ImageView qc_iv;
-    private ImageView quit_iv;
+    private ImageView scan_iv;
+    private ImageView search_iv;
 
 
 
@@ -63,10 +63,10 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
         super.onActivityCreated(savedInstanceState);
         mTreeView = (ListView) getView().findViewById(R.id.id_lv_tree);
         dListView = (DeviceListView) getView().findViewById(R.id.id_lv_content);
-        qc_iv = (ImageView) getView().findViewById(R.id.top_qc_btn);
-        qc_iv.setOnClickListener(this);
-        quit_iv = (ImageView) getView().findViewById(R.id.top_quit_btn);
-        quit_iv.setOnClickListener(this);
+        scan_iv = (ImageView) getView().findViewById(R.id.top_scan_btn);
+        scan_iv.setOnClickListener(this);
+        search_iv = (ImageView) getView().findViewById(R.id.top_search_btn);
+        search_iv.setOnClickListener(this);
         initDatas();
         try
         {
@@ -224,35 +224,17 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.top_qc_btn :
+            case R.id.top_scan_btn :
                 scanQc();
                 break;
-            case R.id.top_quit_btn :
-                logout();
+            case R.id.top_search_btn :
+                ToastUtils.showShort("搜索按钮");
                 break;
         }
 
     }
 
-    /**
-     * 注销当前登录用户
-     */
-    public void logout() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("退出登录")
-                .setMessage("退出登录后不会删除任何个人信息")
-                .setPositiveButton("确定", (dialog, which) -> {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                })
-                .setNegativeButton("取消", (dialog, which) -> {
 
-                })
-                .create();
-        alertDialog.show();
-
-    }
 
     /**
      * 开启二维码扫描

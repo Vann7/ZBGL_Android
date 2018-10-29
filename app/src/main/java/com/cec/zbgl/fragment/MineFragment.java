@@ -7,15 +7,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.LoginActivity;
+import com.cec.zbgl.activity.UserActivity;
+
+import org.w3c.dom.Text;
 
 
 public class MineFragment extends Fragment implements View.OnClickListener {
 
     private TextView logout_tv;
+    private RelativeLayout pd_rl;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,6 +40,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
      * 绑定事件
      */
     private void initEvent() {
+        pd_rl.setOnClickListener(this);
         logout_tv.setOnClickListener(this);
     }
 
@@ -43,6 +49,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
      */
     private void initViews() {
         logout_tv = (TextView) getActivity().findViewById(R.id.mine_out_tv);
+        pd_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_user_rl);
+
     }
 
 
@@ -59,6 +67,12 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.mine_out_tv :
                 logout();
+                break;
+            case R.id.mine_user_rl :
+                Intent intent = new Intent(getActivity(), UserActivity.class);
+                getActivity().startActivity(intent);
+                break;
+
         }
     }
 

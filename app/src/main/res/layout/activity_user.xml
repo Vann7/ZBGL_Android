@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_user"
+    tools:context=".activity.UserActivity">
+
+    <RelativeLayout
+        android:id="@+id/user_rl_01"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/shape_wihte_frame" >
+
+        <TextView
+            android:id="@+id/user_pd_tv"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:padding="1dp"
+            android:text="新密码"
+            android:textSize="16dp" />
+
+        <View
+            android:id="@+id/user_pd_v"
+            android:layout_width="1dip"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_toRightOf="@+id/user_pd_tv"
+            android:background="#EEEFFF"/>
+
+        <EditText
+            android:id="@+id/user_pd_et"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/user_pd_v"
+            android:background="@drawable/transparent"
+            android:ems="19"
+            android:hint="请输入密码"
+            android:inputType="textPassword"
+            android:padding="1dp"
+            android:textSize="16dp"
+            android:text="123">
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/user_pd_del"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="3dp"
+            android:src="@mipmap/text_del"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_rl_02"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/user_rl_01"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/shape_wihte_frame" >
+
+        <TextView
+            android:id="@+id/user_pd_tv2"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="1dp"
+            android:text="确认密码"
+            android:textSize="16dp" />
+
+        <View
+            android:id="@+id/user_pd_v2"
+            android:layout_width="1dip"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_toRightOf="@+id/user_pd_tv2"
+            android:background="#EEEFFF"/>
+
+        <EditText
+            android:id="@+id/user_pd_et2"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/user_pd_v2"
+            android:background="@drawable/transparent"
+            android:ems="19"
+            android:hint="请输入密码"
+            android:inputType="textPassword"
+            android:padding="1dp"
+            android:textSize="16dp">
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/user_pd_del2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="3dp"
+            android:src="@mipmap/text_del"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/mine_out_tv"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/user_rl_02"
+        android:background="@color/white"
+        android:text="修改密码"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/gray"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
+
+

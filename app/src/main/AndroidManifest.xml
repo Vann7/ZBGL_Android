@@ -15,9 +15,8 @@
         android:label="备品管理"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".activity.LoginActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +29,7 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.CourseActivity" />
         <activity android:name=".activity.ContentActivity" />
-        <activity android:name=".thirdLibs.zxing.activity.CaptureActivity"/>
+        <activity android:name=".thirdLibs.zxing.activity.CaptureActivity" />
 
         <!-- FileProvider配置访问路径，适配7.0及其以上 -->
         <provider
@@ -43,7 +42,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.BaseActivity"></activity>
+        <activity android:name=".activity.BaseActivity" />
+        <activity android:name=".activity.DemoActivity" />
+        <activity android:name=".activity.UserActivity"></activity>
     </application>
 
 </manifest>
