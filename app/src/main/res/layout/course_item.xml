@@ -12,7 +12,7 @@
         android:layout_gravity="center_vertical"
         android:gravity="center"
         android:text="当前页面名称"
-        android:textColor="#d3d3d3"
+        android:textColor="@color/black"
         android:textSize="20sp"/>
 
 </LinearLayout>

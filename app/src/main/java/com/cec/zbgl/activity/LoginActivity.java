@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 int flag = userService.checkUser(user);
                 if (flag == 1){
                     ToastUtils.showShort("已登录");
-                    Intent intent = new Intent(LoginActivity.this, WXActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     intent.putExtra("user", user);
                     setResult(RESULT_OK, intent);
                     startActivityForResult(intent, 1);

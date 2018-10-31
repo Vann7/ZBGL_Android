@@ -9,24 +9,43 @@
     <include layout="@layout/bar_back"/>
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pink"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/course_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/pink"
-            android:orientation="vertical">
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:horizontalSpacing="8dp"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="8dp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:layout_marginTop="20dp"
-                android:id="@+id/course_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:numColumns="auto_fit"
-                android:stretchMode="columnWidth"
-                android:gravity="center"
-                android:horizontalSpacing="8dp"
-                android:verticalSpacing="8dp"/>
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/course_add_img"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="520dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="100dp"
+            android:adjustViewBounds="true"
+            android:background="@mipmap/ic_launcher"
+            android:scaleType="center" />
+    </RelativeLayout>
+
+
+
+
 
 
 

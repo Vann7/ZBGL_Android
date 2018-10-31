@@ -2,6 +2,8 @@ package com.cec.zbgl.activity;
 
 import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,8 +14,12 @@ import android.widget.TextView;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.CourseAdapter;
+import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
+import com.cec.zbgl.utils.FileUtils;
 import com.cec.zbgl.utils.LogUtil;
+import com.cec.zbgl.utils.OpenFileUtil;
+import com.cec.zbgl.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +30,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView back_iv;
     private TextView head_tv;
     private RecyclerView mRecyclerView ;
+    private ImageView add_iv;
     private CourseAdapter mAdapter;
     private GridLayoutManager mGridLayoutManager;
 
@@ -46,9 +53,10 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
-
+        add_iv = (ImageView) findViewById(R.id.course_add_img);
+        add_iv.bringToFront();
         mAdapter = new CourseAdapter(this,mData);
-        mGridLayoutManager = new GridLayoutManager(this, 6);
+        mGridLayoutManager = new GridLayoutManager(this, 8);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -56,9 +64,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 if (type == DeviceCourse.TYPE_ONE) {
                     return 2;
                 }else if (type == DeviceCourse.TYPE_TWO){
-                    return 3;
+                    return 4;
                 } else {
-                    return 6;
+                    return 8;
                 }
             }
         });
@@ -83,12 +91,12 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 typyName = "图片";
             }else if (i < 9){
                 type = 2;
-                name = "文档教程";
-                typyName = "文档";
-            } else {
-                type = 3;
                 name = "视频教程";
                 typyName = "视频";
+            } else {
+                type = 3;
+                name = "文档教程";
+                typyName = "文档";
             }
             map = new HashMap<Integer, DeviceCourse>();
             DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
@@ -100,17 +108,56 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         DeviceCourse c1 = new DeviceCourse("true","图片教程",101);
         mData.add(0,c1);
 
-        DeviceCourse c2 = new DeviceCourse("true","文档教程",101);
+        DeviceCourse c2 = new DeviceCourse("true","视频教程",101);
         mData.add( 5,c2);
 
-        DeviceCourse c3 = new DeviceCourse("true","视频教程",101);
+        DeviceCourse c3 = new DeviceCourse("true","文档教程",101);
         mData.add(11,c3);
 
     }
 
     private void initEvent() {
 
+        add_iv.setOnClickListener(this);
+
         back_iv.setOnClickListener(this);
+
+        mAdapter.setOnListClickListener(new ItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                DeviceCourse c = mData.get(position);
+                String fileName;
+                Intent intent;
+                switch (mData.get(position).getCourseType()) {
+                    case 1 :
+                        fileName = "/storage/emulated/0/DCIM/Camera/IMG_20181030_113211.jpg";
+                        intent = OpenFileUtil.openFile(fileName);
+                        startActivity(intent);
+                        ToastUtils.showShort("展示图片");
+                        break;
+                    case 2 :
+
+                        ToastUtils.showShort("播放视频");
+                        fileName = "/storage/emulated/0/DCIM/Camera/VID_20181030_113134.mp4";
+                        intent = OpenFileUtil.openFile(fileName);
+                        startActivity(intent);
+                        break;
+                    case 3 :
+                        fileName = "storage/emulated/0/Download/11111.txt";
+                        intent = OpenFileUtil.openFile(fileName);
+                        startActivity(intent);
+                        ToastUtils.showShort("查看文档");
+                        break;
+
+                }
+
+            }
+
+            @Override
+            public void onItemLongClick(View v, int position) {
+                ToastUtils.showShort("onItemLongClick: "+mData.get(position).toString() + "-"+position);
+            }
+        });
     }
 
     @Override
@@ -118,6 +165,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.bar_back_iv :
                 finish();
+                break;
+            case R.id.course_add_img :
+                ToastUtils.showShort("新增视频");
                 break;
         }
     }

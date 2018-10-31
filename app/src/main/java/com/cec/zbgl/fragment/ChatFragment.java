@@ -65,7 +65,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
         dListView = (DeviceListView) getView().findViewById(R.id.id_lv_content);
         scan_iv = (ImageView) getView().findViewById(R.id.top_scan_btn);
         scan_iv.setOnClickListener(this);
-        search_iv = (ImageView) getView().findViewById(R.id.top_search_btn);
+//        search_iv = (ImageView) getView().findViewById(R.id.top_search_btn);
         search_iv.setOnClickListener(this);
         initDatas();
         try
@@ -227,9 +227,9 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
             case R.id.top_scan_btn :
                 scanQc();
                 break;
-            case R.id.top_search_btn :
-                ToastUtils.showShort("搜索按钮");
-                break;
+//            case R.id.top_search_btn :
+//                ToastUtils.showShort("搜索按钮");
+//                break;
         }
 
     }

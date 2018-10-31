@@ -5,14 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.holder.DeviceViewHolder;
 import com.cec.zbgl.holder.FooterViewHolder;
+import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
 
 import java.util.List;
@@ -36,7 +33,7 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     //上拉加载更多状态-默认为0
     private int mLoadMoreStatus = 0;
-    private OnItemClickListener mListener;
+    private ItemClickListener mListener;
 
 
     public RefreshAdapter(Context context, List<DeviceInfo> datas) {
@@ -142,15 +139,15 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void setOnListClickListener(OnItemClickListener mListener) {
+    public void setOnListClickListener(ItemClickListener mListener) {
         this.mListener = mListener;
     }
 
-    /**
-     * 自定义item点击接口
-     */
-    public interface OnItemClickListener {
-        void onItemClick(View v, int position); //单击事件
-        void onItemLongClick(View v, int position); //长按事件
-    }
+//    /**
+//     * 自定义item点击接口
+//     */
+//    public interface OnItemClickListener {
+//        void onItemClick(View v, int position); //单击事件
+//        void onItemLongClick(View v, int position); //长按事件
+//    }
 }

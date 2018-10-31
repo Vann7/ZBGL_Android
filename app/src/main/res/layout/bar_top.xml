@@ -14,15 +14,17 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/device_search_iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@mipmap/actionbar_icon"/>
+            android:src="@mipmap/ic_search"/>
 
         <TextView
+            android:id="@+id/top_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
-            android:text="首页"
+            android:text="装备信息"
             android:textColor="#d3d3d3"
             android:textSize="18sp"/>
     </LinearLayout>
@@ -40,12 +42,6 @@
             android:layout_height="30dp"
             android:src="@mipmap/ic_scan"/>
 
-        <ImageView
-            android:id="@+id/top_search_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:src="@mipmap/ic_search"/>
 
     <!--    <ImageView
             android:layout_width="30dp"

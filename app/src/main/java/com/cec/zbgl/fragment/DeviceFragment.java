@@ -1,48 +1,53 @@
 package com.cec.zbgl.fragment;
 
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
+import com.cec.zbgl.activity.SearchActivity;
 import com.cec.zbgl.adapter.OrgsAdapter;
 import com.cec.zbgl.adapter.RefreshAdapter;
-import com.cec.zbgl.listener.ILoadListener;
-import com.cec.zbgl.listener.IReflashListener;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.utils.ToastUtils;
-import com.cec.zbgl.view.MeRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-
-public class DiscoverFragment extends Fragment implements View.OnClickListener {
-
+public class DeviceFragment extends Fragment implements View.OnClickListener{
     private ListView mTreeView;
     private OrgsAdapter<SpOrgnization> mAdapter;
     private List<SpOrgnization> orgs;
@@ -54,12 +59,16 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
     private Handler handler = new Handler();
     private AppCompatTextView listTip; //没有数据
 
+    private ImageView scan_iv;
+    private ImageView search_iv;
+    private TextView top_name_tv;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.tab03, container, false);
+        return inflater.inflate(R.layout.fragment_device, container, false);
     }
 
     @Override
@@ -76,6 +85,18 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
         initEvent();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case RESULT_OK:
+                String result = data.getStringExtra("result");
+                ToastUtils.showShort("二维码信息为:"+ result);
+                break;
+            case -2 :
+                String name = data.getStringExtra("result");
+                ToastUtils.showShort("检索词: "+ name);
+        }
+    }
 
     @Override
     public void onResume() {
@@ -83,11 +104,17 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView() {
-        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view22);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefreshLayout22);
+        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
 
-        listTip = (AppCompatTextView) getActivity().findViewById(R.id.list_tip_message22);
+        listTip = (AppCompatTextView) getActivity().findViewById(R.id.list_tip_message);
+        scan_iv = (ImageView) getView().findViewById(R.id.top_scan_btn);
+        scan_iv.setOnClickListener(this);
+
+        search_iv = (ImageView) getView().findViewById(R.id.device_search_iv);
+        search_iv.setOnClickListener(this);
+        top_name_tv = (TextView) getActivity().findViewById(R.id.top_name_tv);
 
         //初始化左侧机构树
         mTreeView = (ListView) getView().findViewById(R.id.id_lv_tree);
@@ -110,6 +137,8 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
         org = new SpOrgnization("2","0","根目录2");
         orgs.add(org);
         org = new SpOrgnization("3","0","根目录3");
+        orgs.add(org);
+        org = new SpOrgnization("4","0","根目录4");
         orgs.add(org);
         org = new SpOrgnization("4","1","根目录1-1");
         orgs.add(org);
@@ -174,7 +203,6 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
         List<DeviceInfo> checkDatas = new ArrayList<>();
         if (root != "根目录2"){
             for (int i=0; i< 15; i++) {
-
                 String name,typyName;
 
                 name = "XX装备数据";
@@ -234,29 +262,24 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
             public void onRefresh() {
 
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                new Handler().postDelayed(() -> {
+                    Random random = new Random();
+                    List<DeviceInfo> headDatas = new ArrayList<>();
+                    for (int i=0; i< 4; i++) {
+                        String name,typyName;
 
-                        Random random = new Random();
-                        List<DeviceInfo> headDatas = new ArrayList<>();
-                        for (int i=0; i< 4; i++) {
-                            String name,typyName;
-
-                            name = "装备信息";
-                            typyName = "服务器";
-                            int r = random.nextInt(100);
-                            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "装备归属类别为:"+typyName );
-                            headDatas.add(device);
-                        }
-
-                        mRefreshAdapter.AddHeaderItem(headDatas);
-
-                        //刷新完成
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(getActivity(), "更新了 "+headDatas.size()+" 条目数据", Toast.LENGTH_SHORT).show();
+                        name = "装备信息";
+                        typyName = "服务器";
+                        int r = random.nextInt(100);
+                        DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "装备归属类别为:"+typyName );
+                        headDatas.add(device);
                     }
 
+                    mRefreshAdapter.AddHeaderItem(headDatas);
+
+                    //刷新完成
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), "更新了 "+headDatas.size()+" 条目数据", Toast.LENGTH_SHORT).show();
                 }, 2000);
 
             }
@@ -325,9 +348,67 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.list_tip_message22 :
+            case R.id.list_tip_message :
                 reloadData("根目录2-1");
                 break;
+            case R.id.top_scan_btn :
+                scanQc();
+                break;
+            case R.id.device_search_iv :
+                startActivity(new Intent(getActivity(), SearchActivity.class));
         }
     }
+
+
+    /**
+     * 开启二维码扫描
+     */
+    public void scanQc() {
+        if (authority()) {
+            startActivityForResult(new Intent(getActivity(),
+                    CaptureActivity.class), 1);
+        } else {
+            showDialogTipUserGoToAppSettting();
+        }
+    }
+
+    //权限判断
+    public boolean authority() {
+        // 版本判断。当手机系统大于 23 时，才有必要去判断权限是否获取
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // 检查该权限是否已经获取
+            int i = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA);
+            // 权限是否已经 授权 GRANTED---授权  DINIED---拒绝
+            if (i != PackageManager.PERMISSION_GRANTED) {
+                // 如果没有授予该权限，就去提示用户请求
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    // 提示用户去应用设置界面手动开启权限
+    private void showDialogTipUserGoToAppSettting(){
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle("存储权限不可用").setMessage("请在-应用设置-权限-中，允许应用使用摄像头权限")
+                .setPositiveButton("立即开启",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 跳转到应用设置界面
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                        intent.setData(uri);
+                        startActivityForResult(intent, 123);
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).setCancelable(false).show();
+
+    }
+
 }

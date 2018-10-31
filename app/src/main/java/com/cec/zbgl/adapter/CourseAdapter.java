@@ -1,24 +1,19 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.cec.zbgl.R;
-import com.cec.zbgl.common.Constant;
+import com.cec.zbgl.holder.TypeDocmentHolder;
+import com.cec.zbgl.holder.TypeImageHolder;
 import com.cec.zbgl.holder.TypeItemHolder;
-import com.cec.zbgl.holder.TypeOneHolder;
-import com.cec.zbgl.holder.TypeThreeHolder;
-import com.cec.zbgl.holder.TypeTwoHolder;
+import com.cec.zbgl.holder.TypeVideoHolder;
+import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder>{
 
@@ -30,7 +25,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     int IS_TITLE_OR_NOT =1;
     int MESSAGE = 2;
     int ColumnNum = 6;
-//    List<Map<Integer, DeviceCourse>> mData;
+    private ItemClickListener mListener;
 
 
     public CourseAdapter(Context context, List<DeviceCourse> mData) {
@@ -52,11 +47,43 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         //判断viewtype类型返回不同Viewholder
         switch (viewType) {
             case  DeviceCourse.TYPE_ONE :
-                return new TypeOneHolder(mLayoutInflater.inflate(R.layout.contact_item01,parent,false));
+                TypeImageHolder oneHolder = new TypeImageHolder(mLayoutInflater.inflate
+                        (R.layout.course_image,parent,false));
+
+                oneHolder.itemView.setOnClickListener( v -> {
+                    mListener.onItemClick(v, oneHolder.getLayoutPosition());
+                });
+                oneHolder.itemView.setOnLongClickListener(v -> {
+                    mListener.onItemLongClick(v, oneHolder.getLayoutPosition());
+                    return true;
+                });
+                return oneHolder;
+
             case   DeviceCourse.TYPE_TWO:
-                return new TypeTwoHolder(mLayoutInflater.inflate(R.layout.contact_item02,parent,false));
+                TypeVideoHolder twoHolder = new TypeVideoHolder(mLayoutInflater.inflate
+                        (R.layout.course_video,parent,false));
+
+                twoHolder.itemView.setOnClickListener( v -> {
+                    mListener.onItemClick(v, twoHolder.getLayoutPosition());
+                });
+                twoHolder.itemView.setOnLongClickListener(v -> {
+                    mListener.onItemLongClick(v, twoHolder.getLayoutPosition());
+                    return true;
+                });
+                return twoHolder;
+
             case   DeviceCourse.TYPE_THREE:
-                return new TypeThreeHolder(mLayoutInflater.inflate(R.layout.contact_item03,parent,false));
+                TypeDocmentHolder threeHolder =  new TypeDocmentHolder(mLayoutInflater.inflate
+                        (R.layout.course_document,parent,false));
+
+                threeHolder.itemView.setOnClickListener( v -> {
+                    mListener.onItemClick(v, threeHolder.getLayoutPosition());
+                });
+                threeHolder.itemView.setOnLongClickListener(v -> {
+                    mListener.onItemLongClick(v, threeHolder.getLayoutPosition());
+                    return true;
+                });
+                return threeHolder;
         }
         return new TypeItemHolder(mLayoutInflater.inflate(R.layout.course_item,parent,false));
     }
@@ -70,13 +97,13 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             int viewType = getItemViewType(position);
             switch (viewType) {
                 case   DeviceCourse.TYPE_ONE :
-                    ((TypeOneHolder)holder).bindHolder(course);
+                    ((TypeImageHolder)holder).bindHolder(course);
                     break;
                 case DeviceCourse.TYPE_TWO:
-                    ((TypeTwoHolder)holder).bindHolder(course);
+                    ((TypeVideoHolder)holder).bindHolder(course);
                     break;
                 case DeviceCourse.TYPE_THREE:
-                    ((TypeThreeHolder)holder).bindHolder(course);
+                    ((TypeDocmentHolder)holder).bindHolder(course);
                     break;
                 case DeviceCourse.TYPE_ITEM:
                     ((TypeItemHolder)holder).bindHolder(course.getMessage());
@@ -127,7 +154,9 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
 
 
-
+    public void setOnListClickListener(ItemClickListener mListener) {
+        this.mListener = mListener;
+    }
 
 
 }

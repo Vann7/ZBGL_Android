@@ -12,14 +12,14 @@
         android:baselineAligned="false">
 
         <RelativeLayout
-            android:id="@+id/id_ll_device"
+            android:id="@+id/id_ll_chat"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/id_iv_device"
+                android:id="@+id/id_iv_chat"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
@@ -27,24 +27,24 @@
                 android:background="@mipmap/ic_launcher_round" />
 
             <TextView
-                android:id="@+id/id_tv_device"
+                android:id="@+id/id_tv_chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_below="@+id/id_iv_device"
+                android:layout_below="@+id/id_iv_chat"
                 android:layout_centerHorizontal="true"
                 android:text="@string/home_device"
                 android:textColor="#008000"/>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/id_ll_sync"
+            android:id="@+id/id_ll_contact"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/id_iv_sync"
+                android:id="@+id/id_iv_contact"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
@@ -52,14 +52,39 @@
                 android:background="@mipmap/ic_launcher_round" />
 
             <TextView
-                android:id="@+id/id_tv_sync"
+                android:id="@+id/id_tv_friend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/id_iv_sync"
+                android:layout_below="@+id/id_iv_contact"
                 android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"
-                android:text="@string/home_sync"
+                android:text="@string/home_contact"
                 android:textColor="@color/black"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/id_ll_discovery"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/id_iv_discovery"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_centerHorizontal="true"
+                android:background="@mipmap/ic_launcher_round" />
+
+            <TextView
+                android:id="@+id/id_tv_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/id_iv_discovery"
+                android:layout_marginTop="5dp"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:text="@string/home_discovery" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -89,7 +114,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/id_iv_tabline"
+        android:id="@+id/id_iv_tabline2"
         android:layout_width="180dp"
         android:layout_height="3dp"
         android:background="@color/goldenrod"

@@ -37,6 +37,7 @@ public class DeviceCourse implements Serializable {
         this.description = description;
         this.isTitle = isTitle;
         this.message = message;
+        this.courseType = deviceType;
     }
 
     public DeviceCourse(String id, String name, int deviceType, String description) {
@@ -44,6 +45,7 @@ public class DeviceCourse implements Serializable {
         this.name = name;
         this.deviceType = deviceType;
         this.description = description;
+        this.courseType = deviceType;
     }
 
 
@@ -51,6 +53,7 @@ public class DeviceCourse implements Serializable {
         this.message = message;
         this.isTitle = isTitle;
         this.deviceType = type;
+        this.courseType = deviceType;
     }
 
     @Override
