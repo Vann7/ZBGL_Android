@@ -37,6 +37,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private int IS_TITLE_OR_NOT =1;
     private int MESSAGE = 2;
 
+
     private List<DeviceCourse> mData =new ArrayList<>();
 //    private List<Map<Integer, DeviceCourse>> mData =new ArrayList<>();
     private Map<Integer, DeviceCourse> map = new HashMap<Integer, DeviceCourse>();
