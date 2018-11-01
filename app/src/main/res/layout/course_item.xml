@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:gravity="center"
+        android:layout_marginLeft="20dp"
+        android:gravity="center_vertical"
         android:text="当前页面名称"
-        android:textColor="@color/black"
         android:textSize="20sp"/>
 
 </LinearLayout>

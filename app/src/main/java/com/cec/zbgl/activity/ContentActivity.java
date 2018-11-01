@@ -40,7 +40,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private EditText createName_Et;
     private EditText createTime_Et;
     private EditText description_Et;
-    private Button back_btn,course_btn;
+    private Button course_btn;
     private DeviceInfo device;
     private ImageView headImage;
     private String mExtStorDir;
@@ -76,7 +76,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         createTime_Et = (EditText) findViewById(R.id.device_createrTime_et);
         description_Et = (EditText) findViewById(R.id.device_description_et);
         headImage = (ImageView) findViewById(R.id.id_device_image);
-        back_btn = (Button)findViewById(R.id.device_back_btn);
         course_btn = (Button) findViewById(R.id.check_course_btn);
 
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
@@ -107,7 +106,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      * 初始化绑定事件
      */
     private void initEvent() {
-        back_btn.setOnClickListener(this);
         course_btn.setOnClickListener(this);
         headImage.setOnClickListener(this);
         back_iv.setOnClickListener(this);
@@ -118,9 +116,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.device_back_btn :
-                this.finish();
-                break;
             case R.id.check_course_btn :
                 Intent intent = new Intent(this,CourseActivity.class);
                 intent.putExtra("name",device.getName());

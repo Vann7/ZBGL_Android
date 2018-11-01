@@ -21,18 +21,25 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
 import com.cec.zbgl.activity.SearchActivity;
+import com.cec.zbgl.adapter.FilterAdapter;
 import com.cec.zbgl.adapter.OrgsAdapter;
 import com.cec.zbgl.adapter.RefreshAdapter;
+import com.cec.zbgl.holder.FilterItemViewHolder;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
@@ -40,6 +47,8 @@ import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -56,13 +65,30 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private RefreshAdapter mRefreshAdapter;
     private GridLayoutManager mGridLayoutManager;
     private List<DeviceInfo> devices = new ArrayList<>();
-    private Handler handler = new Handler();
-    private AppCompatTextView listTip; //没有数据
+    private AppCompatTextView listTip; //没有数据view
+    private RecyclerView filter_rv;
+    private TextView masker_tv;
+    private FilterAdapter filterAdapter;
 
     private ImageView scan_iv;
-    private ImageView search_iv;
-    private TextView top_name_tv;
+    private EditText search_ev;
+    private TextView search_filter;
+    private TextView clear_tv;
+    private TextView confirm_tv;
+    private RelativeLayout filter_rl;
 
+    private boolean isShowing = false;
+    private List<HashMap<Integer, String>> mList = new ArrayList<>();
+
+    private static final int FILTER_TYPE_ITEM   = 1;
+    private static final int FILTER_TYPE_HEADER = 0;
+    private static final int SEARCH_BACK = -2;
+    private List<String> selectedItems = new ArrayList<>();
+
+
+    private String citys[] = {"不限", "武汉", "北京", "上海", "成都", "广州", "深圳", "重庆", "天津", "西安", "南京", "杭州"};
+    private String ages[] = {"不限", "18岁以下", "18-22岁", "23-26岁", "27-35岁", "35岁以上"};
+    private String constellations[] = {"不限", "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座", "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,7 +118,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 String result = data.getStringExtra("result");
                 ToastUtils.showShort("二维码信息为:"+ result);
                 break;
-            case -2 :
+            case SEARCH_BACK :
                 String name = data.getStringExtra("result");
                 ToastUtils.showShort("检索词: "+ name);
         }
@@ -104,17 +130,47 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initView() {
+
+        //主界面RV
         mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
 
+        //没有数据view
         listTip = (AppCompatTextView) getActivity().findViewById(R.id.list_tip_message);
+
+        //扫描二维码
         scan_iv = (ImageView) getView().findViewById(R.id.top_scan_btn);
         scan_iv.setOnClickListener(this);
 
-        search_iv = (ImageView) getView().findViewById(R.id.device_search_iv);
-        search_iv.setOnClickListener(this);
-        top_name_tv = (TextView) getActivity().findViewById(R.id.top_name_tv);
+        //搜索框
+        search_ev = (EditText) getActivity().findViewById(R.id.search_ev);
+        search_ev.setFocusable(false);
+
+        //筛选框
+        search_filter = (TextView) getActivity().findViewById(R.id.search_filter);
+        search_filter.setOnClickListener(this);
+
+        //蒙版
+        masker_tv = (TextView) getActivity().findViewById(R.id.filter_masker);
+        masker_tv.getBackground().setAlpha(100);
+        masker_tv.setVisibility(GONE);
+
+        //筛选条件
+        filter_rv = (RecyclerView) getActivity().findViewById(R.id.filter_view);
+//        filter_rv.setVisibility(GONE);
+
+        //清空
+        clear_tv = (TextView) getActivity().findViewById(R.id.filter_clear);
+//        clear_tv.setVisibility(GONE);
+
+        //确定
+        confirm_tv = (TextView) getActivity().findViewById(R.id.filter_confirm);
+//        confirm_tv.setVisibility(GONE);
+        //筛选条件 RelativeLayout
+        filter_rl = (RelativeLayout) getActivity().findViewById(R.id.filter_rl);
+        filter_rl.setVisibility(GONE);
+
 
         //初始化左侧机构树
         mTreeView = (ListView) getView().findViewById(R.id.id_lv_tree);
@@ -157,6 +213,35 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "系统装备类别为:"+typyName );
             devices.add(device);
         }
+
+        //初始化filter数据
+        HashMap<Integer, String>  map = new HashMap<Integer, String>();
+        map.put(0,"城市");
+        mList.add(map);
+        for (int i=0; i< citys.length; i++) {
+            HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
+            map1.put(1,citys[i]);
+            mList.add(map1);
+        }
+
+        HashMap<Integer, String>  map2 = new HashMap<Integer, String>();
+        map2.put(0,"年龄");
+        mList.add(map2);
+        for (int i=0; i< ages.length; i++) {
+            HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
+            map1.put(1,ages[i]);
+            mList.add(map1);
+        }
+        HashMap<Integer, String>  map3 = new HashMap<Integer, String>();
+        map3.put(0,"星座");
+        mList.add(map3);
+        for (int i=1; i< constellations.length; i++) {
+            HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
+            map1.put(1,constellations[i]);
+            mList.add(map1);
+        }
+
+
         initRecylerView();
         showData();
     }
@@ -192,13 +277,25 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
         listTip.setOnClickListener(this);
 
+        search_ev.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getContext().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivityForResult(intent,1);
+            }
+            return false;
+        });
+
+        masker_tv.setOnClickListener(this);
+        clear_tv.setOnClickListener(this);
+        confirm_tv.setOnClickListener(this);
     }
 
     /**
      * 模拟重载数据
      */
     private void reloadData(String root) {
-
         Random random = new Random();
         List<DeviceInfo> checkDatas = new ArrayList<>();
         if (root != "根目录2"){
@@ -217,14 +314,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         showData();
     }
 
+    //初始化主界面RV 及筛选RV
     private void initRecylerView() {
-
         mRefreshAdapter = new RefreshAdapter(getContext(),devices);
         mGridLayoutManager = new GridLayoutManager(getContext(),2);
-
         //添加动画
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         //添加分割线
         mRecyclerView.setLayoutManager(mGridLayoutManager);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -240,52 +335,72 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             }
         });
         mRecyclerView.setAdapter(mRefreshAdapter);
+
+
+
+        //筛选Adapter
+        filterAdapter = new FilterAdapter(getContext(), mList);
+        //绑定点击事件
+        filterAdapter.setOnListClickListener((v, position) -> {
+            selectedItems.add(mList.get(position).get(FILTER_TYPE_ITEM));
+//            v.setBackgroundColor(Color.RED);
+//            filterAdapter.notifyDataSetChanged();
+        });
+        filter_rv.setAdapter(filterAdapter);
+        GridLayoutManager filterManager = new GridLayoutManager(getContext(),5);
+        filter_rv.setLayoutManager(filterManager);
+        filterManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+
+            @Override
+            public int getSpanSize(int position) {
+                int type = filter_rv.getAdapter().getItemViewType(position);
+                if (type == FILTER_TYPE_HEADER) {//判定为标题
+                    return 5;
+                }else { //正常item
+                    return 1;
+                }
+            }
+        });
     }
 
+    //初始化监听接口
     private void initListener() {
-
         initPullRefresh();
-
         initLoadMoreListener();
 
     }
 
+    //判定当devices数据为空时，展示listTip提示
     private void showData() {
         listTip.setVisibility(devices.size() == 0 ? VISIBLE : GONE);
         mSwipeRefreshLayout.setVisibility(devices.size() == 0 ? GONE : VISIBLE);
 
     }
 
+    //刷新Listener监听
     private void initPullRefresh() {
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+        mSwipeRefreshLayout.setOnRefreshListener(() -> new Handler().postDelayed(() -> {
+            Random random = new Random();
+            List<DeviceInfo> headDatas = new ArrayList<>();
+            for (int i=0; i< 4; i++) {
+                String name,typyName;
 
-
-                new Handler().postDelayed(() -> {
-                    Random random = new Random();
-                    List<DeviceInfo> headDatas = new ArrayList<>();
-                    for (int i=0; i< 4; i++) {
-                        String name,typyName;
-
-                        name = "装备信息";
-                        typyName = "服务器";
-                        int r = random.nextInt(100);
-                        DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "装备归属类别为:"+typyName );
-                        headDatas.add(device);
-                    }
-
-                    mRefreshAdapter.AddHeaderItem(headDatas);
-
-                    //刷新完成
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(getActivity(), "更新了 "+headDatas.size()+" 条目数据", Toast.LENGTH_SHORT).show();
-                }, 2000);
-
+                name = "装备信息";
+                typyName = "服务器";
+                int r = random.nextInt(100);
+                DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "装备归属类别为:"+typyName );
+                headDatas.add(device);
             }
-        });
+
+            mRefreshAdapter.AddHeaderItem(headDatas);
+
+            //刷新完成
+            mSwipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(getActivity(), "更新了 "+headDatas.size()+" 条目数据", Toast.LENGTH_SHORT).show();
+        }, 2000));
     }
 
+    //加载更多Listener监听
     private void initLoadMoreListener() {
 
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -297,47 +412,35 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
                 //判断RecyclerView的状态 是空闲时，同时，是最后一个可见的ITEM时才加载
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == mRefreshAdapter.getItemCount()) {
-
                     //设置正在加载更多
                     mRefreshAdapter.changeMoreStatus(mRefreshAdapter.LOADING_MORE);
-
                     //改为网络请求
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                    new Handler().postDelayed(() -> {
+                        Random random = new Random();
+                        List<DeviceInfo> footerDatas = new ArrayList<>();
+                        for (int i=0; i< 4; i++) {
+                            String name,typyName;
 
-                            //
-
-                            Random random = new Random();
-                            List<DeviceInfo> footerDatas = new ArrayList<>();
-                            for (int i=0; i< 4; i++) {
-                                String name,typyName;
-
-                                name = "图片教程";
-                                typyName = "图片";
-                                int r = random.nextInt(100);
-                                DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "教程类别为:"+typyName );
-                                footerDatas.add(device);
-                            }
-
-                            mRefreshAdapter.AddFooterItem(footerDatas);
-                            //设置回到上拉加载更多
-                            mRefreshAdapter.changeMoreStatus(mRefreshAdapter.PULLUP_LOAD_MORE);
-                            //没有加载更多了
-                            //mRefreshAdapter.changeMoreStatus(mRefreshAdapter.NO_LOAD_MORE);
-                            Toast.makeText(getActivity(), "更新了 " + footerDatas.size() + " 条目数据", Toast.LENGTH_SHORT).show();
+                            name = "图片教程";
+                            typyName = "图片";
+                            int r = random.nextInt(100);
+                            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "教程类别为:"+typyName );
+                            footerDatas.add(device);
                         }
+
+                        mRefreshAdapter.AddFooterItem(footerDatas);
+                        //设置回到上拉加载更多
+                        mRefreshAdapter.changeMoreStatus(mRefreshAdapter.PULLUP_LOAD_MORE);
+                        //没有加载更多了
+                        //mRefreshAdapter.changeMoreStatus(mRefreshAdapter.NO_LOAD_MORE);
+                        Toast.makeText(getActivity(), "更新了 " + footerDatas.size() + " 条目数据", Toast.LENGTH_SHORT).show();
                     }, 2000);
-
-
                 }
-
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 //最后一个可见的ITEM
                 lastVisibleItem = layoutManager.findLastVisibleItemPosition();
@@ -345,6 +448,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         });
     }
 
+    //控件点击事件监听
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -354,8 +458,27 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             case R.id.top_scan_btn :
                 scanQc();
                 break;
-            case R.id.device_search_iv :
-                startActivity(new Intent(getActivity(), SearchActivity.class));
+            case R.id.search_filter :
+               isShowing = (isShowing == false) ? true : false;
+               if (isShowing == false) {
+                  disappear();
+               }else {
+                   appear();
+               }
+               break;
+            case R.id.filter_masker :
+                disappear();
+                break;
+            case R.id.filter_clear :
+                ToastUtils.showShort("clear");
+                selectedItems.clear();
+                filterAdapter.notifyDataSetChanged();
+                break;
+            case R.id.filter_confirm :
+                ToastUtils.showShort("confirm: " + selectedItems.toString());
+                disappear();
+                break;
+
         }
     }
 
@@ -410,5 +533,30 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 }).setCancelable(false).show();
 
     }
+
+    //隐藏筛选tv
+    private void disappear() {
+        isShowing = false;
+        search_filter.setTextColor(this.getResources().getColor(R.color.gray));
+        filter_rv.setVisibility(GONE);
+        filter_rv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_out));
+        filter_rl.setVisibility(GONE);
+        filter_rl.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_out));
+        masker_tv.setVisibility(GONE);
+        masker_tv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_out));
+    }
+
+    //展示筛选tv
+    private void appear() {
+        isShowing = true;
+        search_filter.setTextColor(this.getResources().getColor(R.color.orange));
+        filter_rl.setVisibility(VISIBLE);
+        filter_rl.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+        filter_rv.setVisibility(VISIBLE);
+        filter_rv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+        masker_tv.setVisibility(VISIBLE);
+        masker_tv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+    }
+
 
 }

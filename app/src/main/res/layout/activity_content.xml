@@ -8,8 +8,6 @@
 
     <include layout="@layout/bar_back"/>
 
-
-
     <RelativeLayout
         android:id="@+id/device_ll_01"
         android:layout_width="match_parent"
@@ -21,7 +19,8 @@
             android:id="@+id/id_device_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="@color/gray"/>
+            android:layout_margin="10dp"
+            android:background="@mipmap/logo"/>
 
             <TextView
                 android:id="@+id/device_name_tv"
@@ -35,7 +34,7 @@
 
             <EditText
                 android:id="@+id/device_name_et"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/device_name_tv"
                 android:ems="19"
@@ -55,7 +54,7 @@
 
             <EditText
                 android:id="@+id/device_type_et"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/device_name_tv"
                 android:layout_toRightOf="@id/device_type_tv"
@@ -76,7 +75,7 @@
 
             <EditText
                 android:id="@+id/device_location_et"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/device_type_tv"
                 android:layout_toRightOf="@id/device_location_type"
@@ -98,7 +97,7 @@
 
     <EditText
         android:id="@+id/device_count_et"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_ll_01"
         android:layout_toRightOf="@id/device_count_tv"
@@ -118,7 +117,7 @@
 
     <EditText
         android:id="@+id/device_status_et"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_count_tv"
         android:layout_toRightOf="@id/device_status_tv"
@@ -138,8 +137,8 @@
 
     <EditText
         android:id="@+id/device_belongSys_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
         android:layout_below="@+id/device_status_tv"
         android:layout_toRightOf="@id/device_belongSys_tv"
         android:ems="19"
@@ -158,7 +157,7 @@
 
     <EditText
         android:id="@+id/device_createrName_et"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_belongSys_tv"
         android:layout_toRightOf="@id/device_createrName_tv"
@@ -178,12 +177,14 @@
 
     <EditText
         android:id="@+id/device_createrTime_et"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_createrName_tv"
         android:layout_toRightOf="@id/device_createrTime_tv"
         android:ems="19"
         android:hint="请输入信息:"
+
+        android:background="@drawable/orgs_list_selector"
         android:textSize="16dp" />
 
     <TextView
@@ -198,7 +199,7 @@
 
     <EditText
         android:id="@+id/device_description_et"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_createrTime_tv"
         android:layout_toRightOf="@id/device_description_tv"
@@ -206,46 +207,51 @@
         android:hint="请输入信息:"
         android:textSize="16dp" />
 
-
-    <Button
-        android:id="@+id/device_back_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/device_description_et"
-        android:layout_marginTop="30dp"
-        android:text="返 回" />
-
     <Button
         android:id="@+id/device_save_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/device_back_btn"
+        android:layout_marginLeft="150dp"
+        android:layout_marginRight="150dp"
+        android:layout_below="@id/device_description_et"
         android:layout_marginTop="10dp"
+        android:background="@drawable/bt_shape"
         android:text="保 存" />
+
+    <Button
+        android:id="@+id/device_delete_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="150dp"
+        android:layout_marginRight="150dp"
+        android:layout_below="@id/device_save_btn"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bt_shape"
+        android:text="删除" />
 
     <Button
         android:id="@+id/check_course_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/device_save_btn"
+        android:layout_marginLeft="150dp"
+        android:layout_marginRight="150dp"
+        android:layout_below="@id/device_delete_btn"
         android:layout_marginTop="10dp"
+        android:background="@drawable/bt_shape"
         android:text="查看教程" />
 
     <Button
         android:id="@+id/create_course_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="150dp"
+        android:layout_marginRight="150dp"
         android:layout_below="@id/check_course_btn"
         android:layout_marginTop="10dp"
+        android:background="@drawable/bt_shape"
         android:text="新建教程" />
 
-    <Button
-        android:id="@+id/device_delete_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/create_course_btn"
-        android:layout_marginTop="10dp"
-        android:text="删除" />
+
 
 
 </RelativeLayout>

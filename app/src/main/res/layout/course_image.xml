@@ -13,6 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:scaleType="center"
-        android:background="@mipmap/ic_launcher" />
+        android:scaleType="fitCenter"
+        android:background="@mipmap/nba" />
 </LinearLayout>

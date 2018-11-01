@@ -15,9 +15,9 @@
         android:layout_height="0dp"
         android:layout_weight="5"
         android:adjustViewBounds="true"
-        android:scaleType="center"
+        android:scaleType="centerInside"
         android:layout_marginLeft="10dp"
-        android:background="@mipmap/ic_launcher" />
+        android:background="@mipmap/nba" />
 
     <RelativeLayout
         android:layout_width="match_parent"

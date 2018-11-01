@@ -82,14 +82,14 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
         head_tv.setText(getIntent().getStringExtra("name"));
 
-        for (int i=0; i< 15; i++) {
+        for (int i=0; i< 25; i++) {
             String name,typyName;
             int type;
-            if (i < 4) {
+            if (i < 9) {
                 type = 1;
                 name = "图片教程";
                 typyName = "图片";
-            }else if (i < 9){
+            }else if (i < 18){
                 type = 2;
                 name = "视频教程";
                 typyName = "视频";
@@ -109,10 +109,10 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         mData.add(0,c1);
 
         DeviceCourse c2 = new DeviceCourse("true","视频教程",101);
-        mData.add( 5,c2);
+        mData.add( 10,c2);
 
         DeviceCourse c3 = new DeviceCourse("true","文档教程",101);
-        mData.add(11,c3);
+        mData.add(20,c3);
 
     }
 

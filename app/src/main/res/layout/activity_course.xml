@@ -12,14 +12,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/pink"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/course_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
             android:gravity="center"
             android:horizontalSpacing="8dp"
             android:numColumns="auto_fit"

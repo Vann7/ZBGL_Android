@@ -41,6 +41,7 @@ public class SearchView extends LinearLayout {
     private TextView tv_clear;  // 删除搜索记录按键
     private LinearLayout search_block; // 搜索框布局
     private ImageView searchBack; // 返回按键
+    private TextView search_tv; //检索
 
 
     // ListView列表 & 适配器
@@ -154,21 +155,22 @@ public class SearchView extends LinearLayout {
          */
         et_search.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-
-                // 1. 点击搜索按键后，根据输入的搜索字段进行查询
-                // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
-                if (!(mCallBack == null)){
-                    mCallBack.SearchAciton(et_search.getText().toString());
-                }
-                Toast.makeText(context, "需要搜索的是" + et_search.getText(), Toast.LENGTH_SHORT).show();
-
-                // 2. 点击搜索键后，对该搜索字段在数据库是否存在进行检查（查询）->> 关注1
-                boolean hasData = hasData(et_search.getText().toString().trim());
-                // 3. 若存在，则不保存；若不存在，则将该搜索字段保存（插入）到数据库，并作为历史搜索记录
-                if (!hasData) {
-                    insertData(et_search.getText().toString().trim());
-                    queryData("");
-                }
+                search();
+//                // 1. 点击搜索按键后，根据输入的搜索字段进行查询
+//                // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
+//                if (!(mCallBack == null)){
+//                    mCallBack.SearchAciton(et_search.getText().toString());
+//                }
+////                Toast.makeText(context, "需要搜索的是" + et_search.getText(), Toast.LENGTH_SHORT).show();
+//                if (!et_search.getText().toString().trim().equals("")){
+//                    // 2. 点击搜索键后，对该搜索字段在数据库是否存在进行检查（查询）->> 关注1
+//                    boolean hasData = hasData(et_search.getText().toString().trim());
+//                    // 3. 若存在，则不保存；若不存在，则将该搜索字段保存（插入）到数据库，并作为历史搜索记录
+//                    if (!hasData) {
+//                        insertData(et_search.getText().toString().trim());
+//                        queryData("");
+//                    }
+//                }
             }
             return false;
         });
@@ -215,7 +217,7 @@ public class SearchView extends LinearLayout {
                 mListener.onClick(name, position);
             }
 
-            Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
         });
 
         /**
@@ -230,6 +232,30 @@ public class SearchView extends LinearLayout {
 //            Toast.makeText(context, "返回到上一页", Toast.LENGTH_SHORT).show();
         });
 
+        search_tv.setOnClickListener(v -> {
+            search();
+        });
+
+
+
+    }
+
+    private void search() {
+        // 1. 点击搜索按键后，根据输入的搜索字段进行查询
+        // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
+        if (!(mCallBack == null)){
+            mCallBack.SearchAciton(et_search.getText().toString());
+        }
+//                Toast.makeText(context, "需要搜索的是" + et_search.getText(), Toast.LENGTH_SHORT).show();
+        if (!et_search.getText().toString().trim().equals("")){
+            // 2. 点击搜索键后，对该搜索字段在数据库是否存在进行检查（查询）->> 关注1
+            boolean hasData = hasData(et_search.getText().toString().trim());
+            // 3. 若存在，则不保存；若不存在，则将该搜索字段保存（插入）到数据库，并作为历史搜索记录
+            if (!hasData) {
+                insertData(et_search.getText().toString().trim());
+                queryData("");
+            }
+        }
     }
 
 
@@ -248,10 +274,10 @@ public class SearchView extends LinearLayout {
         et_search.setHint(textHintSearch);
 
         // 3. 搜索框背景颜色
-        search_block = (LinearLayout)findViewById(R.id.search_block);
-        LayoutParams params = (LayoutParams) search_block.getLayoutParams();
-        params.height = searchBlockHeight;
-        search_block.setBackgroundColor(searchBlockColor);
+//        search_block = (LinearLayout)findViewById(R.id.search_block);
+//        LayoutParams params = (LayoutParams) search_block.getLayoutParams();
+//        params.height = searchBlockHeight;
+//        search_block.setBackgroundColor(searchBlockColor);
 //        search_block.setLayoutParams(params);
 
         // 4. 历史搜索记录 = ListView显示
@@ -263,7 +289,8 @@ public class SearchView extends LinearLayout {
 
         // 6. 返回按键
         searchBack = (ImageView) findViewById(R.id.search_back);
-
+        search_tv = (TextView) findViewById(R.id.search_item);
+//        tv_back = (ImageView) findViewById(R.id.search_back);
     }
 
     /**

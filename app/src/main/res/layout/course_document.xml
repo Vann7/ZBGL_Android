@@ -23,9 +23,9 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:adjustViewBounds="true"
-            android:scaleType="center"
+            android:scaleType="fitXY"
             android:layout_marginLeft="5dp"
-            android:background="@mipmap/ic_launcher" />
+            android:background="@mipmap/car" />
 
         <LinearLayout
             android:layout_width="match_parent"

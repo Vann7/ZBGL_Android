@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         app:textSizeSearch="16dp"
         app:textColorSearch="#9b9b9b"
-        android:layout_marginTop="10dp"
         app:textHintSearch="输入查询关键字"
         app:searchBlockHeight="100"
         app:searchBlockColor="@color/white"

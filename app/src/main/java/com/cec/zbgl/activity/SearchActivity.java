@@ -31,18 +31,21 @@ public class SearchActivity extends AppCompatActivity {
 //                System.out.println("我收到了" + string);
             Intent resultIntent = new Intent();
             resultIntent.putExtra("result", string);
-            setResult(-2, resultIntent);
-            finish();
+            this.setResult(-2, resultIntent);
+            SearchActivity.this.finish();
         });
 
         // 5. 设置点击返回按键后的操作（通过回调接口）
-        searchView.setOnClickBack(() -> finish());
+        searchView.setOnClickBack(() -> {
+            SearchActivity.this.finish();
+        });
 
+        // 6. 设置点击item后的操作（通过回调接口）
         searchView.setOnItemClick((name, position) ->  {
             Intent resultIntent = new Intent();
             resultIntent.putExtra("result", name);
-            setResult(-2, resultIntent);
-            finish();
+            this.setResult(-2, resultIntent);
+            SearchActivity.this.finish();
         });
 
     }
