@@ -28,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
+import com.cec.zbgl.activity.CourseActivity;
 import com.cec.zbgl.activity.SearchActivity;
 import com.cec.zbgl.adapter.FilterAdapter;
 import com.cec.zbgl.adapter.OrgsAdapter;
@@ -76,6 +78,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private TextView clear_tv;
     private TextView confirm_tv;
     private RelativeLayout filter_rl;
+
+    private RelativeLayout org_course_rl;
+    private TextView org_course_btn;
+    private TextView org_course_name;
+    private TextView org_course_desc;
+
 
     private boolean isShowing = false;
     private List<HashMap<Integer, String>> mList = new ArrayList<>();
@@ -171,6 +179,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         filter_rl = (RelativeLayout) getActivity().findViewById(R.id.filter_rl);
         filter_rl.setVisibility(GONE);
 
+        //组织机构教程rl
+        org_course_rl = (RelativeLayout) getActivity().findViewById(R.id.org_course);
+        //组织机构查看btn
+        org_course_btn = (TextView) getActivity().findViewById(R.id.org_course_btn);
+        org_course_name = (TextView) getActivity().findViewById(R.id.org_course_name);
+        org_course_desc = (TextView) getActivity().findViewById(R.id.org_course_desc);
+        org_course_name.setText("组织机构-XX部门");
+        org_course_desc.setText("组织机构描述信息——XX部门信息使用教程");
 
         //初始化左侧机构树
         mTreeView = (ListView) getView().findViewById(R.id.id_lv_tree);
@@ -290,6 +306,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         masker_tv.setOnClickListener(this);
         clear_tv.setOnClickListener(this);
         confirm_tv.setOnClickListener(this);
+        org_course_btn.setOnClickListener(this);
     }
 
     /**
@@ -372,6 +389,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     //判定当devices数据为空时，展示listTip提示
     private void showData() {
+        org_course_rl.setVisibility(devices.size() == 0 ? GONE : VISIBLE);
         listTip.setVisibility(devices.size() == 0 ? VISIBLE : GONE);
         mSwipeRefreshLayout.setVisibility(devices.size() == 0 ? GONE : VISIBLE);
 
@@ -478,7 +496,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 ToastUtils.showShort("confirm: " + selectedItems.toString());
                 disappear();
                 break;
-
+            case R.id.org_course_btn :
+                Intent intent = new Intent(getActivity(), CourseActivity.class);
+                startActivity(intent);
         }
     }
 
@@ -515,16 +535,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private void showDialogTipUserGoToAppSettting(){
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("存储权限不可用").setMessage("请在-应用设置-权限-中，允许应用使用摄像头权限")
-                .setPositiveButton("立即开启",new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 跳转到应用设置界面
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, 123);
-                    }
+                .setPositiveButton("立即开启", (dialog1, which) -> {
+                    // 跳转到应用设置界面
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(intent, 123);
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

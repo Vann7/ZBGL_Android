@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/surface_fl"
+        android:layout_width="match_parent"
+        android:layout_height="400dp">
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/surface_masker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gray"
+            android:alpha="1"/>
+
+        <TextView
+            android:id="@+id/surface_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:background="@mipmap/back"/>
+        <ImageView
+            android:id="@+id/surface_play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_search"
+            android:layout_gravity="center"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="350dp">
+            <!--<TextView-->
+                <!--android:id="@+id/surface_startTime"-->
+                <!--android:layout_width="40dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="16sp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:text="00:00" />-->
+
+
+            <TextView
+                android:id="@+id/surface_fill"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@mipmap/ic_scan" />
+        </RelativeLayout>
+    </FrameLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/yellow"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/surface_fl"/>
+    <TextView
+        android:id="@+id/numText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:layout_gravity="bottom|left"
+        android:text="视频描述信息"
+        android:gravity="center_horizontal"
+        android:textSize="30dp"
+        android:layout_below="@id/progressBar"/>
+</RelativeLayout>

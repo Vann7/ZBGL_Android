@@ -26,6 +26,8 @@ import com.cec.zbgl.utils.ToastUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import static android.view.View.VISIBLE;
+
 /**
  * 备品信息详情活动
  */
@@ -41,6 +43,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private EditText createTime_Et;
     private EditText description_Et;
     private Button course_btn;
+    private Button save_btn;
+    private TextView delete_tv;
     private DeviceInfo device;
     private ImageView headImage;
     private String mExtStorDir;
@@ -77,9 +81,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         description_Et = (EditText) findViewById(R.id.device_description_et);
         headImage = (ImageView) findViewById(R.id.id_device_image);
         course_btn = (Button) findViewById(R.id.check_course_btn);
+        save_btn = (Button) findViewById(R.id.device_save_btn);
 
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
+        delete_tv = (TextView) findViewById(R.id.device_delete);
+        delete_tv.setVisibility(VISIBLE);
+
 
     }
 
@@ -109,6 +117,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         course_btn.setOnClickListener(this);
         headImage.setOnClickListener(this);
         back_iv.setOnClickListener(this);
+        save_btn.setOnClickListener(this);
+        delete_tv.setOnClickListener(this);
+
 
     }
 
@@ -128,6 +139,12 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.bar_back_iv :
                 this.finish();
+                break;
+            case R.id.device_delete :
+                ToastUtils.showShort("删除本条信息");
+                break;
+            case R.id.device_save_btn :
+                ToastUtils.showShort("保存本条信息");
                 break;
         }
     }

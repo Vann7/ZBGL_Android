@@ -166,7 +166,8 @@
         android:layout_below="@+id/top"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
-        android:src="@mipmap/ic_launcher" />
+        android:scaleType="centerCrop"
+        android:src="@mipmap/nba" />
 
     <Button
         android:id="@+id/loginButton"

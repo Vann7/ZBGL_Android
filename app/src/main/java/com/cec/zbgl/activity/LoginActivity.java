@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
    private Button btn,db_btn;
    private UserService userService;
     // 要申请的权限
-    private String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
     private String[] permission_camera = {Manifest.permission.CAMERA};
     private String[] permission_write_storage = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -110,8 +110,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     permissions,321);
             if (ContextCompat.checkSelfPermission(this,
                     android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED  ) {
+                        Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED
+                    ) {
                 // 开始提交摄像头、存储请求权限
                 ActivityCompat.requestPermissions(this, permissions, 321);
             }

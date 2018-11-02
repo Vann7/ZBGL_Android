@@ -20,7 +20,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="10dp"
-            android:background="@mipmap/logo"/>
+            android:scaleType="centerCrop"
+            android:src="@mipmap/nba"/>
 
             <TextView
                 android:id="@+id/device_name_tv"
@@ -207,50 +208,42 @@
         android:hint="请输入信息:"
         android:textSize="16dp" />
 
-    <Button
-        android:id="@+id/device_save_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="150dp"
-        android:layout_marginRight="150dp"
+    <ImageView
+        android:id="@+id/content_mask_left"
+        android:layout_width="140dp"
+        android:layout_height="100dp"
         android:layout_below="@id/device_description_et"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bt_shape"
-        android:text="保 存" />
+        android:background="@mipmap/shadow"
+        android:alpha="0"/>
 
     <Button
-        android:id="@+id/device_delete_btn"
-        android:layout_width="match_parent"
+        android:id="@+id/device_save_btn"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="150dp"
-        android:layout_marginRight="150dp"
-        android:layout_below="@id/device_save_btn"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/device_description_et"
+        android:layout_toRightOf="@id/content_mask_left"
+        android:layout_marginTop="50dp"
         android:background="@drawable/bt_shape"
-        android:text="删除" />
+        android:text="保  存" />
 
     <Button
         android:id="@+id/check_course_btn"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="150dp"
-        android:layout_marginRight="150dp"
-        android:layout_below="@id/device_delete_btn"
-        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@id/content_mask_right"
+        android:layout_below="@id/device_description_et"
+        android:layout_marginTop="50dp"
         android:background="@drawable/bt_shape"
-        android:text="查看教程" />
+        android:text="教  程" />
 
-    <Button
-        android:id="@+id/create_course_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="150dp"
-        android:layout_marginRight="150dp"
-        android:layout_below="@id/check_course_btn"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bt_shape"
-        android:text="新建教程" />
-
+    <ImageView
+        android:id="@+id/content_mask_right"
+        android:layout_width="140dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/device_description_et"
+        android:layout_alignParentRight="true"
+        android:background="@mipmap/shadow"
+        android:alpha="0"/>
 
 
 

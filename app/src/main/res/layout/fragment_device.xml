@@ -11,11 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <fragment
                 android:id="@+id/left_fragment"
@@ -38,17 +37,25 @@
                 android:textSize="16sp"
                 android:visibility="gone"/>
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefreshLayout"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="4"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view"
+                <include layout="@layout/org_course_item"/>
+
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeRefreshLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </android.support.v4.widget.SwipeRefreshLayout>
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </android.support.v4.widget.SwipeRefreshLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -61,6 +68,7 @@
            android:id="@+id/filter_rl"
            android:layout_width="match_parent"
            android:layout_height="wrap_content">
+
            <android.support.v7.widget.RecyclerView
                android:id="@+id/filter_view"
                android:layout_width="match_parent"
@@ -94,11 +102,5 @@
                    android:textSize="16dp"/>
            </LinearLayout>
        </RelativeLayout>
-
     </FrameLayout>
-
-
-
-
-
 </LinearLayout>

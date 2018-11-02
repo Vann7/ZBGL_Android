@@ -66,32 +66,6 @@
             android:gravity="center_vertical"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:text="数据同步"/>
-
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:background="@mipmap/ic_launcher_round"/>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/white">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_marginLeft="20dp"
-            android:gravity="center_vertical"
-            android:textSize="22sp"
-            android:textStyle="bold"
             android:text="清除缓存"/>
 
         <Button
@@ -100,7 +74,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
-            android:background="@mipmap/ic_launcher_round"/>
+            android:background="@mipmap/nba"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -143,8 +117,5 @@
         android:layout_marginTop="80dp"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"/>
-
-
-
 
 </LinearLayout>

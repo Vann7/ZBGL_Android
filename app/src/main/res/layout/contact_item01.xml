@@ -25,9 +25,9 @@
             android:layout_weight="1.5"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:scaleType="center"
+            android:scaleType="centerCrop"
             android:layout_marginLeft="10dp"
-            android:background="@mipmap/ic_launcher" />
+            android:src="@mipmap/nba" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -42,8 +42,8 @@
                 android:id="@+id/item01_tv_name"
                 android:textColor="@color/red"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
+                android:gravity="center_vertical"
                 android:layout_weight="1"
                 android:layout_height="0dp" />
 
@@ -53,6 +53,7 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@color/cadetblue"
                 android:layout_width="match_parent"
+                android:gravity="center_vertical"
                 android:layout_weight="1"
                 android:layout_height="0dp"  />
         </LinearLayout>

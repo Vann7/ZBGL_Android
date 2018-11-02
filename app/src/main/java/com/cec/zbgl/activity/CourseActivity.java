@@ -21,6 +21,7 @@ import com.cec.zbgl.utils.LogUtil;
 import com.cec.zbgl.utils.OpenFileUtil;
 import com.cec.zbgl.utils.ToastUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private List<DeviceCourse> mData =new ArrayList<>();
-//    private List<Map<Integer, DeviceCourse>> mData =new ArrayList<>();
     private Map<Integer, DeviceCourse> map = new HashMap<Integer, DeviceCourse>();
 
     @Override
@@ -131,21 +131,24 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 Intent intent;
                 switch (mData.get(position).getCourseType()) {
                     case 1 :
-                        fileName = "/storage/emulated/0/DCIM/Camera/IMG_20181030_113211.jpg";
-                        intent = OpenFileUtil.openFile(fileName);
+//                        fileName = "/storage/emulated/0/DCIM/Camera/IMG_20181030_113211.jpg";
+                        fileName = "android.resource://" + getPackageName()
+                                + "/" + R.mipmap.nba;
+                        intent = OpenFileUtil.getImageFileIntent(fileName);
                         startActivity(intent);
+
                         ToastUtils.showShort("展示图片");
                         break;
                     case 2 :
-
-                        ToastUtils.showShort("播放视频");
-                        fileName = "/storage/emulated/0/DCIM/Camera/VID_20181030_113134.mp4";
-                        intent = OpenFileUtil.openFile(fileName);
+                        System.out.println(getPackageName());
+                        intent = new Intent(CourseActivity.this, MediaActivity.class);
                         startActivity(intent);
                         break;
                     case 3 :
-                        fileName = "storage/emulated/0/Download/11111.txt";
-                        intent = OpenFileUtil.openFile(fileName);
+//                        fileName = "storage/emulated/0/Download/11111.txt";
+                        fileName = "android.resource://" + getPackageName()
+                                + "/" + R.raw.demo3;
+                        intent = OpenFileUtil.getTextFileIntent(fileName,false);
                         startActivity(intent);
                         ToastUtils.showShort("查看文档");
                         break;

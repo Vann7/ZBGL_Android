@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="#0071BC"
@@ -11,20 +11,33 @@
 
     <ImageView
         android:id="@+id/bar_back_iv"
-        android:layout_gravity="center_vertical"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@mipmap/back"/>
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@mipmap/back"
+        android:layout_centerVertical="true"/>
 
 
     <TextView
         android:id="@+id/bar_back_tv"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_width="400dp"
+        android:layout_height="40dp"
         android:layout_gravity="center_vertical"
+        android:layout_centerInParent="true"
         android:gravity="center"
         android:text="当前页面名称"
         android:textColor="#d3d3d3"
         android:textSize="18sp"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/device_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:textColor="@color/lightgray"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="删除"/>
+
+</RelativeLayout>
