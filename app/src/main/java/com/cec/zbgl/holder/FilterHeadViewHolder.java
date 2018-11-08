@@ -10,7 +10,7 @@ import com.cec.zbgl.R;
 public class FilterHeadViewHolder extends RecyclerView.ViewHolder {
 
 
-    private TextView name_tv;
+    TextView name_tv;
 
 
     public FilterHeadViewHolder(View itemView) {

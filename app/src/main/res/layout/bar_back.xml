@@ -11,9 +11,9 @@
 
     <ImageView
         android:id="@+id/bar_back_iv"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@mipmap/back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/back_light"
         android:layout_centerVertical="true"/>
 
 
@@ -39,5 +39,13 @@
         android:gravity="center"
         android:visibility="gone"
         android:text="删除"/>
+    <ImageView
+        android:id="@+id/device_media_add"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/add"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>

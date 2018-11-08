@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D3D3D3"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/mine_header_tv"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/home_mine"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:padding="12dip"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:background="#0071BC"/>
+
+    <TextView
+        android:id="@+id/mine_line_tv"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/mine_header_tv"
+        android:background="@color/black"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="用户名"/>
+
+        <TextView
+            android:id="@+id/mine_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginRight="20dp"
+            android:text="管理员"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="清除缓存"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:layout_marginRight="20dp"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:text="18.02MB"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/mine_user_rl"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="账号与安全"/>
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:background="@mipmap/right"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/mine_out_tv"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:text="退出当前账号"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/gray"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"/>
+
+</LinearLayout>

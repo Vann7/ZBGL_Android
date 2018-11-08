@@ -69,9 +69,4 @@
         android:layout_marginRight="10dp"
         android:gravity="center_vertical"
         android:scaleType="center"/>
-
-
-
-
-
 </LinearLayout>

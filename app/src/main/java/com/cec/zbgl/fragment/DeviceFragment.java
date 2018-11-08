@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
@@ -91,12 +92,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private static final int FILTER_TYPE_ITEM   = 1;
     private static final int FILTER_TYPE_HEADER = 0;
     private static final int SEARCH_BACK = -2;
-    private List<String> selectedItems = new ArrayList<>();
+//    private List<String> selectedItems = new ArrayList<>();
+    private Map<String, Integer> selectedMaps = new HashMap<>();
 
 
-    private String citys[] = {"不限", "武汉", "北京", "上海", "成都", "广州", "深圳", "重庆", "天津", "西安", "南京", "杭州"};
-    private String ages[] = {"不限", "18岁以下", "18-22岁", "23-26岁", "27-35岁", "35岁以上"};
-    private String constellations[] = {"不限", "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座", "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"};
+    private String status[] = {"使用中","未入库","已入库","已出库"};
+    private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
+    private String systems[] = {"系统1","系统2","系统3","系统4"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -232,28 +234,28 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
         //初始化filter数据
         HashMap<Integer, String>  map = new HashMap<Integer, String>();
-        map.put(0,"城市");
+        map.put(0,"设备状态");
         mList.add(map);
-        for (int i=0; i< citys.length; i++) {
+        for (int i=0; i< status.length; i++) {
             HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
-            map1.put(1,citys[i]);
+            map1.put(1,status[i]);
             mList.add(map1);
         }
 
         HashMap<Integer, String>  map2 = new HashMap<Integer, String>();
-        map2.put(0,"年龄");
+        map2.put(0,"设备类别");
         mList.add(map2);
-        for (int i=0; i< ages.length; i++) {
+        for (int i=0; i< types.length; i++) {
             HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
-            map1.put(1,ages[i]);
+            map1.put(1,types[i]);
             mList.add(map1);
         }
         HashMap<Integer, String>  map3 = new HashMap<Integer, String>();
-        map3.put(0,"星座");
+        map3.put(0,"归属系统");
         mList.add(map3);
-        for (int i=1; i< constellations.length; i++) {
+        for (int i=0; i< systems.length; i++) {
             HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
-            map1.put(1,constellations[i]);
+            map1.put(1,systems[i]);
             mList.add(map1);
         }
 
@@ -353,15 +355,24 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         });
         mRecyclerView.setAdapter(mRefreshAdapter);
 
-
-
         //筛选Adapter
         filterAdapter = new FilterAdapter(getContext(), mList);
         //绑定点击事件
         filterAdapter.setOnListClickListener((v, position) -> {
-            selectedItems.add(mList.get(position).get(FILTER_TYPE_ITEM));
-//            v.setBackgroundColor(Color.RED);
-//            filterAdapter.notifyDataSetChanged();
+            String itemName = mList.get(position).get(FILTER_TYPE_ITEM);
+            if (selectedMaps.get(mList.get(position).get(FILTER_TYPE_ITEM)) == null) {
+                selectedMaps.put(mList.get(position).get(FILTER_TYPE_ITEM), 1);
+//                v.setBackgroundColor(Color.LTGRAY);
+
+            } else {
+                selectedMaps.remove(mList.get(position).get(FILTER_TYPE_ITEM));
+//                v.setBackgroundColor(Color.WHITE);
+            }
+
+//            v.setBackgroundColor(Color.YELLOW);
+//                filterAdapter.notifyItemChanged(position);
+            filterAdapter.changeSelected(position,selectedMaps,itemName);
+
         });
         filter_rv.setAdapter(filterAdapter);
         GridLayoutManager filterManager = new GridLayoutManager(getContext(),5);
@@ -489,11 +500,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.filter_clear :
                 ToastUtils.showShort("clear");
-                selectedItems.clear();
-                filterAdapter.notifyDataSetChanged();
+                selectedMaps.clear();
+//                filterAdapter.notifyDataSetChanged();
+                filterAdapter.clearSelected(selectedMaps);
                 break;
             case R.id.filter_confirm :
-                ToastUtils.showShort("confirm: " + selectedItems.toString());
+                ToastUtils.showShort("confirm: " );
+
                 disappear();
                 break;
             case R.id.org_course_btn :

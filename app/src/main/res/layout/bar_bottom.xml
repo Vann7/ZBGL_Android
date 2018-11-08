@@ -24,7 +24,7 @@
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"
-                android:background="@mipmap/ic_launcher_round" />
+                android:src="@mipmap/homefill" />
 
             <TextView
                 android:id="@+id/id_tv_device"
@@ -34,7 +34,7 @@
                 android:layout_below="@+id/id_iv_device"
                 android:layout_centerHorizontal="true"
                 android:text="@string/home_device"
-                android:textColor="#008000"/>
+                android:textColor="@color/black"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -49,7 +49,7 @@
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"
-                android:background="@mipmap/ic_launcher_round" />
+                android:src="@mipmap/round_transfer" />
 
             <TextView
                 android:id="@+id/id_tv_sync"
@@ -74,7 +74,7 @@
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"
-                android:background="@mipmap/ic_launcher_round" />
+                android:src="@mipmap/my" />
 
             <TextView
                 android:id="@+id/id_tv_mine"
@@ -92,7 +92,7 @@
         android:id="@+id/id_iv_tabline"
         android:layout_width="180dp"
         android:layout_height="3dp"
-        android:background="@color/goldenrod"
+        android:src="@color/goldenrod"
         android:contentDescription="@string/home_mine"/>
 
 </LinearLayout>

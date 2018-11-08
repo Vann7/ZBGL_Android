@@ -23,6 +23,7 @@ public class Constant {
     public static final int CODE_GALLERY_REQUEST = 0xa0;
     public static final int CODE_CAMERA_REQUEST = 0xa1;
     public static final int CODE_RESULT_REQUEST = 0xa2;
+    public static final int CODE_VIDEO_REQUEST = 0xa2;
 
     // 裁剪后图片的宽(X)和高(Y),480 X 480的正方形。
     public static int output_X = 480;
@@ -34,4 +35,11 @@ public class Constant {
     public static final int PERMISSION_READ =1;//读取权限
 
     public static final int TYPE_FOOTER_VIEW = 1;
+
+    public static final String CONTENT_TYPE = "类别";
+    public static final String CONTENT_STATUS = "状态";
+    public static final String CONTENT_STSTEM = "系统";
+
+
+
 }

@@ -51,7 +51,7 @@
         <!-- <activity android:name=".activity.HomeActivity"/> -->
         <activity android:name=".activity.SearchActivity" />
         <activity android:name=".activity.VideoActivity" />
-        <activity android:name=".activity.MediaActivity"></activity>
+        <activity android:name=".activity.MediaActivity"/>
     </application>
 
 </manifest>

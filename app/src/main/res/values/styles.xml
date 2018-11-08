@@ -13,4 +13,46 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="appalertdialog" parent="Base.V7.Theme.AppCompat.Dialog">
+        <item name="android:colorBackground">@color/white</item><!--背景颜色-->
+        <item name="android:windowTitleStyle">@style/appalertdialogwindowTitleStyle</item>
+        <item name="textColorAlertDialogListItem">@android:color/black</item>
+        <item name="android:windowAnimationStyle">@style/appalertdialoganimation</item>
+        <item name="buttonStyle">@style/appalertdialogbuttonstyle </item>
+        <item name="buttonBarPositiveButtonStyle">@style/appalertdialogbuttonstyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/appalertdialogbuttonstyle</item>
+    </style>
+
+
+    <!--标题样式-->
+    <style name="appalertdialogwindowTitleStyle" parent="Base.DialogWindowTitle.AppCompat">
+        <item name="android:textAppearance">@style/appalertdialogwindowTitletext</item>
+    </style>
+    <!--标题字体颜色-->
+    <style name="appalertdialogwindowTitletext" parent="Base.TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+
+
+    <!--动画效果-->
+    <style name="appalertdialoganimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>
+    </style>
+    <!--按钮样式-->
+    <style name="appalertdialogbuttonstyle" parent="android:Widget">
+        <item name="android:background">@drawable/abc_btn_default_mtrl_shape</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
+        <item name="android:minHeight">48dip</item>
+        <item name="android:minWidth">88dip</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+    </style>
+
+
 </resources>

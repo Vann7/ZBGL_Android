@@ -4,28 +4,36 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.CourseAdapter;
+import com.cec.zbgl.adapter.CourseAddAdapter;
+import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
-import com.cec.zbgl.utils.FileUtils;
-import com.cec.zbgl.utils.LogUtil;
+import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.OpenFileUtil;
 import com.cec.zbgl.utils.ToastUtils;
+import com.cec.zbgl.utils.VideoUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class CourseActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView back_iv;
@@ -34,6 +42,14 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView add_iv;
     private CourseAdapter mAdapter;
     private GridLayoutManager mGridLayoutManager;
+    private ListView course_lv;
+    private TextView marsker_tv;
+    private CourseAddAdapter addAdapter;
+    private boolean isShowing = false;
+    private ImageUtil imageUtil;
+    private File tempFile;
+    private String imgName;
+    private String videoName;
 
     private int IS_TITLE_OR_NOT =1;
     private int MESSAGE = 2;
@@ -54,8 +70,8 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initView() {
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
-        add_iv = (ImageView) findViewById(R.id.course_add_img);
-        add_iv.bringToFront();
+        add_iv = (ImageView) findViewById(R.id.device_media_add);
+        add_iv.setVisibility(VISIBLE);
         mAdapter = new CourseAdapter(this,mData);
         mGridLayoutManager = new GridLayoutManager(this, 8);
         mGridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -76,6 +92,19 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(12));//item之间的间距
+
+        course_lv = (ListView) findViewById(R.id.course_lv);
+
+        List<String> list = new ArrayList<>();
+        list.add("拍摄照片");
+        list.add("拍摄视频");
+        list.add("导入文档");
+
+        addAdapter = new CourseAddAdapter(R.layout.course_add,this,list,course_lv);
+        course_lv.setAdapter(addAdapter);
+        marsker_tv = (TextView) findViewById(R.id.course_masker);
+        marsker_tv.bringToFront();
+        course_lv.bringToFront();
 
     }
 
@@ -102,7 +131,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             map = new HashMap<Integer, DeviceCourse>();
             DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
                     "教程类别为:"+typyName,"false","item "+(i+1));
-
             mData.add(c0);
         }
         //对分类标题进行初始化
@@ -122,6 +150,8 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         add_iv.setOnClickListener(this);
 
         back_iv.setOnClickListener(this);
+
+        marsker_tv.setOnClickListener(this);
 
         mAdapter.setOnListClickListener(new ItemClickListener() {
             @Override
@@ -152,7 +182,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                         startActivity(intent);
                         ToastUtils.showShort("查看文档");
                         break;
-
                 }
 
             }
@@ -162,6 +191,50 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 ToastUtils.showShort("onItemLongClick: "+mData.get(position).toString() + "-"+position);
             }
         });
+
+        addAdapter.setOnListClickListener(position -> {
+            switch (position) {
+                case 0:
+                    imgName = "1108";
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
+                            new File(Environment.getExternalStorageDirectory(),imgName)
+                    ));
+                    startActivityForResult(cameraIntent, Constant.CODE_CAMERA_REQUEST);
+                    break;
+                case 1:
+                    videoName = "1108";
+                    Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    if (videoIntent.resolveActivity(getPackageManager()) != null) {
+                        videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
+                                new File(Environment.getExternalStorageDirectory(),videoName)
+                        ));
+                        startActivityForResult(videoIntent,Constant.CODE_VIDEO_REQUEST);
+                    }
+                    break;
+                case 2:
+                    ToastUtils.showShort("导入文档");
+                    break;
+            }
+            disappear();
+        });
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case Constant.CODE_CAMERA_REQUEST:
+                tempFile = new File(Environment.getExternalStorageDirectory(), imgName);
+                break;
+            case Constant.CODE_VIDEO_REQUEST:
+                Uri videoUri = data.getData();
+                String path = VideoUtils.getPath(this, videoUri);
+                boolean exits = new File(path).exists();
+                ToastUtils.showShort("拍摄成功: " + path);
+                break;
+        }
     }
 
     @Override
@@ -170,10 +243,33 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.bar_back_iv :
                 finish();
                 break;
-            case R.id.course_add_img :
-                ToastUtils.showShort("新增视频");
+            case R.id.device_media_add :
+                isShowing = (isShowing == false) ? true : false;
+                if (isShowing == false) {
+                    disappear();
+                }else {
+                    appear();
+                }
+                break;
+            case R.id.course_masker :
+                disappear();
                 break;
         }
+    }
+
+    private void appear() {
+        marsker_tv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_in));
+        marsker_tv.setVisibility(VISIBLE);
+        course_lv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_in));
+        course_lv.setVisibility(VISIBLE);
+    }
+
+    private void disappear() {
+        course_lv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
+        marsker_tv.setVisibility(GONE);
+        course_lv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
+        course_lv.setVisibility(GONE);
+
     }
 
 

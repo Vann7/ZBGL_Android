@@ -1,6 +1,7 @@
 package com.cec.zbgl.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -35,9 +36,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private PagerAdapter mAdapter;
     private List<Fragment> mDatas;
 
-    private TextView mDeviceTextView;
-    private TextView mSyncTextView;
-    private TextView mMineTextView;
+    private TextView tv_device;
+    private TextView tv_sync;
+    private TextView tv_mine;
+
+    private ImageView iv_device;
+    private ImageView iv_sync;
+    private ImageView iv_mine;
+
+
     private RelativeLayout mDevice_rl;
     private RelativeLayout mSync_rl;
     private RelativeLayout mMine_rl;
@@ -96,9 +103,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void initView() {
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
-        mDeviceTextView = (TextView) findViewById(R.id.id_tv_device);
-        mSyncTextView = (TextView) findViewById(R.id.id_tv_sync);
-        mMineTextView = (TextView) findViewById(R.id.id_tv_mine);
+        tv_device = (TextView) findViewById(R.id.id_tv_device);
+        tv_sync = (TextView) findViewById(R.id.id_tv_sync);
+        tv_mine = (TextView) findViewById(R.id.id_tv_mine);
+
+        iv_device = (ImageView) findViewById(R.id.id_iv_device);
+        iv_sync = (ImageView) findViewById(R.id.id_iv_sync);
+        iv_mine = (ImageView) findViewById(R.id.id_iv_mine);
 
         mDevice_rl = (RelativeLayout) findViewById(R.id.id_ll_device);
         mSync_rl = (RelativeLayout) findViewById(R.id.id_ll_sync);
@@ -159,9 +170,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * 切换界面后字体颜色修改
      */
     protected void resetTextView() {
-        mDeviceTextView.setTextColor(Color.BLACK);
-        mSyncTextView.setTextColor(Color.BLACK);
-        mMineTextView.setTextColor(Color.BLACK);
+        iv_device.setImageResource(R.mipmap.home);
+        iv_sync.setImageResource(R.mipmap.round_transfer);
+        iv_mine.setImageResource(R.mipmap.my);
+
     }
 
     @Override
@@ -191,13 +203,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         resetTextView();
         switch (position) {
             case 0:
-                mDeviceTextView.setTextColor(Color.parseColor("#008000"));
+                iv_device.setImageResource(R.mipmap.homefill);
                 break;
             case 1:
-                mSyncTextView.setTextColor(Color.parseColor("#008000"));
+                iv_sync.setImageResource(R.mipmap.round_transfer_fill);
                 break;
             case 2:
-                mMineTextView.setTextColor(Color.parseColor("#008000"));
+                iv_mine.setImageResource(R.mipmap.myfill);
                 break;
 
         }

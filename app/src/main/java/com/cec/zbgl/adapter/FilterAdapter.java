@@ -1,6 +1,7 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.cec.zbgl.holder.FilterItemViewHolder;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FilterAdapter extends RecyclerView.Adapter {
 
@@ -21,27 +23,36 @@ public class FilterAdapter extends RecyclerView.Adapter {
     private static final int TYPE_ITEM   = 1;
     private static final int TYPE_HEADER = 0;
     private OnItemClickListener mListener;
-    int mSelect = 0;   //选中项
+    int mSelect = -1;   //选中项
+    String itemName = "";
+    private Map<String, Integer> selectedMaps = new HashMap<>();
+    private int type_one;
+    private int type_two;
+    private int type_three;
+
 
     public FilterAdapter(Context context, List<HashMap<Integer, String>> datas) {
         mInflater = LayoutInflater.from(context);
         this.context = context;
         this.datas = datas;
+
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
         if (viewType == TYPE_HEADER) {
-            FilterItemViewHolder holder = new FilterItemViewHolder(mInflater.inflate(R.layout.filter_item,parent,false));
-            return holder;
+            viewHolder = new FilterHeadViewHolder(mInflater.inflate(R.layout.filter_head,parent,false));
+            return viewHolder;
         }else {
-            FilterHeadViewHolder holder = new FilterHeadViewHolder(mInflater.inflate(R.layout.filter_head,parent,false));
-            //绑定点击事件
-            holder.itemView.setOnClickListener(v -> {
-                mListener.onItemClick(v, holder.getLayoutPosition());
-
-            });
-            return holder;
+            viewHolder = new FilterItemViewHolder(mInflater.inflate(R.layout.filter_item,parent,false));
+//            //绑定点击事件
+//            viewHolder.itemView.setOnClickListener(v -> {
+//                mListener.onItemClick(v, viewHolder.getLayoutPosition());
+//
+//            });
+            return viewHolder;
         }
 
     }
@@ -50,21 +61,53 @@ public class FilterAdapter extends RecyclerView.Adapter {
      * 刷新方法
      * @param positon
      */
-    public void changeSelected(int positon){
-        if(positon != mSelect){
-            mSelect = positon;
-            notifyDataSetChanged();
-        }
+    public void changeSelected(int positon,Map<String, Integer> selectedMaps,String itemName){
+        mSelect = positon;
+        this.selectedMaps = selectedMaps;
+        this.itemName = itemName;
+        notifyDataSetChanged();
+    }
+
+    public void clearSelected(Map<String, Integer> selectedMaps ) {
+        this.selectedMaps = selectedMaps;
+        notifyDataSetChanged();
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (datas.get(position).containsKey(0)) {
-            ((FilterItemViewHolder)holder).bindHolder(datas.get(position).get(0));
+        if (datas.get(position).containsKey(TYPE_HEADER)) {
+            FilterHeadViewHolder headViewHolder = (FilterHeadViewHolder) holder;
+            headViewHolder.bindHolder(datas.get(position).get(TYPE_HEADER));
         }else {
-            ((FilterHeadViewHolder)holder).bindHolder(datas.get(position).get(1));
-        }
+            FilterItemViewHolder itemViewHolder = (FilterItemViewHolder) holder;
+            //绑定点击事件
+            itemViewHolder.itemView.setOnClickListener(v -> {
 
+                mListener.onItemClick(v, itemViewHolder.getLayoutPosition());
+                mSelect = position;
+//                notifyDataSetChanged();
+
+            });
+            itemViewHolder.bindHolder(datas.get(position).get(TYPE_ITEM));
+            if (selectedMaps.size() == 0) {
+                itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#ffffff"));
+            } else {
+                if (mSelect == position) {
+                    if (selectedMaps.get(datas.get(mSelect).get(TYPE_ITEM)) !=null) {
+                        itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#B3B3B3"));
+                    }else {
+                        itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#ffffff"));
+                    }
+                }else {
+                    if (selectedMaps.get(datas.get(position).get(TYPE_ITEM)) != null){
+                        itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#B3B3B3"));
+                    }else {
+                        itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#ffffff"));
+                    }
+                }
+            }
+
+        }
     }
 
     @Override
@@ -91,4 +134,6 @@ public class FilterAdapter extends RecyclerView.Adapter {
     public interface OnItemClickListener {
         void onItemClick(View v, int position); //单击事件
     }
+
+
 }

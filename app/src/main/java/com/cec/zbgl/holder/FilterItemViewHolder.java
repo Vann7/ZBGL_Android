@@ -13,7 +13,7 @@ import com.cec.zbgl.model.DeviceInfo;
 public class FilterItemViewHolder extends RecyclerView.ViewHolder {
 
 
-    private TextView name_tv;
+    public TextView name_tv;
 
     public TextView getName_tv() {
         return name_tv;

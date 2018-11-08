@@ -3,77 +3,115 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/surface_fl"
+
+    <SurfaceView
+        android:id="@+id/surface_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp">
-        <SurfaceView
-            android:id="@+id/surfaceView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/rl_media"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/surface_masker"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/gray"
-            android:alpha="1"/>
+            android:alpha="0.8"/>
 
-        <TextView
+        <ImageView
+            android:id="@+id/media_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
             android:id="@+id/surface_back"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:background="@mipmap/back"/>
+            android:src="@mipmap/back_light"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="20dp"
+            />
+
         <ImageView
             android:id="@+id/surface_play"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@mipmap/ic_search"
-            android:layout_gravity="center"/>
+            android:src="@mipmap/playfill"
+            android:layout_centerInParent="true"/>
+
+        <ImageView
+            android:id="@+id/surface_pause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/stop"
+            android:visibility="gone"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:id="@+id/tv_sound"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:background="#33de1d1d"
+            android:padding="8dp"
+            android:text="音量"
+            android:textColor="#fff" />
 
         <RelativeLayout
+            android:id="@+id/play_rl"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="350dp">
-            <!--<TextView-->
-                <!--android:id="@+id/surface_startTime"-->
-                <!--android:layout_width="40dp"-->
-                <!--android:layout_height="40dp"-->
-                <!--android:layout_marginLeft="20dp"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="16sp"-->
-                <!--android:gravity="center_vertical"-->
-                <!--android:text="00:00" />-->
-
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="4dp"
+            android:gravity="center"
+            android:background="#33ffffff">
 
             <TextView
-                android:id="@+id/surface_fill"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/tv_current"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:layout_centerVertical="true"
+                android:textSize="16sp"
+                android:text="0:00"
+                android:textColor="#fff" />
+
+            <TextView
+                android:id="@+id/tv_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginRight="10dp"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
-                android:background="@mipmap/ic_scan" />
+                android:text="1:00"
+                android:textSize="16sp"
+                android:textColor="#fff" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:progressBarStyleHorizontal"
+                android:layout_toRightOf="@id/tv_current"
+                android:layout_toLeftOf="@id/tv_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
         </RelativeLayout>
-    </FrameLayout>
+    </RelativeLayout>
+
+
     <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/yellow"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/surface_fl"/>
-    <TextView
-        android:id="@+id/numText"
+        android:id="@+id/progress_filled"
+        style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="3dp"
-        android:layout_gravity="bottom|left"
-        android:text="视频描述信息"
-        android:gravity="center_horizontal"
-        android:textSize="30dp"
-        android:layout_below="@id/progressBar"/>
+        android:layout_height="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
 </RelativeLayout>

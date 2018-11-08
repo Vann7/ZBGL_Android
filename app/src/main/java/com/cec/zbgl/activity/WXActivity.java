@@ -220,6 +220,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         switch (position) {
             case 0:
                 mChatTextView.setTextColor(Color.parseColor("#008000"));
+
                 break;
             case 1:
                 mFriendTextView.setTextColor(Color.parseColor("#008000"));

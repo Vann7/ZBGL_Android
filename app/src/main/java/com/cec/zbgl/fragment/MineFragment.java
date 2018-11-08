@@ -1,6 +1,6 @@
 package com.cec.zbgl.fragment;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,7 +26,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.tab04, container, false);
+        return inflater.inflate(R.layout.fragment_mine, container, false);
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -94,6 +94,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
 
                 })
                 .create();
+
         alertDialog.show();
 
     }

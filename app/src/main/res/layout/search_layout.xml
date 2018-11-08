@@ -22,11 +22,11 @@
 
             <ImageView
             android:id="@+id/search_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="5dp"
             android:layout_gravity="center_vertical"
-            android:padding="10dp"
-            android:src="@mipmap/back" />
+            android:src="@mipmap/back_light" />
 
             <com.cec.zbgl.utils.searchview.EditText_Clear
                 android:id="@+id/et_search"
@@ -51,7 +51,6 @@
                 android:gravity="center_vertical"
                 android:layout_marginLeft="5dp"
                 android:textColor="@color/white"
-                android:textStyle="bold"
                 android:text="搜索"/>
         </LinearLayout>
     </LinearLayout>
