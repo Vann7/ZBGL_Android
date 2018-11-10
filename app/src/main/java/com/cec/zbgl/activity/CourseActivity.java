@@ -1,10 +1,17 @@
 package com.cec.zbgl.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.cec.zbgl.BuildConfig;
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.CourseAdapter;
 import com.cec.zbgl.adapter.CourseAddAdapter;
@@ -27,10 +35,16 @@ import com.cec.zbgl.utils.ToastUtils;
 import com.cec.zbgl.utils.VideoUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import me.nereo.multi_image_selector.MultiImageSelector;
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -47,13 +61,18 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private CourseAddAdapter addAdapter;
     private boolean isShowing = false;
     private ImageUtil imageUtil;
-    private File tempFile;
-    private String imgName;
+    private Uri mUriPath;
     private String videoName;
+    private AlertDialog alertDialog;
+    private String imageName;
 
     private int IS_TITLE_OR_NOT =1;
     private int MESSAGE = 2;
-
+    private long sizeLimit = 1024*1024*1024L;//(1GB视频大小限制)
+    private final int CONS_IMAGE = 0;
+    private final int CONS_VIDEO = 1;
+    private final int CONS_DOCUMENT = 2;
+    private final int CONS_LEAD_PHOTO = 3;
 
     private List<DeviceCourse> mData =new ArrayList<>();
     private Map<Integer, DeviceCourse> map = new HashMap<Integer, DeviceCourse>();
@@ -62,6 +81,12 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
+
+        // android 7.0系统解决拍照的问题
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
+
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         initData();
         initView();
@@ -99,6 +124,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         list.add("拍摄照片");
         list.add("拍摄视频");
         list.add("导入文档");
+        list.add("导入照片");
 
         addAdapter = new CourseAddAdapter(R.layout.course_add,this,list,course_lv);
         course_lv.setAdapter(addAdapter);
@@ -160,7 +186,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 String fileName;
                 Intent intent;
                 switch (mData.get(position).getCourseType()) {
-                    case 1 :
+                    case Constant.COURSE_IMAGE :
 //                        fileName = "/storage/emulated/0/DCIM/Camera/IMG_20181030_113211.jpg";
                         fileName = "android.resource://" + getPackageName()
                                 + "/" + R.mipmap.nba;
@@ -169,12 +195,12 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
                         ToastUtils.showShort("展示图片");
                         break;
-                    case 2 :
+                    case Constant.COURSE_VIDEO :
                         System.out.println(getPackageName());
                         intent = new Intent(CourseActivity.this, MediaActivity.class);
                         startActivity(intent);
                         break;
-                    case 3 :
+                    case Constant.COURSE_DOCUMENT :
 //                        fileName = "storage/emulated/0/Download/11111.txt";
                         fileName = "android.resource://" + getPackageName()
                                 + "/" + R.raw.demo3;
@@ -186,35 +212,49 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
             }
 
+            //长按item 删除指定条目item
             @Override
             public void onItemLongClick(View v, int position) {
-                ToastUtils.showShort("onItemLongClick: "+mData.get(position).toString() + "-"+position);
+
+
+                switch (mData.get(position).getCourseType()) {
+                    case Constant.COURSE_IMAGE :
+//
+                        break;
+                    case Constant.COURSE_VIDEO :
+
+                        break;
+                    case Constant.COURSE_DOCUMENT :
+//
+                        break;
+                }
+                deleteItem(position);
             }
         });
 
         addAdapter.setOnListClickListener(position -> {
             switch (position) {
-                case 0:
-                    imgName = "1108";
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
-                            new File(Environment.getExternalStorageDirectory(),imgName)
-                    ));
-                    startActivityForResult(cameraIntent, Constant.CODE_CAMERA_REQUEST);
+                case CONS_IMAGE:
+                   takePhoto();
                     break;
-                case 1:
+                case CONS_VIDEO :
                     videoName = "1108";
                     Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     if (videoIntent.resolveActivity(getPackageManager()) != null) {
                         videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
                                 new File(Environment.getExternalStorageDirectory(),videoName)
                         ));
+                        videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+                        videoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, sizeLimit);
                         startActivityForResult(videoIntent,Constant.CODE_VIDEO_REQUEST);
                     }
                     break;
-                case 2:
-                    ToastUtils.showShort("导入文档");
+                case CONS_DOCUMENT:
+
+
                     break;
+                case CONS_LEAD_PHOTO :
+                    pickPhoto();
             }
             disappear();
         });
@@ -224,17 +264,23 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
         switch (requestCode) {
             case Constant.CODE_CAMERA_REQUEST:
-                tempFile = new File(Environment.getExternalStorageDirectory(), imgName);
+                    List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                    System.out.println(path);
                 break;
             case Constant.CODE_VIDEO_REQUEST:
-                Uri videoUri = data.getData();
-                String path = VideoUtils.getPath(this, videoUri);
-                boolean exits = new File(path).exists();
-                ToastUtils.showShort("拍摄成功: " + path);
+                ToastUtils.showShort("拍摄成功");
+                break;
+            case Constant.CODE_PHOTO_REQUEST:
+                List<String> path1 = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                ToastUtils.showShort(path1.toString());
                 break;
         }
+
     }
 
     @Override
@@ -269,9 +315,33 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         marsker_tv.setVisibility(GONE);
         course_lv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
         course_lv.setVisibility(GONE);
-
     }
 
+    //启动camera拍照
+    private void pickPhoto() {
+        ArrayList<String> defaultDataArray = new ArrayList<>();
+        Intent intent = new Intent(this, MultiImageSelectorActivity.class);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
+        startActivityForResult(intent, Constant.CODE_PHOTO_REQUEST);
+    }
+
+    private void takePhoto() {
+        String dir = Environment.getExternalStorageDirectory().toString();
+      File file = new File(dir);
+      if (!file.exists()) {
+          file.mkdir();
+      }
+      Uri picUri;
+      imageName = System.currentTimeMillis() + ".jpg";
+      File pictureFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+imageName);
+      Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        picUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider", pictureFile);
+      intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+      startActivityForResult(intent, Constant.CODE_CAMERA_REQUEST);
+    }
 
     //设置recyclerView中item的上下左右间距
     public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
@@ -296,5 +366,35 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
         }
     }
+
+
+    private void deleteItem(int position) {
+        alertDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
+                .setMessage("删除本条教程")
+                .setPositiveButton("删除", (dialog, which) -> {
+                    mAdapter.removeData(position);
+                })
+                .setNegativeButton("取消", (dialog, which) -> {
+
+                })
+                .create();
+        alertDialog.show();
+        //修改Message字体颜色
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(alertDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.BLACK);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

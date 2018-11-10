@@ -125,8 +125,16 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void checkTreeItem(List<DeviceInfo> items) {
-        mDatas = items;
+//    public void checkTreeItem(List<DeviceInfo> items) {
+//        mDatas = items;
+//        notifyDataSetChanged();
+//    }
+
+    //  删除数据
+    public void removeData(int position) {
+        mDatas.remove(position);
+        //删除动画
+        notifyItemRemoved(position);
         notifyDataSetChanged();
     }
 
@@ -136,6 +144,11 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      */
     public void changeMoreStatus(int status){
         mLoadMoreStatus=status;
+        notifyDataSetChanged();
+    }
+
+    public void changeData(List<DeviceInfo> items) {
+        mDatas = items;
         notifyDataSetChanged();
     }
 

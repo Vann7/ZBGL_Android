@@ -50,8 +50,12 @@
         <activity android:name=".activity.WXActivity" />
         <!-- <activity android:name=".activity.HomeActivity"/> -->
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.VideoActivity" />
         <activity android:name=".activity.MediaActivity"/>
+
+        <!--Image Selector Entry-->
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
     </application>
 
 </manifest>

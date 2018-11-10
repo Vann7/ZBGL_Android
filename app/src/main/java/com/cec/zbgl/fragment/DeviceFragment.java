@@ -1,7 +1,6 @@
 package com.cec.zbgl.fragment;
 
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,7 +32,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.support.v7.app.AlertDialog;
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
 import com.cec.zbgl.activity.CourseActivity;
@@ -48,12 +47,14 @@ import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.utils.ToastUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
@@ -84,7 +85,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private TextView org_course_btn;
     private TextView org_course_name;
     private TextView org_course_desc;
-
+    private AlertDialog alertDialog;
 
     private boolean isShowing = false;
     private List<HashMap<Integer, String>> mList = new ArrayList<>();
@@ -130,6 +131,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 break;
             case SEARCH_BACK :
                 String name = data.getStringExtra("result");
+                search(name);
                 ToastUtils.showShort("检索词: "+ name);
         }
     }
@@ -277,6 +279,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+        //装备列表监听 点击事件
         mRefreshAdapter.setOnListClickListener(new ItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
@@ -288,7 +291,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onItemLongClick(View v, int position) {
-                ToastUtils.showShort(devices.get(position).toString() + "-"+position);
+                deleteItem(position);
             }
 
         });
@@ -329,7 +332,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             }
         }
         devices = checkDatas;
-        mRefreshAdapter.checkTreeItem(checkDatas);
+        mRefreshAdapter.changeData(checkDatas);
         showData();
     }
 
@@ -362,17 +365,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             String itemName = mList.get(position).get(FILTER_TYPE_ITEM);
             if (selectedMaps.get(mList.get(position).get(FILTER_TYPE_ITEM)) == null) {
                 selectedMaps.put(mList.get(position).get(FILTER_TYPE_ITEM), 1);
-//                v.setBackgroundColor(Color.LTGRAY);
 
             } else {
                 selectedMaps.remove(mList.get(position).get(FILTER_TYPE_ITEM));
-//                v.setBackgroundColor(Color.WHITE);
             }
-
-//            v.setBackgroundColor(Color.YELLOW);
-//                filterAdapter.notifyItemChanged(position);
             filterAdapter.changeSelected(position,selectedMaps,itemName);
-
         });
         filter_rv.setAdapter(filterAdapter);
         GridLayoutManager filterManager = new GridLayoutManager(getContext(),5);
@@ -389,6 +386,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 }
             }
         });
+    }
+
+
+    private void search(String name) {
+        List<DeviceInfo> sList =  devices.stream().filter(device ->
+            name.equals(device.getName())
+        ).collect(Collectors.toList());
+        mRefreshAdapter.changeData(sList);
     }
 
     //初始化监听接口
@@ -528,6 +533,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+
     //权限判断
     public boolean authority() {
         // 版本判断。当手机系统大于 23 时，才有必要去判断权限是否获取
@@ -546,7 +552,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     // 提示用户去应用设置界面手动开启权限
     private void showDialogTipUserGoToAppSettting(){
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
+        alertDialog = new AlertDialog.Builder(getContext(),R.style.appalertdialog)
                 .setTitle("存储权限不可用").setMessage("请在-应用设置-权限-中，允许应用使用摄像头权限")
                 .setPositiveButton("立即开启", (dialog1, which) -> {
                     // 跳转到应用设置界面
@@ -555,13 +561,22 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                     Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
                     intent.setData(uri);
                     startActivityForResult(intent, 123);
-                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).setCancelable(false).show();
-
+                }).setNegativeButton("取消", (dialog12, which) ->
+                        dialog12.cancel()).setCancelable(false).show();
+        //修改Message字体颜色
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(alertDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.BLACK);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     //隐藏筛选tv
@@ -586,6 +601,36 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         filter_rv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
         masker_tv.setVisibility(VISIBLE);
         masker_tv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+    }
+
+    //删除指定item
+    private void deleteItem(int position) {
+        alertDialog = new AlertDialog.Builder(getContext(),R.style.appalertdialog)
+                .setMessage("删除本条信息")
+                .setPositiveButton("删除", (dialog, which) -> {
+                    mRefreshAdapter.removeData(position);
+//                    mList.remove(position);
+                })
+                .setNegativeButton("取消", (dialog, which) -> {
+
+                })
+                .create();
+        alertDialog.show();
+        //修改Message字体颜色
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(alertDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.BLACK);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

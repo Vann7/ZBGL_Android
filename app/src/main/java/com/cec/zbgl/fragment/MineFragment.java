@@ -1,5 +1,7 @@
 package com.cec.zbgl.fragment;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,18 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.LoginActivity;
 import com.cec.zbgl.activity.UserActivity;
 
-import org.w3c.dom.Text;
+import java.lang.reflect.Field;
 
 
 public class MineFragment extends Fragment implements View.OnClickListener {
 
     private TextView logout_tv;
     private RelativeLayout pd_rl;
+
+    private AlertDialog.Builder builder;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,9 +85,9 @@ public class MineFragment extends Fragment implements View.OnClickListener {
      * 注销当前登录用户
      */
     public void logout() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle("退出当前账号")
-                .setMessage("退出后不会删除任何当前账户信息")
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext(),R.style.appalertdialog)
+                .setTitle("退出")
+                .setMessage("退出后不会删除当前账户信息")
                 .setPositiveButton("确定", (dialog, which) -> {
                     Intent intent = new Intent(getActivity(), LoginActivity.class);
                     startActivity(intent);
@@ -96,6 +99,19 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 .create();
 
         alertDialog.show();
-
+        //修改Message字体颜色
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(alertDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.BLACK);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 }

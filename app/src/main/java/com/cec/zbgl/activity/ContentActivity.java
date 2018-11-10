@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -34,6 +35,7 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -170,7 +172,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 this.finish();
                 break;
             case R.id.device_delete :
-                ToastUtils.showShort("删除本条信息");
+                deleteItem();
                 break;
             case R.id.device_save_btn :
                 ToastUtils.showShort("保存本条信息");
@@ -307,6 +309,36 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
         }
+    }
+
+    //删除指定item
+    private void deleteItem() {
+        AlertDialog deleteDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
+                .setMessage("删除本条信息")
+                .setPositiveButton("删除", (dialog, which) -> {
+                    ToastUtils.showShort("删除本条信息");
+                    finish();
+                })
+                .setNegativeButton("取消", (dialog, which) -> {
+
+                })
+                .create();
+        deleteDialog.show();
+        //修改Message字体颜色
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object mAlertController = mAlert.get(deleteDialog);
+            Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+            mMessage.setAccessible(true);
+            TextView mMessageView = (TextView) mMessage.get(mAlertController);
+            mMessageView.setTextColor(Color.BLACK);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

@@ -45,12 +45,13 @@
     </style>
     <!--按钮样式-->
     <style name="appalertdialogbuttonstyle" parent="android:Widget">
-        <item name="android:background">@drawable/abc_btn_default_mtrl_shape</item>
+        <!--<item name="android:background">@drawable/abc_btn_default_mtrl_shape</item>-->
         <item name="android:textAppearance">?android:attr/textAppearanceButton</item>
         <item name="android:minHeight">48dip</item>
         <item name="android:minWidth">88dip</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
+        <item name="android:textColor">@color/orangered</item>
         <item name="android:gravity">center_vertical|center_horizontal</item>
     </style>
 

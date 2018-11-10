@@ -110,11 +110,15 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
                     break;
             }
         }
+    }
 
 
-
-
-
+    //  删除数据
+    public void removeData(int p) {
+        mData.remove(p);
+        //删除动画
+        notifyItemRemoved(p);
+        notifyDataSetChanged();
     }
 
     //判断RecyclerView的子项样式，返回一个int值表示

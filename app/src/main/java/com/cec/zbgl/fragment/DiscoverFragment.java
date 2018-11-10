@@ -185,7 +185,7 @@ public class DiscoverFragment extends Fragment implements View.OnClickListener {
             }
         }
         devices = checkDatas;
-        mRefreshAdapter.checkTreeItem(checkDatas);
+        mRefreshAdapter.changeData(checkDatas);
         showData();
     }
 

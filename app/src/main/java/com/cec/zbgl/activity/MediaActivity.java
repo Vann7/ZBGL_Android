@@ -215,6 +215,7 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 //            tvCurrentT.setText(mp.getCurrentPosition() / 1000 + "");
             tvCurrentT.setText("00:00");
             progressBar.setMax(mp.getDuration());
+            progressBar_filled.setMax(mp.getDuration());
             updateView();
         });
 
@@ -313,6 +314,7 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
                 System.out.println(mediaPlayer.getCurrentPosition() / 1000);
                 tvCurrentT.setText(TimeUtils.stringForTime(mediaPlayer.getCurrentPosition()));
                 progressBar.setProgress(mediaPlayer.getCurrentPosition());
+                progressBar_filled.setProgress(mediaPlayer.getCurrentPosition());
             }
             updateView();
         }, 1000);
@@ -327,12 +329,13 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
                 break;
             case R.id.surface_play :
                 image_iv.setVisibility(GONE);
-                play_iv.setVisibility(GONE);
-                pause_iv.setVisibility(VISIBLE);
-                    mediaPlayer.start();
-//                    handler.postDelayed(() -> {
-//                        disappear();
-//                    },2000);
+                disappear();
+//                play_iv.setVisibility(GONE);
+//                pause_iv.setVisibility(VISIBLE);
+                mediaPlayer.start();
+//                handler.postDelayed(() -> {
+//                    disappear();
+//                },2000);
                 break;
             case R.id.surface_back :
                 finish();
@@ -350,6 +353,7 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private void disappear() {
         masker_tv.setVisibility(GONE);
+        System.out.println("隐藏:" + masker_tv.getVisibility());
         back_iv.setVisibility(GONE);
         play_iv.setVisibility(GONE);
         pause_iv.setVisibility(GONE);
@@ -360,6 +364,7 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private void appear() {
         masker_tv.setVisibility(VISIBLE);
+        System.out.println("显示:" + masker_tv.getVisibility());
         if (mediaPlayer.isPlaying()){
             pause_iv.setVisibility(VISIBLE);
         }else {

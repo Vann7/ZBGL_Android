@@ -48,14 +48,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         init();
     }
 
-
-
     private void init() {
         btn = (Button)findViewById(R.id.loginButton);
         btn.setOnClickListener(this);
         db_btn = (Button) findViewById(R.id.createDb_btn);
         db_btn.setOnClickListener(this);
-
         e1=(EditText)findViewById(R.id.phonenumber);
         e2=(EditText)findViewById(R.id.password);
         m1=(ImageView)findViewById(R.id.del_phonenumber);
@@ -70,12 +67,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         User user = new User(e1.getText().toString(), e2.getText().toString());
         switch (v.getId()) {
             case R.id.loginButton:
-
                 if (user.getName().equals("")  || user.getPassword().equals("")) {
                     ToastUtils.showShort("用户名和密码不能为空");
                     return;
                 }
-
                 int flag = userService.checkUser(user);
                 if (flag == 1){
                     ToastUtils.showShort("已登录");
