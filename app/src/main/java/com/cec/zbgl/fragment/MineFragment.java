@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.LoginActivity;
 import com.cec.zbgl.activity.UserActivity;
+import com.cec.zbgl.utils.CacheUtil;
 
 import java.lang.reflect.Field;
 
@@ -21,8 +22,9 @@ import java.lang.reflect.Field;
 public class MineFragment extends Fragment implements View.OnClickListener {
 
     private TextView logout_tv;
-    private RelativeLayout pd_rl;
-
+    private RelativeLayout password_rl;
+    private RelativeLayout clearCache_rl;
+    private TextView cacheSize_tv;
     private AlertDialog.Builder builder;
 
     @Override
@@ -34,8 +36,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initViews();
-
+        initView();
         initEvent();
     }
 
@@ -43,16 +44,24 @@ public class MineFragment extends Fragment implements View.OnClickListener {
      * 绑定事件
      */
     private void initEvent() {
-        pd_rl.setOnClickListener(this);
+        password_rl.setOnClickListener(this);
+        clearCache_rl.setOnClickListener(this);
         logout_tv.setOnClickListener(this);
     }
 
     /**
      * 初始化界面view
      */
-    private void initViews() {
+    private void initView() {
         logout_tv = (TextView) getActivity().findViewById(R.id.mine_out_tv);
-        pd_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_user_rl);
+        password_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_user_rl);
+        clearCache_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_clear_cache_rl);
+        cacheSize_tv = (TextView) getActivity().findViewById(R.id.cache_size);
+        try {
+            cacheSize_tv.setText(CacheUtil.getTotalCacheSize(getContext()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -75,10 +84,19 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 Intent intent = new Intent(getActivity(), UserActivity.class);
                 getActivity().startActivity(intent);
                 break;
-
+            case R.id.mine_clear_cache_rl :
+                clean();
+                break;
         }
     }
 
+    /**
+     *
+     */
+    private void clean() {
+        CacheUtil.clearAllCache(getContext());
+        cacheSize_tv.setText("0MB");
+    }
 
 
     /**

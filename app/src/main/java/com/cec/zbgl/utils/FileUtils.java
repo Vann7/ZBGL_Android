@@ -1,8 +1,11 @@
 package com.cec.zbgl.utils;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,6 +19,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static android.os.Environment.MEDIA_MOUNTED;
 
 /**
  * Author   :hymanme
@@ -314,4 +321,70 @@ public class FileUtils {
         }
         return null;
     }
+
+
+    /**
+     * 创建视频文件
+     * @return
+     * @throws IOException
+     */
+    public static File createMediaFile(Context context) throws IOException {
+        File dir = null;
+        if(TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_MOUNTED)) {
+            dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+            if (!dir.exists()) {
+                dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES + "/Camera");
+                if (!dir.exists()) {
+                    dir = getCacheDirectory(context, true);
+                }
+            }
+        }else{
+            dir = getCacheDirectory(context, true);
+        }
+        return File.createTempFile("VID", ".mp4", dir);
+    }
+
+    public static File getCacheDirectory(Context context, boolean preferExternal) {
+        File appCacheDir = null;
+        String externalStorageState;
+        try {
+            externalStorageState = Environment.getExternalStorageState();
+        } catch (NullPointerException e) { // (sh)it happens (Issue #660)
+            externalStorageState = "";
+        } catch (IncompatibleClassChangeError e) { // (sh)it happens too (Issue #989)
+            externalStorageState = "";
+        }
+        if (preferExternal && MEDIA_MOUNTED.equals(externalStorageState) && hasExternalStoragePermission(context)) {
+            appCacheDir = getExternalCacheDir(context);
+        }
+        if (appCacheDir == null) {
+            appCacheDir = context.getCacheDir();
+        }
+        if (appCacheDir == null) {
+            String cacheDirPath = "/data/data/" + context.getPackageName() + "/cache/";
+            appCacheDir = new File(cacheDirPath);
+        }
+        return appCacheDir;
+    }
+
+    private static File getExternalCacheDir(Context context) {
+        File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
+        File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
+        if (!appCacheDir.exists()) {
+            if (!appCacheDir.mkdirs()) {
+                return null;
+            }
+            try {
+                new File(appCacheDir, ".nomedia").createNewFile();
+            } catch (IOException e) {
+            }
+        }
+        return appCacheDir;
+    }
+
+    private static boolean hasExternalStoragePermission(Context context) {
+        int perm = context.checkCallingOrSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+        return perm == PackageManager.PERMISSION_GRANTED;
+    }
+
 }

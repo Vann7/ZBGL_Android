@@ -117,5 +117,6 @@ public class DeviceAdapter extends BaseAdapter {
         private TextView name_tv;
         private TextView type_tv;
         private TextView location_tv;
+
     }
 }

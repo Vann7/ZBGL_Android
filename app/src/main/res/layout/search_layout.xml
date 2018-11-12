@@ -55,7 +55,30 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/result_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <!--<ScrollView-->
+            <!--android:id="@+id/result_sv"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/greenyellow">-->
+
+            <ListView
+                android:id="@+id/search_result_lv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+
+        <!--</ScrollView>-->
+    </LinearLayout>
+
+
     <ScrollView
+        android:id="@+id/list_sv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -82,4 +105,6 @@
                 android:text="清除搜索历史" />
         </LinearLayout>
     </ScrollView>
+
+
 </LinearLayout>

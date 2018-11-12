@@ -52,8 +52,7 @@
             android:hint="请输入密码"
             android:inputType="textPassword"
             android:padding="1dp"
-            android:textSize="16dp"
-            android:text="123">
+            android:textSize="16dp">
 
             <requestFocus />
         </EditText>
@@ -132,12 +131,12 @@
         android:layout_width="400dp"
         android:layout_height="60dp"
         android:layout_below="@+id/user_rl_02"
-        android:background="@color/white"
+        android:background="@drawable/login_button_selector"
         android:text="修改密码"
         android:gravity="center"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:textColor="@color/gray"
+        android:textColor="@color/white"
         android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true" />
 

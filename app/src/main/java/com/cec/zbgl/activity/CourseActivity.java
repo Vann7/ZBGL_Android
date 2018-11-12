@@ -1,15 +1,21 @@
 package com.cec.zbgl.activity;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +23,12 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cec.zbgl.BuildConfig;
 import com.cec.zbgl.R;
@@ -33,6 +41,7 @@ import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.OpenFileUtil;
 import com.cec.zbgl.utils.ToastUtils;
 import com.cec.zbgl.utils.VideoUtils;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,6 +54,8 @@ import java.util.Map;
 
 import me.nereo.multi_image_selector.MultiImageSelector;
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
+import me.nereo.multi_image_selector.MultiImageSelectorFragment;
+import me.nereo.multi_image_selector.utils.FileUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -58,6 +69,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private GridLayoutManager mGridLayoutManager;
     private ListView course_lv;
     private TextView marsker_tv;
+    private ImageView image_iv; //图片展示iv
     private CourseAddAdapter addAdapter;
     private boolean isShowing = false;
     private ImageUtil imageUtil;
@@ -65,6 +77,10 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private String videoName;
     private AlertDialog alertDialog;
     private String imageName;
+    private File mTmpFile;
+    private File mVideoFile;
+    private static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 110;
+    private static final int REQUEST_CAMERA = 100;
 
     private int IS_TITLE_OR_NOT =1;
     private int MESSAGE = 2;
@@ -73,9 +89,12 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private final int CONS_VIDEO = 1;
     private final int CONS_DOCUMENT = 2;
     private final int CONS_LEAD_PHOTO = 3;
+    private int mGridWidth;
 
     private List<DeviceCourse> mData =new ArrayList<>();
-    private Map<Integer, DeviceCourse> map = new HashMap<Integer, DeviceCourse>();
+    private List<DeviceCourse> mData_Imag =new ArrayList<>();
+    private List<DeviceCourse> mData_Video =new ArrayList<>();
+    private List<DeviceCourse> mData_Doc =new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +107,23 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         builder.detectFileUriExposure();
 
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
+        initWidth();
         initData();
         initView();
         initEvent();
+    }
+
+    private void initWidth() {
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        int width = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point size = new Point();
+            wm.getDefaultDisplay().getSize(size);
+            width = size.x;
+        }else{
+            width = wm.getDefaultDisplay().getWidth();
+        }
+        mGridWidth = width;
     }
 
     private void initView() {
@@ -132,6 +165,8 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         marsker_tv.bringToFront();
         course_lv.bringToFront();
 
+        image_iv = (ImageView) findViewById(R.id.show_image_iv);
+
     }
 
     private void initData() {
@@ -145,29 +180,38 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 type = 1;
                 name = "图片教程";
                 typyName = "图片";
+                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
+                        "教程类别为:"+typyName,"false","item "+(i+1));
+                mData_Imag.add(c0);
             }else if (i < 18){
                 type = 2;
                 name = "视频教程";
                 typyName = "视频";
+                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
+                        "教程类别为:"+typyName,"false","item "+(i+1));
+                mData_Video.add(c0);
             } else {
                 type = 3;
                 name = "文档教程";
                 typyName = "文档";
+                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
+                        "教程类别为:"+typyName,"false","item "+(i+1));
+                mData_Doc.add(c0);
             }
-            map = new HashMap<Integer, DeviceCourse>();
-            DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                    "教程类别为:"+typyName,"false","item "+(i+1));
-            mData.add(c0);
+
+
         }
         //对分类标题进行初始化
         DeviceCourse c1 = new DeviceCourse("true","图片教程",101);
-        mData.add(0,c1);
-
+        mData_Imag.add(0,c1);
         DeviceCourse c2 = new DeviceCourse("true","视频教程",101);
-        mData.add( 10,c2);
-
+        mData_Video.add( 0,c2);
         DeviceCourse c3 = new DeviceCourse("true","文档教程",101);
-        mData.add(20,c3);
+        mData_Doc.add(0,c3);
+
+        mData.addAll(mData_Imag);
+        mData.addAll(mData_Video);
+        mData.addAll(mData_Doc);
 
     }
 
@@ -190,10 +234,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 //                        fileName = "/storage/emulated/0/DCIM/Camera/IMG_20181030_113211.jpg";
                         fileName = "android.resource://" + getPackageName()
                                 + "/" + R.mipmap.nba;
-                        intent = OpenFileUtil.getImageFileIntent(fileName);
-                        startActivity(intent);
+//                        intent = OpenFileUtil.getImageFileIntent(fileName);
+//                        startActivity(intent);
+                        String src = mData.get(position).getLocation();
+                        showImage(src);
 
-                        ToastUtils.showShort("展示图片");
                         break;
                     case Constant.COURSE_VIDEO :
                         System.out.println(getPackageName());
@@ -206,7 +251,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                                 + "/" + R.raw.demo3;
                         intent = OpenFileUtil.getTextFileIntent(fileName,false);
                         startActivity(intent);
-                        ToastUtils.showShort("查看文档");
                         break;
                 }
 
@@ -238,16 +282,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                    takePhoto();
                     break;
                 case CONS_VIDEO :
-                    videoName = "1108";
-                    Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    if (videoIntent.resolveActivity(getPackageManager()) != null) {
-                        videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(
-                                new File(Environment.getExternalStorageDirectory(),videoName)
-                        ));
-                        videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-                        videoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, sizeLimit);
-                        startActivityForResult(videoIntent,Constant.CODE_VIDEO_REQUEST);
-                    }
+                    takeVideo();
                     break;
                 case CONS_DOCUMENT:
 
@@ -259,26 +294,46 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             disappear();
         });
 
+        image_iv.setOnClickListener(this);
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
         if (resultCode != RESULT_OK) {
             return;
         }
         switch (requestCode) {
             case Constant.CODE_CAMERA_REQUEST:
-                    List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
-                    System.out.println(path);
+                if (mTmpFile != null) {
+                    // notify system the image has change
+                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mTmpFile)));
+                    DeviceCourse c0 = new DeviceCourse("121","text123",1,
+                            "教程类别为:"+"图片","false","item "+(121+1));
+                    c0.setLocation(mTmpFile.getAbsolutePath());
+                    mData_Imag.add(c0);
+                }
+                collectData();
                 break;
             case Constant.CODE_VIDEO_REQUEST:
-                ToastUtils.showShort("拍摄成功");
+                if (mVideoFile != null) {
+                    // notify system the image has change
+                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mVideoFile)));
+                    ToastUtils.showShort(mVideoFile.getAbsolutePath());
+                }
                 break;
             case Constant.CODE_PHOTO_REQUEST:
-                List<String> path1 = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
-                ToastUtils.showShort(path1.toString());
+                List<String> paths = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                for (int i=0; i< paths.size(); i++) {
+                    DeviceCourse c0 = new DeviceCourse("121","text123",1,
+                            "教程类别为:"+"图片","false","item "+(121+1));
+                    c0.setLocation(paths.get(i));
+                    mData_Imag.add(c0);
+                }
+                collectData();
                 break;
+
         }
 
     }
@@ -300,6 +355,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.course_masker :
                 disappear();
                 break;
+            case R.id.show_image_iv :
+                image_iv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
+                image_iv.setVisibility(GONE);
         }
     }
 
@@ -317,7 +375,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         course_lv.setVisibility(GONE);
     }
 
-    //启动camera拍照
+    /**
+     * 相册选取照片(支持拍照)
+     */
     private void pickPhoto() {
         ArrayList<String> defaultDataArray = new ArrayList<>();
         Intent intent = new Intent(this, MultiImageSelectorActivity.class);
@@ -328,22 +388,69 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         startActivityForResult(intent, Constant.CODE_PHOTO_REQUEST);
     }
 
+    /**
+     * 拍摄照片
+     */
     private void takePhoto() {
-        String dir = Environment.getExternalStorageDirectory().toString();
-      File file = new File(dir);
-      if (!file.exists()) {
-          file.mkdir();
-      }
-      Uri picUri;
-      imageName = System.currentTimeMillis() + ".jpg";
-      File pictureFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+imageName);
-      Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        picUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider", pictureFile);
-      intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
-      startActivityForResult(intent, Constant.CODE_CAMERA_REQUEST);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    getString(me.nereo.multi_image_selector.R.string.mis_permission_rationale_write_storage),
+                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
+        }else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(this.getPackageManager()) != null) {
+                try {
+                    mTmpFile = FileUtils.createTmpFile(this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (mTmpFile != null && mTmpFile.exists()) {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
+                    startActivityForResult(intent, Constant.CODE_CAMERA_REQUEST);
+                } else {
+                    Toast.makeText(this, me.nereo.multi_image_selector.R.string.mis_error_image_not_exist, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, me.nereo.multi_image_selector.R.string.mis_msg_no_camera, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
-    //设置recyclerView中item的上下左右间距
+
+    /**
+     * 拍摄视频
+     */
+    private void takeVideo() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED){
+            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    getString(me.nereo.multi_image_selector.R.string.mis_permission_rationale_write_storage),
+                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
+        }else {
+            Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            if (videoIntent.resolveActivity(this.getPackageManager()) != null) {
+                try {
+                    mVideoFile = com.cec.zbgl.utils.FileUtils.createMediaFile(this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(mVideoFile.exists());
+                if (mVideoFile != null && mVideoFile.exists()) {
+                    videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mVideoFile));
+                    videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+                    videoIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, sizeLimit);
+                    startActivityForResult(videoIntent,Constant.CODE_VIDEO_REQUEST);
+                }
+            }
+        }
+    }
+
+
+
+    /**
+     *  设置recyclerView中item的上下左右间距
+     */
     public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         private int space;
 
@@ -368,6 +475,10 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
+    /**
+     * 删除指定item
+     * @param position
+     */
     private void deleteItem(int position) {
         alertDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
                 .setMessage("删除本条教程")
@@ -394,6 +505,59 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * 权限请求
+     * @param permission
+     * @param rationale
+     * @param requestCode
+     */
+    private void requestPermission(final String permission, String rationale, final int requestCode){
+        if(shouldShowRequestPermissionRationale(permission)){
+            new AlertDialog.Builder(this)
+                    .setTitle(me.nereo.multi_image_selector.R.string.mis_permission_dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(me.nereo.multi_image_selector.R.string.mis_permission_dialog_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            requestPermissions(new String[]{permission}, requestCode);
+                        }
+                    })
+                    .setNegativeButton(me.nereo.multi_image_selector.R.string.mis_permission_dialog_cancel, null)
+                    .create().show();
+        }else{
+            requestPermissions(new String[]{permission}, requestCode);
+        }
+    }
+
+
+    public void collectData() {
+        mData.clear();
+        mData.addAll(mData_Imag);
+        mData.addAll(mData_Video);
+        mData.addAll(mData_Doc);
+        mAdapter.onDateChange(mData);
+    }
+
+    private void showImage(String uri) {
+        image_iv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_in));
+        image_iv.setVisibility(VISIBLE);
+        if (uri != null) {
+           File imageFile = new File(uri);
+            // 显示图片
+          /*   Picasso.with(this)
+                    .load(imageFile)
+                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                    .tag(MultiImageSelectorFragment.TAG)
+                    .resize(mGridWidth, mGridWidth)
+                    .centerCrop()
+                    .into(image_iv);*/
+          Bitmap bitmap = BitmapFactory.decodeFile(uri);
+           image_iv.setImageBitmap(bitmap);
+        } else {
+            image_iv.setImageResource(R.mipmap.default_image);
+        }
     }
 
 

@@ -40,6 +40,7 @@ public class Constant {
     public static final String CONTENT_TYPE = "类别";
     public static final String CONTENT_STATUS = "状态";
     public static final String CONTENT_STSTEM = "系统";
+    public static final String CONTENT_ICON = "修改头像";
 
     public static final int COURSE_IMAGE = 1;
     public static final int COURSE_VIDEO = 2;

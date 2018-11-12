@@ -1,9 +1,12 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.graphics.Point;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.holder.TypeDocmentHolder;
@@ -12,6 +15,7 @@ import com.cec.zbgl.holder.TypeItemHolder;
 import com.cec.zbgl.holder.TypeVideoHolder;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
+import com.cec.zbgl.model.DeviceInfo;
 
 import java.util.List;
 
@@ -19,6 +23,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
     private LayoutInflater mLayoutInflater;
     private List<DeviceCourse> mData;
+    private Context mContext;
 
     private static final int VIEW_TYPE_TITLE= 101;
     private static final int VIEW_TYPE_ITEM = 100;
@@ -26,11 +31,25 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     int MESSAGE = 2;
     int ColumnNum = 6;
     private ItemClickListener mListener;
+    private int mGridWidth;
 
 
     public CourseAdapter(Context context, List<DeviceCourse> mData) {
         mLayoutInflater = LayoutInflater.from(context);
+        mContext = context;
         this.mData = mData;
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        int width = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point size = new Point();
+            wm.getDefaultDisplay().getSize(size);
+            width = size.x;
+        }else{
+            width = wm.getDefaultDisplay().getWidth();
+        }
+        mGridWidth = width / 3;
+
 
     }
 
@@ -48,7 +67,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         switch (viewType) {
             case  DeviceCourse.TYPE_ONE :
                 TypeImageHolder oneHolder = new TypeImageHolder(mLayoutInflater.inflate
-                        (R.layout.course_image,parent,false));
+                        (R.layout.course_image,parent,false), mContext,mGridWidth);
 
                 oneHolder.itemView.setOnClickListener( v -> {
                     mListener.onItemClick(v, oneHolder.getLayoutPosition());
@@ -61,7 +80,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
             case   DeviceCourse.TYPE_TWO:
                 TypeVideoHolder twoHolder = new TypeVideoHolder(mLayoutInflater.inflate
-                        (R.layout.course_video,parent,false));
+                        (R.layout.course_video,parent,false), mContext);
 
                 twoHolder.itemView.setOnClickListener( v -> {
                     mListener.onItemClick(v, twoHolder.getLayoutPosition());
@@ -74,7 +93,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
             case   DeviceCourse.TYPE_THREE:
                 TypeDocmentHolder threeHolder =  new TypeDocmentHolder(mLayoutInflater.inflate
-                        (R.layout.course_document,parent,false));
+                        (R.layout.course_document,parent,false), mContext);
 
                 threeHolder.itemView.setOnClickListener( v -> {
                     mListener.onItemClick(v, threeHolder.getLayoutPosition());
@@ -119,6 +138,11 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         //删除动画
         notifyItemRemoved(p);
         notifyDataSetChanged();
+    }
+
+    public void onDateChange(List<DeviceCourse> courses) {
+        this.mData = courses;
+        this.notifyDataSetChanged();
     }
 
     //判断RecyclerView的子项样式，返回一个int值表示

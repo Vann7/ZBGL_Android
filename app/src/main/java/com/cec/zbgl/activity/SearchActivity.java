@@ -27,13 +27,13 @@ public class SearchActivity extends AppCompatActivity {
 
         // 4. 设置点击搜索按键后的操作（通过回调接口）
         // 参数 = 搜索框输入的内容
-        searchView.setOnClickSearch(string -> {
+/*        searchView.setOnClickSearch(string -> {
 //                System.out.println("我收到了" + string);
             Intent resultIntent = new Intent();
             resultIntent.putExtra("result", string);
             this.setResult(-2, resultIntent);
-            SearchActivity.this.finish();
-        });
+//            SearchActivity.this.finish();
+        });*/
 
         // 5. 设置点击返回按键后的操作（通过回调接口）
         searchView.setOnClickBack(() -> {
@@ -41,11 +41,10 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         // 6. 设置点击item后的操作（通过回调接口）
-        searchView.setOnItemClick((name, position) ->  {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("result", name);
-            this.setResult(-2, resultIntent);
-            SearchActivity.this.finish();
+        searchView.setOnItemClick((id, position) ->  {
+            Intent intent = new Intent(this, ContentActivity.class);
+            intent.putExtra("id", id);
+            startActivity(intent);
         });
 
     }

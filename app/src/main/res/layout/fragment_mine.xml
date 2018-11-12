@@ -55,6 +55,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/mine_clear_cache_rl"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginRight="10dp"
@@ -72,6 +73,7 @@
             android:text="清除缓存"/>
         
         <TextView
+            android:id="@+id/cache_size"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_alignParentRight="true"

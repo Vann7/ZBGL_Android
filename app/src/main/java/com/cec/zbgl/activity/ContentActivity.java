@@ -36,9 +36,14 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.cec.zbgl.common.Constant.CONTENT_ICON;
 import static com.cec.zbgl.common.Constant.CONTENT_STATUS;
 import static com.cec.zbgl.common.Constant.CONTENT_STSTEM;
 import static com.cec.zbgl.common.Constant.CONTENT_TYPE;
@@ -75,6 +80,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private String status[] = {"使用中","未入库","已入库","已出库"};
     private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
     private String systems[] = {"系统1","系统2","系统3","系统4"};
+    private String icons[] = {"从相册选取","拍摄"};
 
 
     @Override
@@ -82,6 +88,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
         mExtStorDir = Environment.getExternalStorageDirectory().toString();
+
         initView();
         initData();
         initEvent();
@@ -112,7 +119,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         delete_tv = (TextView) findViewById(R.id.device_delete);
-        delete_tv.setVisibility(VISIBLE);
+
+
 
         type_ll = (LinearLayout)findViewById(R.id.device_type_ll);
         status_ll = (LinearLayout)findViewById(R.id.device_status_ll);
@@ -125,18 +133,24 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      * 初始化et数据
      */
     private void initData() {
+        String id = getIntent().getStringExtra("id");
+        ToastUtils.showShort("id:" + id);
         device = (DeviceInfo) getIntent().getSerializableExtra("device");
-        name_Et.setText(device.getName());
-        type_Et.setText(String.valueOf(device.getType()));
-        location_Et.setText(device.getLocation());
-        count_Et.setText(String.valueOf(device.getCount()));
-        status_Et.setText(String.valueOf(device.getStatus()));
-        belongSys_Et.setText(device.getBelongSys());
-        createName_Et.setText(device.getCreaterName());
+        if (device != null) {
+            name_Et.setText(device.getName());
+            type_Et.setText(String.valueOf(device.getType()));
+            location_Et.setText(device.getLocation());
+            count_Et.setText(String.valueOf(device.getCount()));
+            status_Et.setText(String.valueOf(device.getStatus()));
+            belongSys_Et.setText(device.getBelongSys());
+            createName_Et.setText(device.getCreaterName());
 //        createTime_Et.setText(device.getCreateTime().toString());
-        description_Et.setText(device.getDescription());
-
-        head_tv.setText(device.getName());
+            description_Et.setText(device.getDescription());
+            head_tv.setText(device.getName());
+            delete_tv.setVisibility(VISIBLE);
+        }else {
+            delete_tv.setVisibility(GONE);
+        }
     }
 
     /**
@@ -164,9 +178,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 break;
             case R.id.id_device_image :
-                imageUtil = new ImageUtil(this);
-//                imageUtil.checkReadPermission();
-                imageUtil.checkStoragePermission();
+                popView(CONTENT_ICON, icons);
                 break;
             case R.id.bar_back_iv :
                 this.finish();
@@ -192,6 +204,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         // 用户没有进行有效的设置操作，返回
         if (resultCode == RESULT_CANCELED) {
             Toast.makeText(getApplication(), "取消", Toast.LENGTH_LONG).show();
@@ -210,7 +223,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
                     ToastUtils.showShort("没有SDCard!");
                 }
-
                 break;
 
             case Constant.CODE_RESULT_REQUEST:
@@ -223,11 +235,17 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                break;
+            case Constant.CODE_PHOTO_REQUEST:
+                List<String> paths = intent.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                String src = paths.get(0);
 
+                Bitmap bitmap = BitmapFactory.decodeFile(src);
+                setImageToHeadView(intent,bitmap);
                 break;
         }
 
-        super.onActivityResult(requestCode, resultCode, intent);
+
     }
 
     /**
@@ -298,6 +316,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                     belongSys_Et.setText(list[which]);
                 }));
                 break;
+            case CONTENT_ICON :
+                builder.setTitle("设置设备图片");
+                builder.setItems(list, ((dialog, which) -> {
+                    changeIcon(which);
+                }));
         }
         builder.show();
     }
@@ -337,6 +360,23 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private void changeIcon(int position){
+        if (position == 0) {
+            ArrayList<String> defaultDataArray = new ArrayList<>();
+            Intent intent = new Intent(this, MultiImageSelectorActivity.class);
+            intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+            intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 1);
+            intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+            intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
+            startActivityForResult(intent, Constant.CODE_PHOTO_REQUEST);
+        } else {
+            imageUtil = new ImageUtil(this);
+//        imageUtil.checkReadPermission();
+            imageUtil.checkStoragePermission();
         }
 
     }

@@ -286,6 +286,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 DeviceInfo node = devices.get(position);
                 Intent intent = new Intent(getActivity(), ContentActivity.class);
                 intent.putExtra("device",node);
+                intent.putExtra("id", node.getId());
                 startActivity(intent);
             }
 
@@ -632,6 +633,4 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         }
 
     }
-
-
 }

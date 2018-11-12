@@ -17,13 +17,20 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.adapter.SearchAdapter;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Carson_Ho on 17/8/10.
@@ -42,6 +49,11 @@ public class SearchView extends LinearLayout {
     private LinearLayout search_block; // 搜索框布局
     private ImageView searchBack; // 返回按键
     private TextView search_tv; //检索
+
+    private ScrollView list_sv; //历史搜索sv
+//    private ScrollView result_sv; //搜索结果sv
+    private LinearLayout result_ll;
+    private ListView result_lv; //所搜结果lv
 
 
     // ListView列表 & 适配器
@@ -68,6 +80,9 @@ public class SearchView extends LinearLayout {
     private int searchBlockHeight;
     private int searchBlockColor;
 
+    private List<DeviceInfo> devices = new ArrayList<>();
+    private SearchAdapter mAdapter;
+
     /**
      * 构造函数
      * 作用：对搜索框进行初始化
@@ -75,6 +90,7 @@ public class SearchView extends LinearLayout {
     public SearchView(Context context) {
         super(context);
         this.context = context;
+        initData();
         init();
     }
 
@@ -82,6 +98,7 @@ public class SearchView extends LinearLayout {
         super(context, attrs);
         this.context = context;
         initAttrs(context, attrs); // ->>关注a
+        initData();
         init();// ->>关注b
     }
 
@@ -89,7 +106,20 @@ public class SearchView extends LinearLayout {
         super(context, attrs, defStyleAttr);
         this.context = context;
         initAttrs(context, attrs);
+        initData();
         init();
+    }
+
+    private void initData() {
+        Random random = new Random();
+        for (int i=0; i< 15; i++) {
+            String name,typyName;
+            name = "21装备";
+            typyName = "笔记本电脑";
+            int r = random.nextInt(100);
+            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "系统装备类别为:"+typyName );
+            devices.add(device);
+        }
     }
 
     /**
@@ -156,6 +186,7 @@ public class SearchView extends LinearLayout {
         et_search.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                 search();
+                showResult();
 //                // 1. 点击搜索按键后，根据输入的搜索字段进行查询
 //                // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
 //                if (!(mCallBack == null)){
@@ -182,7 +213,7 @@ public class SearchView extends LinearLayout {
         et_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                hideResult();
             }
 
             @Override
@@ -202,6 +233,7 @@ public class SearchView extends LinearLayout {
         });
 
 
+
         /**
          * 搜索记录列表（ListView）监听
          * 即当用户点击搜索历史里的字段后,会直接将结果当作搜索字段进行搜索
@@ -211,11 +243,11 @@ public class SearchView extends LinearLayout {
             // 获取用户点击列表里的文字,并自动填充到搜索框内
             TextView textView = (TextView) view.findViewById(android.R.id.text1);
             String name = textView.getText().toString();
-//            et_search.setText(name);
-
-            if (mListener != null) {
-                mListener.onClick(name, position);
-            }
+            et_search.setText(name);
+            showResult();
+//            if (mListener != null) {
+//                mListener.onClick(name, position);
+//            }
 
 //            Toast.makeText(context, name, Toast.LENGTH_SHORT).show();
         });
@@ -234,9 +266,16 @@ public class SearchView extends LinearLayout {
 
         search_tv.setOnClickListener(v -> {
             search();
+            showResult();
         });
 
+        result_lv.setOnItemClickListener((parent, view, position, id) -> {
 
+            if (mListener != null) {
+                mListener.onClick(devices.get(position).getId(), position);
+            }
+
+        });
 
     }
 
@@ -291,6 +330,17 @@ public class SearchView extends LinearLayout {
         searchBack = (ImageView) findViewById(R.id.search_back);
         search_tv = (TextView) findViewById(R.id.search_item);
 //        tv_back = (ImageView) findViewById(R.id.search_back);
+
+        list_sv = (ScrollView) findViewById(R.id.list_sv);
+
+        //7.搜索结果sv lv ll
+        result_ll = (LinearLayout) findViewById(R.id.result_ll);
+//        result_sv = (ScrollView) findViewById(R.id.result_sv);
+        result_lv = (ListView) findViewById(R.id.search_result_lv);
+//        result_sv.setVisibility(GONE);
+
+        mAdapter = new SearchAdapter(result_lv, context,  devices);
+        result_lv.setAdapter(mAdapter);
     }
 
     /**
@@ -375,10 +425,30 @@ public class SearchView extends LinearLayout {
         this.mListener = mListener;
     }
 
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.et_search :
+//                hideResult();
+//        }
+//    }
+
     /**
      * listView点击Listener接口
      */
     public interface OnListClickListener {
         void onClick(String name, int position);
     }
+
+
+    private void hideResult() {
+        result_ll.setVisibility(GONE);
+        list_sv.setVisibility(VISIBLE);
+    }
+
+    private void showResult() {
+        result_ll.setVisibility(VISIBLE);
+        list_sv.setVisibility(GONE);
+    }
+
 }
