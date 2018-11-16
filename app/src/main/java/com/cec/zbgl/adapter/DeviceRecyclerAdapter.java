@@ -23,10 +23,12 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
     private LayoutInflater mLayoutInflater;
     private List<DeviceInfo> devices;
     private OnItemClickListener mListener;
+    private Context mContext;
 
 
     public DeviceRecyclerAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
+        this.mContext = context;
         devices = new ArrayList<>();
     }
 
@@ -42,7 +44,7 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //绑定viewHolder
         DeviceViewHolder viewHolder = new DeviceViewHolder(mLayoutInflater.
-        inflate(R.layout.contact_item01,parent,false));
+        inflate(R.layout.contact_item01,parent,false),mContext);
 
         //绑定点击事件
         viewHolder.itemView.setOnClickListener(v -> {

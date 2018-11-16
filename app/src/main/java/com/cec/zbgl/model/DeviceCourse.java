@@ -1,17 +1,22 @@
 package com.cec.zbgl.model;
 
+import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /** 备品备件_设备教程 */
-public class DeviceCourse implements Serializable {
+public class DeviceCourse extends LitePalSupport implements Serializable {
     public static final int TYPE_ONE = 1;
     public static final int TYPE_TWO = 2;
     public static final int TYPE_THREE = 3;
     public static final int TYPE_ITEM = 101;
 
 
-    private String id;
+    private long id;
+    @Column(unique = true, nullable = false)
+    private String mId;
     private String deviceId;
     private String sysId;
     private String name;
@@ -23,37 +28,40 @@ public class DeviceCourse implements Serializable {
     private String location;
     private String description;
     private boolean isValid;
-    private String message;
-    private String isTitle;
+    private byte[] image; //压缩图片
+    private byte[] image_full;  //原尺寸图片
+    @Column(ignore = true)
+    private String message;   //当为标题时显示标题信息(不存数据库)
+    @Column(ignore = true)
+    private boolean isTitle; //判断是否为标题(不存数据库)
 
 
     public DeviceCourse() {
     }
 
-    public DeviceCourse(String id, String name, int deviceType, String description,String isTitle,String message) {
-        this.id = id;
+    public DeviceCourse(String mId, String name, int courseType, String description,boolean isTitle,String message) {
+        this.mId = mId;
         this.name = name;
-        this.deviceType = deviceType;
+        this.courseType = courseType;
         this.description = description;
         this.isTitle = isTitle;
         this.message = message;
-        this.courseType = deviceType;
-    }
-
-    public DeviceCourse(String id, String name, int deviceType, String description) {
-        this.id = id;
-        this.name = name;
         this.deviceType = deviceType;
+    }
+
+    public DeviceCourse(String mId, String name, int courseType, String description) {
+        this.mId = mId;
+        this.name = name;
+        this.courseType = courseType;
         this.description = description;
-        this.courseType = deviceType;
+        this.deviceType = deviceType;
     }
 
 
-    public DeviceCourse(String isTitle, String message,int type) {
+    public DeviceCourse(boolean isTitle, String message,int type) {
         this.message = message;
         this.isTitle = isTitle;
-        this.deviceType = type;
-        this.courseType = deviceType;
+        this.courseType = type;
     }
 
     @Override
@@ -74,12 +82,21 @@ public class DeviceCourse implements Serializable {
                 '}';
     }
 
-    public String getId() {
+
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public String getmId() {
+        return mId;
+    }
+
+    public void setmId(String mId) {
+        this.mId = mId;
     }
 
     public String getDeviceId() {
@@ -177,11 +194,28 @@ public class DeviceCourse implements Serializable {
         this.message = message;
     }
 
-    public String getIsTitle() {
+    public boolean getIsTitle() {
         return isTitle;
     }
 
-    public void setIsTitle(String isTitle) {
+    public void setIsTitle(boolean isTitle) {
         this.isTitle = isTitle;
     }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public byte[] getImage_full() {
+        return image_full;
+    }
+
+    public void setImage_full(byte[] image_full) {
+        this.image_full = image_full;
+    }
+
 }

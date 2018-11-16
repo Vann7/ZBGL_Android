@@ -48,7 +48,7 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewType == TYPE_ITEM) {
             //绑定viewHolder
             DeviceViewHolder viewHolder = new DeviceViewHolder(mInflater.
-                    inflate(R.layout.contact_item01,parent,false));
+                    inflate(R.layout.contact_item01,parent,false),mContext);
             //绑定点击事件
             viewHolder.itemView.setOnClickListener(v -> {
                 mListener.onItemClick(v, viewHolder.getLayoutPosition());
@@ -98,6 +98,9 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         //RecyclerView的count设置为数据总条数+ 1（footerView）
+        if (mDatas == null) {
+            return 1;
+        }
         return mDatas.size() + 1;
     }
 

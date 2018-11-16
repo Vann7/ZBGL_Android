@@ -110,7 +110,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         DeviceCourse course = mData.get(position);
-        if("true".equals(course.getIsTitle())){
+        if(course.getIsTitle() == true){
             ((TypeItemHolder)holder).bindHolder(course.getMessage());
         }else {
             int viewType = getItemViewType(position);
@@ -153,7 +153,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             return VIEW_TYPE_TITLE;
         }else {
 
-            return course.getDeviceType();
+            return course.getCourseType();
         }
     }
 

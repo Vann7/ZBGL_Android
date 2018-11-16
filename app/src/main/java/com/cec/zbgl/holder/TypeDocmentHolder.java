@@ -1,6 +1,8 @@
 package com.cec.zbgl.holder;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -28,6 +30,13 @@ public class TypeDocmentHolder extends RecyclerView.ViewHolder {
     }
 
     public void  bindHolder(DeviceCourse course) {
+        if (course.getImage() != null) {
+            byte[] bytes = course.getImage();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            imageView.setImageBitmap(bitmap);
+        }else {
+            imageView.setImageResource(R.mipmap.default_image);
+        }
         name.setText(course.getName());
         desc.setText(course.getDescription());
     }

@@ -9,8 +9,8 @@ import java.io.Serializable;
  * 用户信息
  */
 public class User extends LitePalSupport implements Serializable {
-    @Column(unique = true)
     private int id;
+    @Column(nullable = false)
     private String name;
     private String password;
 

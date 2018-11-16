@@ -27,6 +27,7 @@ import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.SearchAdapter;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.service.DeviceService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class SearchView extends LinearLayout {
 
     private List<DeviceInfo> devices = new ArrayList<>();
     private SearchAdapter mAdapter;
+    private DeviceService deviceService = new DeviceService();
 
     /**
      * 构造函数
@@ -111,15 +113,7 @@ public class SearchView extends LinearLayout {
     }
 
     private void initData() {
-        Random random = new Random();
-        for (int i=0; i< 15; i++) {
-            String name,typyName;
-            name = "21装备";
-            typyName = "笔记本电脑";
-            int r = random.nextInt(100);
-            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "系统装备类别为:"+typyName );
-            devices.add(device);
-        }
+
     }
 
     /**
@@ -234,6 +228,8 @@ public class SearchView extends LinearLayout {
 
 
 
+
+
         /**
          * 搜索记录列表（ListView）监听
          * 即当用户点击搜索历史里的字段后,会直接将结果当作搜索字段进行搜索
@@ -245,6 +241,7 @@ public class SearchView extends LinearLayout {
             String name = textView.getText().toString();
             et_search.setText(name);
             showResult();
+            search();
 //            if (mListener != null) {
 //                mListener.onClick(name, position);
 //            }
@@ -272,29 +269,35 @@ public class SearchView extends LinearLayout {
         result_lv.setOnItemClickListener((parent, view, position, id) -> {
 
             if (mListener != null) {
-                mListener.onClick(devices.get(position).getId(), position);
+                mListener.onClick(devices.get(position).getmId(), position);
             }
 
         });
 
     }
 
-    private void search() {
+    public void search() {
+        String name = et_search.getText().toString();
         // 1. 点击搜索按键后，根据输入的搜索字段进行查询
         // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
         if (!(mCallBack == null)){
-            mCallBack.SearchAciton(et_search.getText().toString());
+            mCallBack.SearchAciton(name);
         }
 //                Toast.makeText(context, "需要搜索的是" + et_search.getText(), Toast.LENGTH_SHORT).show();
         if (!et_search.getText().toString().trim().equals("")){
             // 2. 点击搜索键后，对该搜索字段在数据库是否存在进行检查（查询）->> 关注1
-            boolean hasData = hasData(et_search.getText().toString().trim());
+            boolean hasData = hasData(name.trim());
             // 3. 若存在，则不保存；若不存在，则将该搜索字段保存（插入）到数据库，并作为历史搜索记录
             if (!hasData) {
                 insertData(et_search.getText().toString().trim());
                 queryData("");
             }
         }
+
+
+        //根据name 查询装备信息list
+       devices = deviceService.searchByName(name);
+        mAdapter.onDateChange(devices);
     }
 
 
@@ -359,7 +362,6 @@ public class SearchView extends LinearLayout {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        System.out.println(cursor.getCount());
         // 当输入框为空 & 数据库中有搜索记录时，显示 "删除搜索记录"按钮
         if (tempName.equals("") && cursor.getCount() != 0){
             tv_clear.setVisibility(VISIBLE);
@@ -437,7 +439,7 @@ public class SearchView extends LinearLayout {
      * listView点击Listener接口
      */
     public interface OnListClickListener {
-        void onClick(String name, int position);
+        void onClick(String mid, int position);
     }
 
 

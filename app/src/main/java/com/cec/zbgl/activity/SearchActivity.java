@@ -15,6 +15,7 @@ public class SearchActivity extends AppCompatActivity {
 
     // 1. 初始化搜索框变量
     private SearchView searchView;
+    private static final int BACK_REFRESH = -3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +42,21 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         // 6. 设置点击item后的操作（通过回调接口）
-        searchView.setOnItemClick((id, position) ->  {
+        searchView.setOnItemClick((mid, position) ->  {
             Intent intent = new Intent(this, ContentActivity.class);
-            intent.putExtra("id", id);
-            startActivity(intent);
+            intent.putExtra("mid", mid);
+            intent.putExtra("add", false);
+            startActivityForResult(intent,1);
         });
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case BACK_REFRESH :
+                searchView.search();
+
+        }
     }
 }

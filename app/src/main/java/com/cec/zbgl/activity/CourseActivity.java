@@ -37,6 +37,9 @@ import com.cec.zbgl.adapter.CourseAddAdapter;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
+import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.service.CourseService;
+import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.OpenFileUtil;
 import com.cec.zbgl.utils.ToastUtils;
@@ -51,6 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import me.nereo.multi_image_selector.MultiImageSelector;
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
@@ -90,6 +94,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private final int CONS_DOCUMENT = 2;
     private final int CONS_LEAD_PHOTO = 3;
     private int mGridWidth;
+    private CourseService courseService;
+    private String deviceId; //装备id
+    private String sysId; //组织机构id
 
     private List<DeviceCourse> mData =new ArrayList<>();
     private List<DeviceCourse> mData_Imag =new ArrayList<>();
@@ -100,7 +107,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
-
+        courseService = new CourseService();
         // android 7.0系统解决拍照的问题
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -171,42 +178,34 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initData() {
 
-        head_tv.setText(getIntent().getStringExtra("name"));
+        deviceId = getIntent().getStringExtra("deviceId");
+        sysId = getIntent().getStringExtra("sysId");
 
-        for (int i=0; i< 25; i++) {
-            String name,typyName;
-            int type;
-            if (i < 9) {
-                type = 1;
-                name = "图片教程";
-                typyName = "图片";
-                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                        "教程类别为:"+typyName,"false","item "+(i+1));
-                mData_Imag.add(c0);
-            }else if (i < 18){
-                type = 2;
-                name = "视频教程";
-                typyName = "视频";
-                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                        "教程类别为:"+typyName,"false","item "+(i+1));
-                mData_Video.add(c0);
-            } else {
-                type = 3;
-                name = "文档教程";
-                typyName = "文档";
-                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                        "教程类别为:"+typyName,"false","item "+(i+1));
-                mData_Doc.add(c0);
-            }
-
-
+        String name = getIntent().getStringExtra("name");
+        if (name != null){
+            head_tv.setText(name);
+        } else {
+            head_tv.setText(sysId);
         }
+        if(deviceId != null) {
+            mData_Imag = courseService.loadByDid(deviceId, Constant.COURSE_IMAGE);
+            mData_Video = courseService.loadByDid(deviceId, Constant.COURSE_VIDEO);
+            mData_Doc = courseService.loadByDid(deviceId, Constant.COURSE_DOCUMENT);
+        }
+
+        if (sysId != null) {
+            mData_Imag = courseService.loadBySysid(sysId, Constant.COURSE_IMAGE);
+            mData_Video = courseService.loadBySysid(sysId, Constant.COURSE_VIDEO);
+            mData_Doc = courseService.loadBySysid(sysId, Constant.COURSE_DOCUMENT);
+        }
+
+
         //对分类标题进行初始化
-        DeviceCourse c1 = new DeviceCourse("true","图片教程",101);
+        DeviceCourse c1 = new DeviceCourse(true,"图片教程",101);
         mData_Imag.add(0,c1);
-        DeviceCourse c2 = new DeviceCourse("true","视频教程",101);
+        DeviceCourse c2 = new DeviceCourse(true,"视频教程",101);
         mData_Video.add( 0,c2);
-        DeviceCourse c3 = new DeviceCourse("true","文档教程",101);
+        DeviceCourse c3 = new DeviceCourse(true,"文档教程",101);
         mData_Doc.add(0,c3);
 
         mData.addAll(mData_Imag);
@@ -231,14 +230,8 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 Intent intent;
                 switch (mData.get(position).getCourseType()) {
                     case Constant.COURSE_IMAGE :
-//                        fileName = "/storage/emulated/0/DCIM/Camera/IMG_20181030_113211.jpg";
-                        fileName = "android.resource://" + getPackageName()
-                                + "/" + R.mipmap.nba;
-//                        intent = OpenFileUtil.getImageFileIntent(fileName);
-//                        startActivity(intent);
                         String src = mData.get(position).getLocation();
                         showImage(src);
-
                         break;
                     case Constant.COURSE_VIDEO :
                         System.out.println(getPackageName());
@@ -305,30 +298,57 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
         switch (requestCode) {
-            case Constant.CODE_CAMERA_REQUEST:
+            case Constant.CODE_CAMERA_REQUEST: //拍照 回调存储
                 if (mTmpFile != null) {
                     // notify system the image has change
                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mTmpFile)));
-                    DeviceCourse c0 = new DeviceCourse("121","text123",1,
-                            "教程类别为:"+"图片","false","item "+(121+1));
+                    DeviceCourse c0 = new DeviceCourse(UUID.randomUUID().toString(),"text123",
+                            Constant.COURSE_IMAGE,"教程类别为:"+"图片",false,"item "+(121+1));
                     c0.setLocation(mTmpFile.getAbsolutePath());
+                    Bitmap bitmap = BitmapFactory.decodeFile(mTmpFile.getAbsolutePath());
+                    ImageUtil imageUtil = new ImageUtil(this);
+                    Bitmap bitmap_small = imageUtil.imageZoom(bitmap,20.00);  //图片压缩
+                    Bitmap bitmap_full = imageUtil.imageZoom(bitmap,200.00);  //图片压缩
+                    byte[] images_small = imageUtil.imageToByte(bitmap_small);
+                    byte[] images_full = imageUtil.imageToByte(bitmap_full);
+                    c0.setImage(images_small);
+                    c0.setImage_full(images_full);
+                    c0.setDeviceId(deviceId);
+                    c0.setSysId(sysId);
+                    c0.setValid(true);
+                    courseService.insert(c0);
                     mData_Imag.add(c0);
                 }
                 collectData();
                 break;
-            case Constant.CODE_VIDEO_REQUEST:
+            case Constant.CODE_VIDEO_REQUEST: //拍摄视频 回调存储
                 if (mVideoFile != null) {
                     // notify system the image has change
                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mVideoFile)));
                     ToastUtils.showShort(mVideoFile.getAbsolutePath());
                 }
                 break;
-            case Constant.CODE_PHOTO_REQUEST:
+            case Constant.CODE_PHOTO_REQUEST:  //相册获取照片 回调存储
                 List<String> paths = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
                 for (int i=0; i< paths.size(); i++) {
-                    DeviceCourse c0 = new DeviceCourse("121","text123",1,
-                            "教程类别为:"+"图片","false","item "+(121+1));
+                    DeviceCourse c0 = new DeviceCourse(UUID.randomUUID().toString(),"text123",
+                            Constant.COURSE_IMAGE,"教程类别为:"+"图片",false,"item "+(121+1));
                     c0.setLocation(paths.get(i));
+
+                    Bitmap bitmap = BitmapFactory.decodeFile(paths.get(i));
+                    ImageUtil imageUtil = new ImageUtil(this);
+                    Bitmap bitmap_small = imageUtil.imageZoom(bitmap,20.00);  //图片压缩
+                    Bitmap bitmap_full = imageUtil.imageZoom(bitmap,200.00);  //图片压缩
+                    byte[] images_small = imageUtil.imageToByte(bitmap_small);
+                    byte[] images_full = imageUtil.imageToByte(bitmap_small);
+                    c0.setImage(images_small);
+                    c0.setImage_full(images_full);
+
+//                    c0.setImage(com.cec.zbgl.utils.FileUtils.File2byte(paths.get(i)));
+                    c0.setDeviceId(deviceId);
+                    c0.setSysId(sysId);
+                    c0.setValid(true);
+                    courseService.insert(c0);
                     mData_Imag.add(c0);
                 }
                 collectData();

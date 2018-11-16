@@ -205,9 +205,9 @@ public class ImageUtil {
         }
     }
 
-    private Bitmap imageZoom(Bitmap bitMap) {
+    public Bitmap imageZoom(Bitmap bitMap,double size) {
         //图片允许最大空间   单位：KB
-        double maxSize =1000.00;
+        double maxSize =size;
         //将bitmap放至数组中，意在bitmap的大小（与实际读取的原文件要大）
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitMap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -254,5 +254,16 @@ public class ImageUtil {
     }
 
 
+    /**
+     * 把图片转换为字节
+     * @param bitmap
+     * @return
+     */
+    public byte[]imageToByte(Bitmap bitmap){
+        if (bitmap == null) return  null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
+        return baos.toByteArray();
+    }
 
 }

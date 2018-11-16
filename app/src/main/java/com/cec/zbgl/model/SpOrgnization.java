@@ -4,12 +4,16 @@ import com.cec.zbgl.utils.tree.annotation.TreeNodeId;
 import com.cec.zbgl.utils.tree.annotation.TreeNodeLabel;
 import com.cec.zbgl.utils.tree.annotation.TreeNodePid;
 
+import org.litepal.annotation.Column;
+import org.litepal.crud.LitePalSupport;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /** 装备管理_（系统）组织结构  */
-public class SpOrgnization implements Serializable {
-    private java.lang.String id;
+public class SpOrgnization extends LitePalSupport implements Serializable {
+    private long id;
+    private String mId;
     @TreeNodeId
     private java.lang.String code;
     @TreeNodePid
@@ -33,7 +37,8 @@ public class SpOrgnization implements Serializable {
     @Override
     public String toString() {
         return "SpOrgnization{" +
-                "id='" + id + '\'' +
+                "id=" + id +
+                ", mId='" + mId + '\'' +
                 ", code='" + code + '\'' +
                 ", parentCode='" + parentCode + '\'' +
                 ", value='" + value + '\'' +
@@ -45,11 +50,19 @@ public class SpOrgnization implements Serializable {
                 '}';
     }
 
-    public String getId() {
+    public String getmId() {
+        return mId;
+    }
+
+    public void setmId(String mId) {
+        this.mId = mId;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

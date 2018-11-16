@@ -8,7 +8,7 @@
     	For example:
     	<dbname value="demo" />
     -->
-    <dbname value="demo" />
+    <dbname value="zbgl" />
 
     <!--
     	Define the version of your database. Each time you want
@@ -33,6 +33,9 @@
     -->
     <list>
         <mapping class="com.cec.zbgl.model.User"/>
+        <mapping class="com.cec.zbgl.model.SpOrgnization"/>
+        <mapping class="com.cec.zbgl.model.DeviceInfo"/>
+        <mapping class="com.cec.zbgl.model.DeviceCourse"/>
     </list>
 
     <!--

@@ -11,7 +11,7 @@
         android:id="@+id/org_course_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@mipmap/car"
+        android:src="@mipmap/default_image"
         android:layout_marginLeft="10dp"/>
 
     <LinearLayout

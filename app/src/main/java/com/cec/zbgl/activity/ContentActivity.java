@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.cec.zbgl.R;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.ToastUtils;
 
@@ -36,7 +38,9 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
@@ -76,10 +80,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout status_ll;
     private LinearLayout belongSys_ll;
     private AlertDialog.Builder builder;
+    private String mid; //装备mid
+    private boolean add; //是否新增
+    private DeviceService deviceService;
 
     private String status[] = {"使用中","未入库","已入库","已出库"};
     private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
-    private String systems[] = {"系统1","系统2","系统3","系统4"};
+    private String systems[] = {"根目录1","根目录2","根目录3","根目录4"};
     private String icons[] = {"从相册选取","拍摄"};
 
 
@@ -88,7 +95,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
         mExtStorDir = Environment.getExternalStorageDirectory().toString();
-
+        deviceService = new DeviceService();
         initView();
         initData();
         initEvent();
@@ -115,7 +122,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         headImage = (ImageView) findViewById(R.id.id_device_image);
         course_btn = (Button) findViewById(R.id.check_course_btn);
         save_btn = (Button) findViewById(R.id.device_save_btn);
-
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         delete_tv = (TextView) findViewById(R.id.device_delete);
@@ -133,10 +139,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      * 初始化et数据
      */
     private void initData() {
-        String id = getIntent().getStringExtra("id");
-        ToastUtils.showShort("id:" + id);
-        device = (DeviceInfo) getIntent().getSerializableExtra("device");
-        if (device != null) {
+        mid = getIntent().getStringExtra("mid");
+        add = getIntent().getBooleanExtra("add",false);
+        if (!add) {
+            device = deviceService.getDeviceByMid(mid);
             name_Et.setText(device.getName());
             type_Et.setText(String.valueOf(device.getType()));
             location_Et.setText(device.getLocation());
@@ -144,11 +150,21 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             status_Et.setText(String.valueOf(device.getStatus()));
             belongSys_Et.setText(device.getBelongSys());
             createName_Et.setText(device.getCreaterName());
-//        createTime_Et.setText(device.getCreateTime().toString());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            createTime_Et.setText(sdf.format(device.getCreateTime()));
             description_Et.setText(device.getDescription());
             head_tv.setText(device.getName());
             delete_tv.setVisibility(VISIBLE);
+            if (device.getImage() != null) {
+                byte[] bytes = device.getImage();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                headImage.setImageBitmap(bitmap);
+            }
         }else {
+            device = new DeviceInfo();
+            device.setmId(mid);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            createTime_Et.setText(sdf.format(new Date()));
             delete_tv.setVisibility(GONE);
         }
     }
@@ -174,8 +190,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.check_course_btn :
                 Intent intent = new Intent(this,CourseActivity.class);
+                intent.putExtra("deviceId", device.getmId());
                 intent.putExtra("name",device.getName());
-                startActivity(intent);
+                startActivityForResult(intent,1);
                 break;
             case R.id.id_device_image :
                 popView(CONTENT_ICON, icons);
@@ -187,7 +204,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 deleteItem();
                 break;
             case R.id.device_save_btn :
-                ToastUtils.showShort("保存本条信息");
+                save();
                 break;
             case R.id.device_type_ll :
                 popView(CONTENT_TYPE,types);
@@ -201,13 +218,14 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         // 用户没有进行有效的设置操作，返回
         if (resultCode == RESULT_CANCELED) {
-            Toast.makeText(getApplication(), "取消", Toast.LENGTH_LONG).show();
             return;
         }
         switch (requestCode) {
@@ -339,7 +357,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         AlertDialog deleteDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
                 .setMessage("删除本条信息")
                 .setPositiveButton("删除", (dialog, which) -> {
-                    ToastUtils.showShort("删除本条信息");
+                    deviceService.delete(device.getId());
+                    Intent intent1 = new Intent();
+                    setResult(-3, intent1);
                     finish();
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
@@ -379,6 +399,88 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             imageUtil.checkStoragePermission();
         }
 
+    }
+
+    private void save() {
+        String temp = name_Et.getText().toString().trim();
+        if (temp.equals("")) {
+            ToastUtils.showShort("装备名称不能为空");
+            return;
+        }
+
+        if (add) {
+            boolean flag = addDevice();
+            if (flag) {
+                Intent intent1 = new Intent();
+                setResult(-3, intent1);
+                finish();
+                ToastUtils.showShort("保存本条信息成功");
+            }else {
+                ToastUtils.showShort("保存本条信息失败");
+            }
+        } else { //更新操作
+            int a = updateDevice();
+            Intent intent1 = new Intent();
+            setResult(-3, intent1);
+            finish();
+            ToastUtils.showShort("更新本条信息成功");
+        }
+    }
+
+    /**
+     * 保存装备信息
+     * @return
+     */
+    public boolean addDevice() {
+        device.setName(name_Et.getText().toString());
+//        device.setType(Integer.valueOf(type_Et.getText().toString()));
+        device.setLocation(location_Et.getText().toString());
+        if (!count_Et.getText().toString().equals("")){
+            device.setCount(Integer.valueOf(count_Et.getText().toString()));
+        }
+
+//        device.setStatus(Integer.valueOf(status_Et.getText().toString()));
+        device.setBelongSys(belongSys_Et.getText().toString());
+        device.setCreaterName(createName_Et.getText().toString());
+        device.setDescription(description_Et.getText().toString());
+        device.setCreateTime(new Date());
+        device.setValid(true);
+        headImage.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(headImage.getDrawingCache());
+        headImage.setDrawingCacheEnabled(false);
+
+        ImageUtil imageUtil = new ImageUtil(this);
+        bitmap = imageUtil.imageZoom(bitmap,20.00);  //图片压缩
+        byte[] images = imageUtil.imageToByte(bitmap);
+        device.setImage(images);
+        return deviceService.insert(device);
+    }
+
+    /**
+     * 更新装备信息
+     * @return
+     */
+    public int updateDevice() {
+        device.setName(name_Et.getText().toString());
+//        device.setType(Integer.valueOf(type_Et.getText().toString()));
+        device.setLocation(location_Et.getText().toString());
+        if (!count_Et.getText().toString().equals("")){
+            device.setCount(Integer.valueOf(count_Et.getText().toString()));
+        }
+//        device.setStatus(Integer.valueOf(status_Et.getText().toString()));
+//        device.setBelongSys(belongSys_Et.getText().toString());
+        device.setCreaterName(createName_Et.getText().toString());
+        device.setDescription(description_Et.getText().toString());
+        device.setCreateTime(new Date());
+        device.setValid(true);
+        headImage.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(headImage.getDrawingCache());
+        headImage.setDrawingCacheEnabled(false);
+        ImageUtil imageUtil = new ImageUtil(this);
+        bitmap = imageUtil.imageZoom(bitmap,20.00);  //图片压缩
+        byte[] images = imageUtil.imageToByte(bitmap);
+        device.setImage(images);
+        return deviceService.update(device);
     }
 
 

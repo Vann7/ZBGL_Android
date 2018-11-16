@@ -1,6 +1,8 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +13,13 @@ import android.widget.TextView;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.utils.FileUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
+
+import me.nereo.multi_image_selector.MultiImageSelectorFragment;
 
 
 /**
@@ -89,6 +96,18 @@ public class SearchAdapter extends BaseAdapter {
         viewHolder.name_tv.setText(device.getName());
         viewHolder.type_tv.setText(String.valueOf(device.getType()));
         viewHolder.location_tv.setText(device.getLocation());
+        if (device.getImage() != null) {
+            File imageFile = FileUtils.byte2File(device.getImage(), mContext);
+            // 显示图片
+            Picasso.with(mContext)
+                    .load(imageFile)
+                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                    .tag(MultiImageSelectorFragment.TAG)
+                    .resize(60, 60)
+                    .centerCrop()
+                    .into(viewHolder.image_iv);
+
+        }
         return convertView;
     }
 

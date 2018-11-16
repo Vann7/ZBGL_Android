@@ -44,6 +44,8 @@ import com.cec.zbgl.holder.FilterItemViewHolder;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.service.DeviceService;
+import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.utils.ToastUtils;
 
@@ -54,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static android.app.Activity.RESULT_OK;
@@ -85,6 +88,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private TextView org_course_btn;
     private TextView org_course_name;
     private TextView org_course_desc;
+    private ImageView org_course_image;
     private AlertDialog alertDialog;
 
     private boolean isShowing = false;
@@ -93,13 +97,17 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private static final int FILTER_TYPE_ITEM   = 1;
     private static final int FILTER_TYPE_HEADER = 0;
     private static final int SEARCH_BACK = -2;
+    private static final int BACK_REFRESH = -3;
 //    private List<String> selectedItems = new ArrayList<>();
     private Map<String, Integer> selectedMaps = new HashMap<>();
 
+    private OrgsService orgsService;
+    private DeviceService deviceService;
 
+    private String belongSys = "根目录1";
     private String status[] = {"使用中","未入库","已入库","已出库"};
     private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
-    private String systems[] = {"系统1","系统2","系统3","系统4"};
+//    private String systems[] = {"系统1","系统2","系统3","系统4"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,6 +124,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        deviceService = new DeviceService();
         initView();
         initData();
         initListener();
@@ -126,13 +135,31 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (resultCode) {
             case RESULT_OK:
-                String result = data.getStringExtra("result");
-                ToastUtils.showShort("二维码信息为:"+ result);
+//                long id = (long)Integer.valueOf(data.getStringExtra("result"));
+                String mid = data.getStringExtra("result");
+                boolean flag = deviceService.check(mid);
+                if (flag) {
+                    ToastUtils.showShort("装备信息存在, id为:"+ mid);
+                    Intent intent = new Intent(getActivity(), ContentActivity.class);
+                    intent.putExtra("mid", mid);
+                    intent.putExtra("add", false);
+                    startActivityForResult(intent,1);
+                }else {
+                    ToastUtils.showShort("装备信息不存在");
+                    Intent intent = new Intent(getActivity(), ContentActivity.class);
+                    intent.putExtra("mid", UUID.randomUUID().toString());
+                    intent.putExtra("add",true);
+                    startActivityForResult(intent,1);
+                }
                 break;
             case SEARCH_BACK :
                 String name = data.getStringExtra("result");
                 search(name);
                 ToastUtils.showShort("检索词: "+ name);
+                break;
+            case BACK_REFRESH :
+                devices = deviceService.loadLost();
+                mRefreshAdapter.changeData(devices);
         }
     }
 
@@ -189,6 +216,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         org_course_btn = (TextView) getActivity().findViewById(R.id.org_course_btn);
         org_course_name = (TextView) getActivity().findViewById(R.id.org_course_name);
         org_course_desc = (TextView) getActivity().findViewById(R.id.org_course_desc);
+        org_course_image = (ImageView) getActivity().findViewById(R.id.org_course_image);
         org_course_name.setText("组织机构-XX部门");
         org_course_desc.setText("组织机构描述信息——XX部门信息使用教程");
 
@@ -207,33 +235,17 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initOrgs() {
-        orgs = new ArrayList<>();
-        SpOrgnization org = new SpOrgnization("1","0","根目录1");
-        orgs.add(org);
-        org = new SpOrgnization("2","0","根目录2");
-        orgs.add(org);
-        org = new SpOrgnization("3","0","根目录3");
-        orgs.add(org);
-        org = new SpOrgnization("4","0","根目录4");
-        orgs.add(org);
-        org = new SpOrgnization("4","1","根目录1-1");
-        orgs.add(org);
-        org = new SpOrgnization("5","1","根目录1-2");
-        orgs.add(org);
+        orgsService = new OrgsService(getContext());
+
+
+
+        orgs = orgsService.loadList();
+//        orgs = orgs2;
     }
 
 
     private void initData() {
-        Random random = new Random();
-        for (int i=0; i< 15; i++) {
-            String name,typyName;
-            name = "21装备";
-            typyName = "笔记本电脑";
-            int r = random.nextInt(100);
-            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "系统装备类别为:"+typyName );
-            devices.add(device);
-        }
-
+        devices = deviceService.loadLost();
         //初始化filter数据
         HashMap<Integer, String>  map = new HashMap<Integer, String>();
         map.put(0,"设备状态");
@@ -252,14 +264,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             map1.put(1,types[i]);
             mList.add(map1);
         }
-        HashMap<Integer, String>  map3 = new HashMap<Integer, String>();
-        map3.put(0,"归属系统");
-        mList.add(map3);
-        for (int i=0; i< systems.length; i++) {
-            HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
-            map1.put(1,systems[i]);
-            mList.add(map1);
-        }
+//        HashMap<Integer, String>  map3 = new HashMap<Integer, String>();
+//        map3.put(0,"归属系统");
+//        mList.add(map3);
+//        for (int i=0; i< systems.length; i++) {
+//            HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
+//            map1.put(1,systems[i]);
+//            mList.add(map1);
+//        }
 
 
         initRecylerView();
@@ -272,11 +284,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      */
     private void initEvent() {
         mAdapter.setOnTreeNodeClickListener((node, position) -> {
-            if (node.isLeaf())
-            {
-                reloadData(node.getName());
-//                ToastUtils.showShort(node.getName());
-            }
+//            if (node.isLeaf()) reloadData(node.getName());
+            reloadData(node.getName());
+            org_course_name.setText(node.getName());
+            org_course_desc.setText(node.getName() + "教程描述信息");
         });
 
         //装备列表监听 点击事件
@@ -285,13 +296,15 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             public void onItemClick(View v, int position) {
                 DeviceInfo node = devices.get(position);
                 Intent intent = new Intent(getActivity(), ContentActivity.class);
-                intent.putExtra("device",node);
-                intent.putExtra("id", node.getId());
-                startActivity(intent);
+//                intent.putExtra("device",node);
+                intent.putExtra("mid", node.getmId());
+                intent.putExtra("add", false);
+                startActivityForResult(intent,1);
             }
 
             @Override
             public void onItemLongClick(View v, int position) {
+                deviceService.delete(devices.get(position).getId());
                 deleteItem(position);
             }
 
@@ -319,19 +332,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      * 模拟重载数据
      */
     private void reloadData(String root) {
-        Random random = new Random();
-        List<DeviceInfo> checkDatas = new ArrayList<>();
-        if (root != "根目录2"){
-            for (int i=0; i< 15; i++) {
-                String name,typyName;
-
-                name = "XX装备数据";
-                typyName = "网口";
-                int r = random.nextInt(100);
-                DeviceInfo device = new DeviceInfo(String.valueOf(r)+"-"+root, name+": "+r,  "装备类别为:"+typyName );
-                checkDatas.add(device);
-            }
-        }
+        List<DeviceInfo> checkDatas  = deviceService.searchBySys(root);
+        belongSys = root;
         devices = checkDatas;
         mRefreshAdapter.changeData(checkDatas);
         showData();
@@ -365,7 +367,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         filterAdapter.setOnListClickListener((v, position) -> {
             String itemName = mList.get(position).get(FILTER_TYPE_ITEM);
             if (selectedMaps.get(mList.get(position).get(FILTER_TYPE_ITEM)) == null) {
-                selectedMaps.put(mList.get(position).get(FILTER_TYPE_ITEM), 1);
+                if (position > status.length + 1) {
+                    selectedMaps.put(mList.get(position).get(FILTER_TYPE_ITEM), 2);
+                } else {
+                    selectedMaps.put(mList.get(position).get(FILTER_TYPE_ITEM), 1);
+                }
+
 
             } else {
                 selectedMaps.remove(mList.get(position).get(FILTER_TYPE_ITEM));
@@ -395,6 +402,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             name.equals(device.getName())
         ).collect(Collectors.toList());
         mRefreshAdapter.changeData(sList);
+        showData();
     }
 
     //初始化监听接口
@@ -406,7 +414,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     //判定当devices数据为空时，展示listTip提示
     private void showData() {
-        org_course_rl.setVisibility(devices.size() == 0 ? GONE : VISIBLE);
+//        org_course_rl.setVisibility(devices.size() == 0 ? GONE : VISIBLE);
         listTip.setVisibility(devices.size() == 0 ? VISIBLE : GONE);
         mSwipeRefreshLayout.setVisibility(devices.size() == 0 ? GONE : VISIBLE);
 
@@ -417,18 +425,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         mSwipeRefreshLayout.setOnRefreshListener(() -> new Handler().postDelayed(() -> {
             Random random = new Random();
             List<DeviceInfo> headDatas = new ArrayList<>();
-            for (int i=0; i< 4; i++) {
-                String name,typyName;
-
-                name = "装备信息";
-                typyName = "服务器";
-                int r = random.nextInt(100);
-                DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "装备归属类别为:"+typyName );
-                headDatas.add(device);
-            }
-
+            headDatas = deviceService.loadLost();
             mRefreshAdapter.AddHeaderItem(headDatas);
-
             //刷新完成
             mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity(), "更新了 "+headDatas.size()+" 条目数据", Toast.LENGTH_SHORT).show();
@@ -453,15 +451,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                     new Handler().postDelayed(() -> {
                         Random random = new Random();
                         List<DeviceInfo> footerDatas = new ArrayList<>();
-                        for (int i=0; i< 4; i++) {
-                            String name,typyName;
 
-                            name = "图片教程";
-                            typyName = "图片";
-                            int r = random.nextInt(100);
-                            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "教程类别为:"+typyName );
-                            footerDatas.add(device);
-                        }
+                        footerDatas = deviceService.loadLost();
 
                         mRefreshAdapter.AddFooterItem(footerDatas);
                         //设置回到上拉加载更多
@@ -512,13 +503,32 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.filter_confirm :
                 ToastUtils.showShort("confirm: " );
-
+                filterDevice();
                 disappear();
                 break;
             case R.id.org_course_btn :
                 Intent intent = new Intent(getActivity(), CourseActivity.class);
-                startActivity(intent);
+                intent.putExtra("sysId", belongSys);
+                startActivityForResult(intent,1);
         }
+    }
+
+    /**
+     * 筛选装备信息
+     */
+    private void filterDevice() {
+        List<String> types = new ArrayList<>();
+        List<String> status = new ArrayList<>();
+        for (String key : selectedMaps.keySet()) {
+            if (selectedMaps.get(key) == 1) {
+                types.add(key);
+            }else {
+                status.add(key);
+            }
+        }
+       devices = deviceService.filterByType(types, status, belongSys);
+        mRefreshAdapter.changeData(devices);
+        showData();
     }
 
 
@@ -610,6 +620,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 .setMessage("删除本条信息")
                 .setPositiveButton("删除", (dialog, which) -> {
                     mRefreshAdapter.removeData(position);
+                    deviceService.delete(devices.get(position).getId());
 //                    mList.remove(position);
                 })
                 .setNegativeButton("取消", (dialog, which) -> {

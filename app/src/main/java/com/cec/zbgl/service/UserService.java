@@ -26,7 +26,7 @@ public class UserService {
         mContext = context;
 //        helper = DatabaseHelper.getInstance(mContext);
 //        db = helper.getWritableDatabase();
-        db = LitePal.getDatabase();
+//        db = LitePal.getDatabase();
     }
 
     public void create() {
@@ -41,7 +41,7 @@ public class UserService {
         values.put("name","tony");
         values.put("password","123456");
         long l =  db.insert("user",null,values);*/
-        SQLiteDatabase db2 = LitePal.getDatabase();
+//        SQLiteDatabase db2 = LitePal.getDatabase();
         Random random = new Random();
         user.setId(random.nextInt(100));
         boolean flag =  user.save();
@@ -50,7 +50,6 @@ public class UserService {
         }else {
             ToastUtils.showShort("新增失败");
         }
-
         return flag;
     }
 

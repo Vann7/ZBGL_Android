@@ -8,8 +8,9 @@ import java.util.Date;
 
 /** 装备管理_设备库存信息 */
 public class DeviceInfo extends LitePalSupport implements Serializable {
-    @Column(nullable = false)
-    private java.lang.String id;
+    private long id;
+    @Column(unique = true, nullable = false)
+    private String mId;
     private java.lang.String name;
     private int type;
     private java.lang.String location;
@@ -20,10 +21,10 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
     private java.lang.String createrId;
     private java.lang.String createrName;
     private java.util.Date createTime;
+    private byte[] image;
     private boolean isValid;
 
-    public DeviceInfo() {
-    }
+    public DeviceInfo() {}
 
     public DeviceInfo(String name, String belongSys, String location) {
         this.name = name;
@@ -58,11 +59,27 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
                 '}';
     }
 
-    public String getId() {
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getmId() {
+        return mId;
+    }
+
+    public void setmId(String mId) {
+        this.mId = mId;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
