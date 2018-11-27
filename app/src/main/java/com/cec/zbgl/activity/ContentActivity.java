@@ -3,6 +3,7 @@ package com.cec.zbgl.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,7 +30,10 @@ import android.widget.Toast;
 import com.cec.zbgl.R;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.DeviceService;
+import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.ToastUtils;
 
@@ -42,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
@@ -83,10 +88,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private String mid; //装备mid
     private boolean add; //是否新增
     private DeviceService deviceService;
+    private OrgsService orgsService;
 
     private String status[] = {"使用中","未入库","已入库","已出库"};
     private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
-    private String systems[] = {"根目录1","根目录2","根目录3","根目录4"};
+    private String systems[];
     private String icons[] = {"从相册选取","拍摄"};
 
 
@@ -95,7 +101,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
         mExtStorDir = Environment.getExternalStorageDirectory().toString();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+
         deviceService = new DeviceService();
+        orgsService = new OrgsService();
         initView();
         initData();
         initEvent();
@@ -125,9 +135,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         delete_tv = (TextView) findViewById(R.id.device_delete);
-
-
-
         type_ll = (LinearLayout)findViewById(R.id.device_type_ll);
         status_ll = (LinearLayout)findViewById(R.id.device_status_ll);
         belongSys_ll = (LinearLayout)findViewById(R.id.device_belongSys_ll);
@@ -150,8 +157,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             status_Et.setText(String.valueOf(device.getStatus()));
             belongSys_Et.setText(device.getBelongSys());
             createName_Et.setText(device.getCreaterName());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            createTime_Et.setText(sdf.format(device.getCreateTime()));
+            if (device.getCreateTime() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                createTime_Et.setText(sdf.format(device.getCreateTime()));
+            }
             description_Et.setText(device.getDescription());
             head_tv.setText(device.getName());
             delete_tv.setVisibility(VISIBLE);
@@ -161,12 +170,20 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 headImage.setImageBitmap(bitmap);
             }
         }else {
+            SharedPreferences setting = getSharedPreferences("User", 0);
+            String name = setting.getString("name","");
             device = new DeviceInfo();
             device.setmId(mid);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             createTime_Et.setText(sdf.format(new Date()));
+            createName_Et.setText(name);
             delete_tv.setVisibility(GONE);
         }
+
+        List<SpOrgnization> list = orgsService.loadNames();
+        systems = new String[list.size()];
+        List<String> names = list.stream().map(SpOrgnization::getName).collect(Collectors.toList());
+        names.toArray(systems);
     }
 
     /**
@@ -178,7 +195,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         back_iv.setOnClickListener(this);
         save_btn.setOnClickListener(this);
         delete_tv.setOnClickListener(this);
-
         type_ll.setOnClickListener(this);
         status_ll.setOnClickListener(this);
         belongSys_ll.setOnClickListener(this);
@@ -470,6 +486,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 //        device.setStatus(Integer.valueOf(status_Et.getText().toString()));
 //        device.setBelongSys(belongSys_Et.getText().toString());
         device.setCreaterName(createName_Et.getText().toString());
+        device.setBelongSys(belongSys_Et.getText().toString());
         device.setDescription(description_Et.getText().toString());
         device.setCreateTime(new Date());
         device.setValid(true);
@@ -482,6 +499,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         device.setImage(images);
         return deviceService.update(device);
     }
+
+
 
 
 }

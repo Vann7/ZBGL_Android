@@ -4,6 +4,7 @@ import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 /** 备品备件_设备教程 */
@@ -15,7 +16,7 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
 
 
     private long id;
-    @Column(unique = true, nullable = false)
+//    @Column(unique = true, nullable = false)
     private String mId;
     private String deviceId;
     private String sysId;
@@ -23,7 +24,7 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
     private int deviceType;
     private int courseType;
     private String createrId;
-    private String createName;
+    private String createrName;
     private Date createTime;
     private String location;
     private String description;
@@ -34,6 +35,8 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
     private String message;   //当为标题时显示标题信息(不存数据库)
     @Column(ignore = true)
     private boolean isTitle; //判断是否为标题(不存数据库)
+    private boolean isUpload; //是否已上传服务器
+    private boolean isEdited; //是否已编辑
 
 
     public DeviceCourse() {
@@ -67,21 +70,27 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
     @Override
     public String toString() {
         return "DeviceCourse{" +
-                "id='" + id + '\'' +
+                "id=" + id +
+                ", mId='" + mId + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", sysId='" + sysId + '\'' +
                 ", name='" + name + '\'' +
                 ", deviceType=" + deviceType +
                 ", courseType=" + courseType +
                 ", createrId='" + createrId + '\'' +
-                ", createName='" + createName + '\'' +
+                ", createrName='" + createrName + '\'' +
                 ", createTime=" + createTime +
                 ", location='" + location + '\'' +
                 ", description='" + description + '\'' +
                 ", isValid=" + isValid +
+                ", image=" + Arrays.toString(image) +
+                ", image_full=" + Arrays.toString(image_full) +
+                ", message='" + message + '\'' +
+                ", isTitle=" + isTitle +
+                ", isUpload=" + isUpload +
+                ", isEdited=" + isEdited +
                 '}';
     }
-
 
     public long getId() {
         return id;
@@ -147,12 +156,12 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
         this.createrId = createrId;
     }
 
-    public String getCreateName() {
-        return createName;
+    public String getCreaterName() {
+        return createrName;
     }
 
-    public void setCreateName(String createName) {
-        this.createName = createName;
+    public void setCreaterName(String createrName) {
+        this.createrName = createrName;
     }
 
     public Date getCreateTime() {
@@ -186,21 +195,6 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
     public void setValid(boolean valid) {
         isValid = valid;
     }
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public boolean getIsTitle() {
-        return isTitle;
-    }
-
-    public void setIsTitle(boolean isTitle) {
-        this.isTitle = isTitle;
-    }
 
     public byte[] getImage() {
         return image;
@@ -218,4 +212,35 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
         this.image_full = image_full;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isTitle() {
+        return isTitle;
+    }
+
+    public void setTitle(boolean title) {
+        isTitle = title;
+    }
+
+    public boolean isUpload() {
+        return isUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        isUpload = upload;
+    }
+
+    public boolean isEdited() {
+        return isEdited;
+    }
+
+    public void setEdited(boolean edited) {
+        isEdited = edited;
+    }
 }

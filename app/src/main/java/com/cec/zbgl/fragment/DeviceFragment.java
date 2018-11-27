@@ -40,6 +40,7 @@ import com.cec.zbgl.activity.SearchActivity;
 import com.cec.zbgl.adapter.FilterAdapter;
 import com.cec.zbgl.adapter.OrgsAdapter;
 import com.cec.zbgl.adapter.RefreshAdapter;
+import com.cec.zbgl.event.MessageEvent;
 import com.cec.zbgl.holder.FilterItemViewHolder;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
@@ -48,6 +49,10 @@ import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
 import com.cec.zbgl.utils.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -104,10 +109,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private OrgsService orgsService;
     private DeviceService deviceService;
 
-    private String belongSys = "根目录1";
+    private String current_node;
+    private String belongSys = "";
     private String status[] = {"使用中","未入库","已入库","已出库"};
     private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
 //    private String systems[] = {"系统1","系统2","系统3","系统4"};
+    private int page;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,7 +165,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 ToastUtils.showShort("检索词: "+ name);
                 break;
             case BACK_REFRESH :
-                devices = deviceService.loadLost();
+                devices = deviceService.loadList(page,belongSys);
                 mRefreshAdapter.changeData(devices);
         }
     }
@@ -172,6 +179,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
         //主界面RV
         mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view);
+        mRecyclerView.setItemViewCacheSize(20);
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
 
@@ -236,16 +244,17 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     private void initOrgs() {
         orgsService = new OrgsService(getContext());
-
-
-
         orgs = orgsService.loadList();
+        if (orgs.size()>0){
+            belongSys = orgs.get(0).getName();
+        }
+
 //        orgs = orgs2;
     }
 
-
     private void initData() {
-        devices = deviceService.loadLost();
+        page = 0;
+        devices = deviceService.loadList(0,belongSys);
         //初始化filter数据
         HashMap<Integer, String>  map = new HashMap<Integer, String>();
         map.put(0,"设备状态");
@@ -264,15 +273,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             map1.put(1,types[i]);
             mList.add(map1);
         }
-//        HashMap<Integer, String>  map3 = new HashMap<Integer, String>();
-//        map3.put(0,"归属系统");
-//        mList.add(map3);
-//        for (int i=0; i< systems.length; i++) {
-//            HashMap<Integer, String>  map1 = new HashMap<Integer, String>();
-//            map1.put(1,systems[i]);
-//            mList.add(map1);
-//        }
-
 
         initRecylerView();
         showData();
@@ -284,10 +284,15 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      */
     private void initEvent() {
         mAdapter.setOnTreeNodeClickListener((node, position) -> {
+            if (current_node != node.getName()) {
+                page = 0;
+                reloadData(node.getName());
+                current_node = node.getName();
+                org_course_name.setText(node.getName());
+                org_course_desc.setText(node.getName() + "教程描述信息");
+            }
 //            if (node.isLeaf()) reloadData(node.getName());
-            reloadData(node.getName());
-            org_course_name.setText(node.getName());
-            org_course_desc.setText(node.getName() + "教程描述信息");
+
         });
 
         //装备列表监听 点击事件
@@ -425,12 +430,16 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         mSwipeRefreshLayout.setOnRefreshListener(() -> new Handler().postDelayed(() -> {
             Random random = new Random();
             List<DeviceInfo> headDatas = new ArrayList<>();
-            headDatas = deviceService.loadLost();
+//            List<DeviceInfo> headDatas = deviceService.loadList(0,belongSys);
             mRefreshAdapter.AddHeaderItem(headDatas);
             //刷新完成
             mSwipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(getActivity(), "更新了 "+headDatas.size()+" 条目数据", Toast.LENGTH_SHORT).show();
-        }, 2000));
+            if (headDatas.size() == 0) {
+                ToastUtils.showShort("没有更新的数据了...");
+            }else {
+                ToastUtils.showShort("新增了 "+headDatas.size()+" 条数据");
+            }
+        }, 20));
     }
 
     //加载更多Listener监听
@@ -452,15 +461,19 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                         Random random = new Random();
                         List<DeviceInfo> footerDatas = new ArrayList<>();
 
-                        footerDatas = deviceService.loadLost();
+                        footerDatas = deviceService.loadList(++page, belongSys);
 
                         mRefreshAdapter.AddFooterItem(footerDatas);
                         //设置回到上拉加载更多
                         mRefreshAdapter.changeMoreStatus(mRefreshAdapter.PULLUP_LOAD_MORE);
                         //没有加载更多了
                         //mRefreshAdapter.changeMoreStatus(mRefreshAdapter.NO_LOAD_MORE);
-                        Toast.makeText(getActivity(), "更新了 " + footerDatas.size() + " 条目数据", Toast.LENGTH_SHORT).show();
-                    }, 2000);
+                        if (footerDatas.size() == 0){
+                            ToastUtils.showShort("没有数据了...");
+                        } else  {
+                            ToastUtils.showShort("加载" + footerDatas.size() + "条信息");
+                        }
+                    }, 10);
                 }
             }
 
@@ -642,6 +655,44 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * 数据同步完成后刷新界面UI
+     * @param messageEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(MessageEvent messageEvent) {
+        initOrgs();
+        try {
+            mAdapter = new OrgsAdapter<>(mTreeView, getContext(),
+                    orgs, 0);
+            mTreeView.setAdapter(mAdapter);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        devices = deviceService.loadList(0,belongSys);
+        showData();
+        mRefreshAdapter.changeData(devices);
+//        initData();
+        initEvent();
+    }
+
+    /**
+     * 绑定EventBus
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    /**
+     * 解除绑定EventBus
+     */
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

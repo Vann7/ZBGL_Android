@@ -1,6 +1,7 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +73,11 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         if (holder instanceof DeviceViewHolder) {
+
+
             if (mDatas != null){
+                ((DeviceViewHolder) holder).imageView.setTag(mDatas.get(position).getId());
+                ((DeviceViewHolder) holder).imageView.setVisibility(View.GONE);
                 ((DeviceViewHolder)holder).bindHolder(mDatas.get(position));
             }
 
@@ -95,6 +100,7 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
+
     @Override
     public int getItemCount() {
         //RecyclerView的count设置为数据总条数+ 1（footerView）
@@ -114,6 +120,8 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return TYPE_ITEM;
         }
     }
+
+
 
 
 

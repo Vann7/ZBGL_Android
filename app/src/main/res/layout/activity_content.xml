@@ -50,7 +50,8 @@
                     android:textSize="16dp"
                     android:inputType="none"
                     android:gravity="center_vertical"
-                    android:background="@drawable/transparent" />
+                    android:background="@drawable/transparent">
+                </EditText>
             </LinearLayout>
 
             <View

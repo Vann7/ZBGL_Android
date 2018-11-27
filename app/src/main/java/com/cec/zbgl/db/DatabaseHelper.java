@@ -48,7 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             +"createrId varchar(36),"
             +"createrName varchar(128),"
             +"createTime date,"
-            +"isValid boolean)";
+            +"isValid boolean,"
+            +"isUpload boolean)";
 
     /**
      * 新建设备教程表
@@ -65,7 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             +"createrId varchar(36),"
             +"createrName varchar(128),"
             +"createTime date,"
-            +"isValid boolean)";
+            +"isValid boolean,"
+            +"isUpload boolean)";
 
     public static final String CREATE_PAD = "";
 

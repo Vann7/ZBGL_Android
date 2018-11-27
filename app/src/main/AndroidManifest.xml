@@ -50,12 +50,24 @@
         <activity android:name=".activity.WXActivity" />
         <!-- <activity android:name=".activity.HomeActivity"/> -->
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.MediaActivity"/>
+        <activity android:name=".activity.MediaActivity" />
 
-        <!--Image Selector Entry-->
+        <!-- Image Selector Entry -->
         <activity
-            android:configChanges="orientation|screenSize"
-            android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
+            android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".activity.ServerActivity"></activity>
+
+        <receiver android:name=".receiver.MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="MY_BROADCAST"/>
+            </intent-filter>
+
+        </receiver>
+
+
     </application>
 
 </manifest>

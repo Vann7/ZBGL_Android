@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.ImageFormat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +24,7 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
 
     private Context mContext;
     private LinearLayout item_ll;
-    private ImageView imageView;
+    public ImageView imageView;
     private TextView name;
     private TextView type;
     private TextView desc;
@@ -41,20 +42,24 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindHolder(DeviceInfo device) {
+        imageView.setVisibility(View.VISIBLE);
         name.setText(device.getName());
         type.setText(device.getBelongSys());
         desc.setText(device.getLocation());
-        if (device.getImage() != null) {
-            File imageFile = FileUtils.byte2File(device.getImage(), mContext);
-            // 显示图片
-            Picasso.with(mContext)
-                    .load(imageFile)
-                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
-                    .tag(MultiImageSelectorFragment.TAG)
-                    .resize(mGridWidth, mGridWidth)
-                    .centerCrop()
-                    .into(imageView);
+        if (imageView.getTag().equals(device.getId())) {
+            if (device.getImage() != null) {
+                File imageFile = FileUtils.byte2File(device.getImage(), mContext);
+                // 显示图片
+                Picasso.with(mContext)
+                        .load(imageFile)
+//                        .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                        .tag("deviceTag")
+                        .resize(mGridWidth, mGridWidth)
+                        .centerCrop()
+                        .into(imageView);
+            }
         }
+
     }
 
 

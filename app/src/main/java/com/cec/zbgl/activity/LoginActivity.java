@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -91,15 +93,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userService = new UserService(this);
 
         User user = new User(e1.getText().toString(), e2.getText().toString());
+        user.setmId(UUID.randomUUID().toString());
         switch (v.getId()) {
             case R.id.loginButton:
                 if (user.getName().equals("")  || user.getPassword().equals("")) {
                     ToastUtils.showShort("用户名和密码不能为空");
                     return;
                 }
-                int flag = userService.checkUser(user);
-                if (flag == 1){
-                    ToastUtils.showShort("已登录");
+                List<User> list = userService.checkUser(user);
+                if (list.size() == 1){
+                    user.setId(list.get(0).getId());
+                    user.setmId(list.get(0).getmId());
+                    saveSession(user);
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     intent.putExtra("user", user);
                     setResult(RESULT_OK, intent);
@@ -110,10 +115,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.createDb_btn:
-               initData(user);
+                new MyAsyncTask().execute(user);
                 break;
         }
 
+    }
+
+    private void saveSession(User user) {
+        SharedPreferences setting = getSharedPreferences("User", 0);
+        SharedPreferences.Editor editor = setting.edit();
+        editor.putString("id",String.valueOf(user.getId()));
+        editor.putString("name", user.getName());
+        editor.putString("mid",user.getmId());
+        editor.putString("password", user.getPassword());
+        editor.commit();
     }
 
     @Override
@@ -152,7 +167,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         //初始化组织机构
 
-        List<SpOrgnization> orgs2 = new ArrayList<>();
+       /* List<SpOrgnization> orgs2 = new ArrayList<>();
         SpOrgnization org2 = new SpOrgnization("1","0","根目录1");
         org2.setmId(UUID.randomUUID().toString());
         orgs2.add(org2);
@@ -173,8 +188,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         orgs2.add(org2);
         for (SpOrgnization o : orgs2) {
             orgsService.insert(o);
-        }
+        }*/
 
+/*
 
         //初始化装备信息
         Random random = new Random();
@@ -196,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             device.setValid(true);
             device.setCreateTime(new Date());
             device.setmId(UUID.randomUUID().toString());
-            deviceService.insert(device);
+            deviceService.insertFromServer(device);
         }
 
         DeviceInfo device = new DeviceInfo(String.valueOf(123) + " 测试装备01",
@@ -205,7 +221,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         device.setImage(images);
         device.setValid(true);
         device.setCreateTime(new Date());
-        deviceService.insert(device);
+        deviceService.insertFromServer(device);
 
         DeviceInfo device2 = new DeviceInfo(String.valueOf(1234) + " 测试装备02",
                 "根目录1",  "系统装备存放位置2" );
@@ -213,7 +229,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         device2.setImage(images);
         device2.setValid(true);
         device2.setCreateTime(new Date());
-        deviceService.insert(device2);
+        deviceService.insertFromServer(device2);
 
 
         //初始化教程信息
@@ -236,7 +252,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     c0.setDeviceId("0208d702-a388-480c-9c20-ecf727476103");
                 }
 
-                courseService.insert(c0);
+                courseService.insertFromServer(c0);
             }else if (i < 18){
                 type = Constant.COURSE_VIDEO;
                 name = "视频教程";
@@ -250,7 +266,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }else {
                     c0.setDeviceId("0208d702-a388-480c-9c20-ecf727476103");
                 }
-                courseService.insert(c0);
+                courseService.insertFromServer(c0);
             } else {
                 type = Constant.COURSE_DOCUMENT;
                 name = "文档教程";
@@ -265,12 +281,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }else {
                     c0.setDeviceId("0208d702-a388-480c-9c20-ecf727476103");
                 }
-                courseService.insert(c0);
+                courseService.insertFromServer(c0);
             }
         }
 
+*/
 
     }
 
+
+    class MyAsyncTask extends AsyncTask<User, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(User... users) {
+            initData(users[0]);
+            return null;
+        }
+    }
 
 }

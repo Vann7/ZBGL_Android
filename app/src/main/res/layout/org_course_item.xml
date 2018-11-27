@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/org_course_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:foregroundGravity="center_vertical"
@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/org_course_desc"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:foregroundGravity="center_vertical"

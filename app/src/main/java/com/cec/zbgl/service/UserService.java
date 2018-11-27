@@ -29,6 +29,8 @@ public class UserService {
 //        db = LitePal.getDatabase();
     }
 
+    public UserService(){}
+
     public void create() {
 
     }
@@ -45,28 +47,23 @@ public class UserService {
         Random random = new Random();
         user.setId(random.nextInt(100));
         boolean flag =  user.save();
-        if (flag) {
-            ToastUtils.showShort("新增成功");
-        }else {
-            ToastUtils.showShort("新增失败");
-        }
         return flag;
     }
 
-    public int checkUser(User user) {
-        List<User> u = LitePal.where("name = ? and password = ?",user.getName(),user.getPassword()).find(User.class);
-        if (u.size() > 0){
-            return 1;
-        }else {
-            return 0;
-        }
-//        Cursor cursor = db.rawQuery("select * from user where name= '" + user.getName()+"' and password = '" + user.getPassword()+"'",null);
-//        if (cursor.getCount() > 0) {
-//            return 1;
-//        }else {
-//            return 0;
-//        }
+    public List<User> checkUser(User user) {
+        List<User> list = LitePal.where("name = ? and password = ?",user.getName(),user.getPassword()).find(User.class);
+        return list;
+    }
 
+    public List<User> getALl() {
+        return LitePal.findAll(User.class);
+    }
+
+    public int updatePassword(User user) {
+        ContentValues values = new ContentValues();
+        values.put("password",user.getPassword());
+       int flag =  LitePal.update(User.class, values, user.getId());
+       return flag;
     }
 
 }

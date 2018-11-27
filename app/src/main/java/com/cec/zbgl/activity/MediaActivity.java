@@ -1,12 +1,15 @@
 package com.cec.zbgl.activity;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -22,15 +25,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.model.DeviceCourse;
+import com.cec.zbgl.service.CourseService;
+import com.cec.zbgl.utils.FileUtils;
 import com.cec.zbgl.utils.LogUtil;
 import com.cec.zbgl.utils.TimeUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.IOException;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener {
+public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener ,MediaPlayer.OnVideoSizeChangedListener {
 
     private SurfaceView surfaceView;
 
@@ -67,6 +75,16 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private TextView masker_tv;
 
+    private CourseService courseService;
+
+    private DeviceCourse course;
+
+    private long id;
+
+    private int surfaceWidth;
+
+    private int surfaceHeight;
+
     private int currentPosition;
 
 //    private boolean isPlaying = false;
@@ -87,26 +105,15 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         initView();
-        initImage();
+        initData();
         initEvent();
 
-    }
-
-    private void initImage() {
-        uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-                + getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
-        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        mmr.setDataSource(this,uri);
-        Bitmap bitmap = mmr.getFrameAtTime();
-        image_iv.setImageBitmap(bitmap);
-        mmr.release();
     }
 
 
     private void initView() {
         mediaPlayer = new MediaPlayer();
         handler = new Handler();
-
         screenWidth = getResources().getDisplayMetrics().widthPixels;
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         holder = surfaceView.getHolder();
@@ -122,8 +129,35 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         pause_iv = (ImageView) findViewById(R.id.surface_pause);
         image_iv = (ImageView) findViewById(R.id.media_image);
         masker_tv = (TextView) findViewById(R.id.surface_masker);
+
     }
 
+    private void initData() {
+        courseService = new CourseService();
+        id = getIntent().getLongExtra("id",0);
+        course = courseService.getDevice(id);
+
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point size = new Point();
+            wm.getDefaultDisplay().getSize(size);
+            surfaceWidth = size.x;
+            surfaceHeight = size.y;
+        }else{
+            surfaceWidth = wm.getDefaultDisplay().getWidth();
+            surfaceHeight = wm.getDefaultDisplay().getHeight();
+        }
+        File imageFile = FileUtils.byte2File(course.getImage(),this);
+        // 显示图片
+        Picasso.with(this)
+                .load(imageFile)
+                .resize(surfaceWidth, surfaceHeight)
+                .centerCrop()
+                .into(image_iv);
+
+
+
+    }
 
 
     @Override
@@ -203,9 +237,10 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
         // TODO　给videoview设置播放源(通过本地存储卡来设置)
         // uri = Uri.fromFile(new File("/sdcard/download/video1.mp4"));
+        uri = Uri.fromFile(new File(course.getLocation()));
         //TODO 给viedeoview设置播放源（通过资源文件来设置），PS 在调用资源文件时，在协议头后加上如“://”
-        uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-                + getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
+//        uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+//                + getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
 
         mediaPlayer.setOnPreparedListener(mp -> {
             // 开始播放视频
@@ -271,6 +306,8 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
             mediaPlayer.setDisplay(holder);
             // 3.准备进行异步播放(当prepareAsync被调用后会执行mediaPlayer的onPrepared回调方法)
             mediaPlayer.prepareAsync();
+
+            setVideoSize();
         }
         catch (IOException e)
         {
@@ -311,7 +348,6 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
             // TODO 设置进度控件
             if (mediaPlayer != null && mediaPlayer.isPlaying())
             {
-                System.out.println(mediaPlayer.getCurrentPosition() / 1000);
                 tvCurrentT.setText(TimeUtils.stringForTime(mediaPlayer.getCurrentPosition()));
                 progressBar.setProgress(mediaPlayer.getCurrentPosition());
                 progressBar_filled.setProgress(mediaPlayer.getCurrentPosition());
@@ -353,7 +389,6 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private void disappear() {
         masker_tv.setVisibility(GONE);
-        System.out.println("隐藏:" + masker_tv.getVisibility());
         back_iv.setVisibility(GONE);
         play_iv.setVisibility(GONE);
         pause_iv.setVisibility(GONE);
@@ -364,7 +399,6 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private void appear() {
         masker_tv.setVisibility(VISIBLE);
-        System.out.println("显示:" + masker_tv.getVisibility());
         if (mediaPlayer.isPlaying()){
             pause_iv.setVisibility(VISIBLE);
         }else {
@@ -374,5 +408,42 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         tvSound.setVisibility(VISIBLE);
         play_rl.setVisibility(VISIBLE);
         progressBar_filled.setVisibility(GONE);
+    }
+
+    /**
+     * 重新设置mediaPlayer 长宽比例
+     */
+    private void setVideoSize() {
+        float videoWidth = mediaPlayer.getVideoWidth();
+        float videoHeight = mediaPlayer.getVideoHeight();
+        int width, height;
+        float scale = videoWidth / videoHeight;
+        width = 0;
+        height = surfaceHeight;
+        //根据视频尺寸去计算->视频可以在sufaceView中放大的最大倍数。
+        float max;
+        if (getResources().getConfiguration().orientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            //竖屏模式下按视频宽度计算放大倍数值
+//            max = Math.max((float) videoWidth / (float) surfaceWidth,(float) videoHeight / (float) surfaceHeight);
+        } else{
+            //横屏模式下按视频高度计算放大倍数值
+//            max = Math.max(((float) videoWidth/(float) surfaceHeight),(float) videoHeight/(float) surfaceWidth);
+            width = (int)(scale * surfaceHeight);
+        }
+
+        //视频宽高分别/最大倍数值 计算出放大后的视频尺寸
+//        videoWidth = (int) Math.ceil((float) videoWidth / max);
+//        videoHeight = (int) Math.ceil((float) videoHeight / max);
+
+        //无法直接设置视频尺寸，将计算出的视频尺寸设置到surfaceView 让视频自动填充。
+         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        surfaceView.setLayoutParams(params);
+
+    }
+
+    @Override
+    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        setVideoSize();
     }
 }

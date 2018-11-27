@@ -1,52 +1,29 @@
-package com.cec.zbgl.model;
+package com.cec.zbgl.dto;
 
-import org.litepal.annotation.Column;
-import org.litepal.crud.LitePalSupport;
-
-import java.io.Serializable;
-import java.util.Arrays;
+import java.sql.Blob;
 import java.util.Date;
 
-/** 装备管理_设备库存信息 */
-public class DeviceInfo extends LitePalSupport implements Serializable {
-    private long id;
-//    @Column(unique = true, nullable = false)
-    private String mId;
-    private java.lang.String name;
+
+public class DeviceDto {
+    private String id;
+    private String name;
     private int type;
-    private java.lang.String location;
+    private String location;
     private int count;
     private int status;
     private String belongSys;
-    private java.lang.String description;
-    private java.lang.String createrId;
-    private java.lang.String createrName;
-    private java.util.Date createTime;
+    private String description;
+    private String createrId;
+    private String createrName;
+    private Date createTime;
     private byte[] image;
     private boolean isValid;
     private boolean isUpload; //是否已上传服务器
-    private boolean isEdited; //是否已编辑
-
-    public DeviceInfo() {}
-
-    public DeviceInfo(String name, String belongSys, String location) {
-        this.name = name;
-        this.belongSys = belongSys;
-        this.location = location;
-    }
-
-    
-    public DeviceInfo(String name, int type, String location) {
-        this.name = name;
-        this.type = type;
-        this.location = location;
-    }
 
     @Override
     public String toString() {
         return "DeviceInfo{" +
-                "id=" + id +
-                ", mId='" + mId + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", type=" + type +
                 ", location='" + location + '\'' +
@@ -57,26 +34,16 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
                 ", createrId='" + createrId + '\'' +
                 ", createrName='" + createrName + '\'' +
                 ", createTime=" + createTime +
-                ", image=" + Arrays.toString(image) +
                 ", isValid=" + isValid +
-                ", isUpload=" + isUpload +
                 '}';
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getmId() {
-        return mId;
-    }
-
-    public void setmId(String mId) {
-        this.mId = mId;
     }
 
     public String getName() {
@@ -159,16 +126,16 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
         this.createTime = createTime;
     }
 
+    public boolean isValid() {
+        return isValid;
+    }
+
     public byte[] getImage() {
         return image;
     }
 
     public void setImage(byte[] image) {
         this.image = image;
-    }
-
-    public boolean isValid() {
-        return isValid;
     }
 
     public void setValid(boolean valid) {
@@ -183,11 +150,5 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
         isUpload = upload;
     }
 
-    public boolean isEdited() {
-        return isEdited;
-    }
 
-    public void setEdited(boolean edited) {
-        isEdited = edited;
-    }
 }

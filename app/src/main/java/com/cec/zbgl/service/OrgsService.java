@@ -4,7 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.cec.zbgl.db.DatabaseHelper;
+import com.cec.zbgl.dto.OrgnizationDto;
 import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.utils.DtoUtils;
 
 import org.litepal.LitePal;
 
@@ -25,6 +27,8 @@ public class OrgsService {
 //        db = helper.getWritableDatabase();
         db = LitePal.getDatabase();
     }
+
+    public OrgsService(){}
 
     public boolean insert(SpOrgnization org) {
         boolean flag = false;
@@ -54,9 +58,34 @@ public class OrgsService {
         return flag;
     }
 
+    /**
+     * 批量插入服务器端数据
+     * @param list
+     */
+    public void batchInsert(List<OrgnizationDto> list) {
+        LitePal.deleteAll(SpOrgnization.class);
+        for (OrgnizationDto orgDto : list) {
+            SpOrgnization org = DtoUtils.toOrgnization(orgDto);
+            org.save();
+        }
+
+    }
+
     public List<SpOrgnization> loadList() {
-        List<SpOrgnization> orgs = LitePal.findAll(SpOrgnization.class);
+        List<SpOrgnization> orgs = LitePal.
+                where("isValid = ?", "1")
+                .order("code ASC")
+                .find(SpOrgnization.class);
         return orgs;
+    }
+
+    public List<SpOrgnization> loadNames() {
+        List<SpOrgnization> list = LitePal
+                .select("name")
+                .where("isValid = ?", "1")
+                .order("code ASC")
+                .find(SpOrgnization.class);
+        return list;
     }
 
 }

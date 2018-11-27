@@ -68,7 +68,7 @@ public class CourseAddAdapter extends BaseAdapter {
             viewHolder.image.setImageResource(R.mipmap.camera);
         }else if(position == 1) {
             viewHolder.name.setText("拍摄视频");
-            viewHolder.image.setImageResource(R.mipmap.camera);
+            viewHolder.image.setImageResource(R.mipmap.video);
         } else if (position == 2){
             viewHolder.name.setText("导入文档");
             viewHolder.image.setImageResource(R.mipmap.file);

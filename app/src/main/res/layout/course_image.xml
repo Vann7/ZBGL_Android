@@ -14,5 +14,7 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
+        android:paddingRight="4dp"
+        android:layout_marginRight="5dp"
         android:src="@mipmap/default_image" />
 </LinearLayout>

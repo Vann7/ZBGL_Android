@@ -10,7 +10,7 @@
     <include layout="@layout/bar_back"/>
 
     <RelativeLayout
-        android:id="@+id/user_rl_0"
+        android:id="@+id/server_rl"
         android:layout_width="300dp"
         android:layout_height="40dp"
         android:layout_marginTop="150dp"
@@ -19,38 +19,38 @@
         android:background="@drawable/shape_wihte_frame" >
 
         <TextView
-            android:id="@+id/user_pd_tv0"
+            android:id="@+id/server_ip_tv"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:padding="1dp"
-            android:text="原始密码"
+            android:text="服务器IP"
             android:textSize="16dp" />
 
         <View
-            android:id="@+id/user_pd_v0"
+            android:id="@+id/server_ip_v"
             android:layout_width="1dip"
             android:layout_height="fill_parent"
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
-            android:layout_toRightOf="@+id/user_pd_tv0"
+            android:layout_toRightOf="@+id/server_ip_tv"
             android:background="#EEEFFF"/>
 
         <EditText
-            android:id="@+id/user_pd_et0"
+            android:id="@+id/server_ip_et"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/user_pd_v0"
+            android:layout_toRightOf="@+id/server_ip_v"
             android:background="@drawable/transparent"
             android:ems="19"
-            android:hint="请输入原始密码"
-            android:inputType="textPassword"
+            android:hint="请输入服务器ip"
+            android:inputType="textPostalAddress"
             android:padding="1dp"
             android:textSize="16dp">
 
@@ -58,7 +58,7 @@
         </EditText>
 
         <ImageView
-            android:id="@+id/user_pd_del0"
+            android:id="@+id/server_ip_del"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
@@ -69,47 +69,47 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/user_rl_01"
+        android:id="@+id/server_port_rl"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/user_rl_0"
+        android:layout_below="@+id/server_rl"
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:background="@drawable/shape_wihte_frame" >
 
         <TextView
-            android:id="@+id/user_pd_tv"
+            android:id="@+id/server_port_tv"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:padding="1dp"
-            android:text="新密码"
+            android:text="端口号"
             android:textSize="16dp" />
 
         <View
-            android:id="@+id/user_pd_v"
+            android:id="@+id/server_port_v"
             android:layout_width="1dip"
             android:layout_height="fill_parent"
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
-            android:layout_toRightOf="@+id/user_pd_tv"
+            android:layout_toRightOf="@+id/server_port_tv"
             android:background="#EEEFFF"/>
 
         <EditText
-            android:id="@+id/user_pd_et"
+            android:id="@+id/server_port_et"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/user_pd_v"
+            android:layout_toRightOf="@+id/server_port_v"
             android:background="@drawable/transparent"
             android:ems="19"
-            android:hint="请输入密码"
-            android:inputType="textPassword"
+            android:hint="请输入服务器端口"
+            android:inputType="number"
             android:padding="1dp"
             android:textSize="16dp">
 
@@ -117,7 +117,7 @@
         </EditText>
 
         <ImageView
-            android:id="@+id/user_pd_del"
+            android:id="@+id/server_port_del"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
@@ -127,71 +127,14 @@
             android:visibility="invisible" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/user_rl_02"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/user_rl_01"
-        android:layout_marginTop="30dp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/shape_wihte_frame" >
-
-        <TextView
-            android:id="@+id/user_pd_tv2"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:padding="1dp"
-            android:text="确认密码"
-            android:textSize="16dp" />
-
-        <View
-            android:id="@+id/user_pd_v2"
-            android:layout_width="1dip"
-            android:layout_height="fill_parent"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_toRightOf="@+id/user_pd_tv2"
-            android:background="#EEEFFF"/>
-
-        <EditText
-            android:id="@+id/user_pd_et2"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/user_pd_v2"
-            android:background="@drawable/transparent"
-            android:ems="19"
-            android:hint="请输入密码"
-            android:inputType="textPassword"
-            android:padding="1dp"
-            android:textSize="16dp">
-
-            <requestFocus />
-        </EditText>
-
-        <ImageView
-            android:id="@+id/user_pd_del2"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="3dp"
-            android:src="@mipmap/text_del"
-            android:visibility="invisible" />
-    </RelativeLayout>
 
     <TextView
-        android:id="@+id/user_submit_tv"
+        android:id="@+id/server_submit_tv"
         android:layout_width="400dp"
         android:layout_height="60dp"
-        android:layout_below="@+id/user_rl_02"
+        android:layout_below="@+id/server_port_rl"
         android:background="@drawable/login_button_selector"
-        android:text="修改密码"
+        android:text="设置"
         android:gravity="center"
         android:textSize="20dp"
         android:textStyle="bold"

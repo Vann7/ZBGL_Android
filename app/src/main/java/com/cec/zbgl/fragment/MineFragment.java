@@ -1,6 +1,7 @@
 package com.cec.zbgl.fragment;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.content.Intent;
@@ -13,7 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.LoginActivity;
+import com.cec.zbgl.activity.ServerActivity;
 import com.cec.zbgl.activity.UserActivity;
+import com.cec.zbgl.model.User;
 import com.cec.zbgl.utils.CacheUtil;
 
 import java.lang.reflect.Field;
@@ -24,8 +27,12 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private TextView logout_tv;
     private RelativeLayout password_rl;
     private RelativeLayout clearCache_rl;
+    private RelativeLayout server_rl;
     private TextView cacheSize_tv;
+    private TextView name_tv;
+
     private AlertDialog.Builder builder;
+    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,16 +54,22 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         password_rl.setOnClickListener(this);
         clearCache_rl.setOnClickListener(this);
         logout_tv.setOnClickListener(this);
+        server_rl.setOnClickListener(this);
+
     }
 
     /**
      * 初始化界面view
      */
     private void initView() {
+        getSession();
         logout_tv = (TextView) getActivity().findViewById(R.id.mine_out_tv);
         password_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_user_rl);
+        server_rl = (RelativeLayout) getActivity().findViewById(R.id.server_rl);
         clearCache_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_clear_cache_rl);
         cacheSize_tv = (TextView) getActivity().findViewById(R.id.cache_size);
+        name_tv = (TextView) getActivity().findViewById(R.id.mine_name_tv);
+        name_tv.setText(user.getName());
         try {
             cacheSize_tv.setText(CacheUtil.getTotalCacheSize(getContext()));
         } catch (Exception e) {
@@ -82,10 +95,15 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.mine_user_rl :
                 Intent intent = new Intent(getActivity(), UserActivity.class);
+                intent.putExtra("user",user);
                 getActivity().startActivity(intent);
                 break;
             case R.id.mine_clear_cache_rl :
                 clean();
+                break;
+            case R.id.server_rl :
+                Intent intent1 = new Intent(getActivity(), ServerActivity.class);
+                getActivity().startActivity(intent1);
                 break;
         }
     }
@@ -96,6 +114,13 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     private void clean() {
         CacheUtil.clearAllCache(getContext());
         cacheSize_tv.setText("0MB");
+    }
+
+
+    private void getSession() {
+        SharedPreferences setting = getActivity().getSharedPreferences("User", 0);
+        user = new User(setting.getString("name",""),setting.getString("password",""));
+        user.setId(Integer.valueOf(setting.getString("id","0")));
     }
 
 

@@ -47,8 +47,8 @@ public class TypeImageHolder extends RecyclerView.ViewHolder {
             // 显示图片
             Picasso.with(mContext)
                     .load(imageFile)
-                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
-                    .tag(MultiImageSelectorFragment.TAG)
+//                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+//                    .tag(MultiImageSelectorFragment.TAG)
                     .resize(mGridWidth, mGridWidth)
                     .centerCrop()
                     .into(imageView);

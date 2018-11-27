@@ -32,6 +32,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     int ColumnNum = 6;
     private ItemClickListener mListener;
     private int mGridWidth;
+    private int mGridWidth2;
 
 
     public CourseAdapter(Context context, List<DeviceCourse> mData) {
@@ -48,8 +49,8 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         }else{
             width = wm.getDefaultDisplay().getWidth();
         }
-        mGridWidth = width / 3;
-
+        mGridWidth = width / 4;
+        mGridWidth2 = width / 2;
 
     }
 
@@ -79,8 +80,9 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
                 return oneHolder;
 
             case   DeviceCourse.TYPE_TWO:
+
                 TypeVideoHolder twoHolder = new TypeVideoHolder(mLayoutInflater.inflate
-                        (R.layout.course_video,parent,false), mContext);
+                        (R.layout.course_video,parent,false), mContext,mGridWidth2);
 
                 twoHolder.itemView.setOnClickListener( v -> {
                     mListener.onItemClick(v, twoHolder.getLayoutPosition());
@@ -110,7 +112,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         DeviceCourse course = mData.get(position);
-        if(course.getIsTitle() == true){
+        if(course.isTitle() == true){
             ((TypeItemHolder)holder).bindHolder(course.getMessage());
         }else {
             int viewType = getItemViewType(position);
@@ -149,7 +151,7 @@ public class CourseAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         DeviceCourse course = mData.get(position);
-        if ("true".equals(course.getIsTitle())) {
+        if ("true".equals(course.isTitle())) {
             return VIEW_TYPE_TITLE;
         }else {
 

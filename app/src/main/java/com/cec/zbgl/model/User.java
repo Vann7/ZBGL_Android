@@ -10,9 +10,11 @@ import java.io.Serializable;
  */
 public class User extends LitePalSupport implements Serializable {
     private int id;
+    private String mId;
     @Column(nullable = false)
     private String name;
     private String password;
+    private boolean isEdited; //是否已编辑
 
     public User(){}
 
@@ -53,5 +55,21 @@ public class User extends LitePalSupport implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getmId() {
+        return mId;
+    }
+
+    public void setmId(String mId) {
+        this.mId = mId;
+    }
+
+    public boolean isEdited() {
+        return isEdited;
+    }
+
+    public void setEdited(boolean edited) {
+        isEdited = edited;
     }
 }

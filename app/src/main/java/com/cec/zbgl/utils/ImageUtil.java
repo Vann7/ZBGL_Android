@@ -41,6 +41,10 @@ public class ImageUtil {
         this.activity = activity;
     }
 
+    public ImageUtil() {
+        mExtStorDir = Environment.getExternalStorageDirectory().toString();
+    }
+
     // 从本地相册选取图片作为头像
     public void choseHeadImageFromGallery() {
         // 设置文件类型    （在华为手机中不能获取图片，要替换代码）
