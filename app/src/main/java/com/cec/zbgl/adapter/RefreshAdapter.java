@@ -88,8 +88,6 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         if (holder instanceof DeviceViewHolder) {
-
-
             if (mDatas != null){
                 ((DeviceViewHolder) holder).imageView.setTag(mDatas.get(position).getId());
                 ((DeviceViewHolder) holder).imageView.setVisibility(View.GONE);

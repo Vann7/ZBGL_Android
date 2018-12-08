@@ -26,7 +26,8 @@ allprojects {
         mavenCentral()
         maven { url'https://maven.google.com'}
         jcenter { url "http://jcenter.bintray.com/"}
-        google()
+//        maven { url 'https://jitpack.io' }
+//        google()
     }
 }
 
