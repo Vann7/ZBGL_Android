@@ -10,57 +10,70 @@
     <LinearLayout
         android:id="@+id/sync_ll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
 
         <ProgressBar
             android:id="@+id/sync_progressBar"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="40dp"
-            android:layout_marginLeft="200dp"
-            android:layout_marginTop="300dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:indeterminateTint="@color/salmon"/>
+            android:indeterminateTint="@color/salmon" />
+
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="8"
-            android:layout_marginTop="300dp"
-            android:textSize="26sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="正在同步中，请不要退出应用"
-            />
+            android:textSize="22sp" />
     </LinearLayout>
-
-
-
 
 
     <TextView
         android:id="@+id/sync_data"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentLeft="true"
-        android:gravity="center"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="100dp"
+        android:layout_marginLeft="114dp"
+        android:layout_marginTop="50dp"
         android:background="@color/lightgray"
-        android:text="同步数据"/>
+        android:gravity="center"
+        android:text="同步数据"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/sync_file"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:id="@+id/sync_upload_file"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="50dp"
         android:layout_marginRight="100dp"
         android:gravity="center"
         android:textSize="22sp"
         android:textStyle="bold"
         android:background="@color/lightgray"
-        android:text="同步文件"/>
+        android:text="上传文件"/>
+
+    <TextView
+        android:id="@+id/sync_download_file"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sync_upload_file"
+        android:layout_marginRight="100dp"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:background="@color/lightgray"
+        android:text="下载文件"/>
 
 
 

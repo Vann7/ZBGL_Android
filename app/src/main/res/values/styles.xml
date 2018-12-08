@@ -55,5 +55,7 @@
         <item name="android:gravity">center_vertical|center_horizontal</item>
     </style>
 
+    <!-- ProgressBar 样式 -->
+
 
 </resources>

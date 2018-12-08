@@ -3,6 +3,7 @@ package com.cec.zbgl.utils;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -458,6 +459,20 @@ public class FileUtils {
                 }
             }
 
+        }
+        return file;
+    }
+
+    public static File bitmap2File(Bitmap bitmap,  Context mContext) {
+        String filePath = mContext.getExternalCacheDir().toString();
+        File file = new File(filePath + File.separator + System.currentTimeMillis() + ".jpg");
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return file;
     }

@@ -1,11 +1,14 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.holder.DeviceViewHolder;
@@ -24,6 +27,7 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     List<DeviceInfo>   mDatas;
     private static final int TYPE_ITEM   = 0;
     private static final int TYPE_FOOTER = 1;
+    private static final int TYPE_NONE = 1;
 
     //上拉加载更多
     public static final int PULLUP_LOAD_MORE = 0;
@@ -35,12 +39,24 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     //上拉加载更多状态-默认为0
     private int mLoadMoreStatus = 0;
     private ItemClickListener mListener;
+    private int flag;
 
 
     public RefreshAdapter(Context context, List<DeviceInfo> datas) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mDatas = datas;
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        int height = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point size = new Point();
+            wm.getDefaultDisplay().getSize(size);
+            height = size.y;
+        }else{
+            height = wm.getDefaultDisplay().getHeight();
+        }
+        flag = ((height -110 )/ 120);
     }
 
     @Override
@@ -63,7 +79,6 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return viewHolder;
         } else if (viewType == TYPE_FOOTER) {
             View itemView = mInflater.inflate(R.layout.load_more_footview_layout, parent, false);
-
             return new FooterViewHolder(itemView);
         }
         return null;
@@ -83,6 +98,12 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (holder instanceof FooterViewHolder) {
             FooterViewHolder footerViewHolder = (FooterViewHolder) holder;
+            if (mDatas.size() > flag) {
+                footerViewHolder.mLoadLayout.setVisibility(View.VISIBLE);
+            }else {
+                footerViewHolder.mLoadLayout.setVisibility(View.GONE);
+                return;
+            }
             switch (mLoadMoreStatus) {
                 case PULLUP_LOAD_MORE:
                     footerViewHolder.mTvLoadText.setText("上拉加载更多...");
@@ -113,6 +134,7 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
 
+
         if (position + 1 == getItemCount()) {
             //最后一个item设置为footerView
             return TYPE_FOOTER;
@@ -120,10 +142,6 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return TYPE_ITEM;
         }
     }
-
-
-
-
 
 
     public void AddHeaderItem(List<DeviceInfo> items) {

@@ -90,8 +90,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private DeviceService deviceService;
     private OrgsService orgsService;
 
-    private String status[] = {"使用中","未入库","已入库","已出库"};
-    private String types[] = {"网线","显示器","路由器","鼠标","键盘","笔记本","电源","耳机"};
+    private String status[] = {"未入库","已入库","已出库"};
+    private String types[] = {"移动Pad","交换机","服务器","磁盘阵列","计算机","显示终端","笔记本","打印机","网线","水晶头"};
     private String systems[];
     private String icons[] = {"从相册选取","拍摄"};
 
@@ -449,13 +449,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      */
     public boolean addDevice() {
         device.setName(name_Et.getText().toString());
-//        device.setType(Integer.valueOf(type_Et.getText().toString()));
+        device.setType(type_Et.getText().toString());
         device.setLocation(location_Et.getText().toString());
         if (!count_Et.getText().toString().equals("")){
             device.setCount(Integer.valueOf(count_Et.getText().toString()));
         }
 
-//        device.setStatus(Integer.valueOf(status_Et.getText().toString()));
+        device.setStatus(status_Et.getText().toString());
         device.setBelongSys(belongSys_Et.getText().toString());
         device.setCreaterName(createName_Et.getText().toString());
         device.setDescription(description_Et.getText().toString());
@@ -478,13 +478,12 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      */
     public int updateDevice() {
         device.setName(name_Et.getText().toString());
-//        device.setType(Integer.valueOf(type_Et.getText().toString()));
+        device.setType(type_Et.getText().toString());
         device.setLocation(location_Et.getText().toString());
         if (!count_Et.getText().toString().equals("")){
             device.setCount(Integer.valueOf(count_Et.getText().toString()));
         }
-//        device.setStatus(Integer.valueOf(status_Et.getText().toString()));
-//        device.setBelongSys(belongSys_Et.getText().toString());
+        device.setStatus(status_Et.getText().toString());
         device.setCreaterName(createName_Et.getText().toString());
         device.setBelongSys(belongSys_Et.getText().toString());
         device.setDescription(description_Et.getText().toString());

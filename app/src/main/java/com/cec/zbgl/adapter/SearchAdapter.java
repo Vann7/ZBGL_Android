@@ -83,7 +83,7 @@ public class SearchAdapter extends BaseAdapter {
             viewHolder.image_iv = (ImageView) convertView.findViewById(R.id.id_device_image);
             viewHolder.name_tv = (TextView) convertView.findViewById(R.id.id_device_name);
             viewHolder.type_tv = (TextView) convertView.findViewById(R.id.id_device_type);
-            viewHolder.location_tv = (TextView) convertView.findViewById(R.id.id_device_location);
+//            viewHolder.location_tv = (TextView) convertView.findViewById(R.id.id_device_location);
             //通过setTag将convertView与viewHolder关联
             convertView.setTag(viewHolder);
         }else {
@@ -95,7 +95,7 @@ public class SearchAdapter extends BaseAdapter {
         //设置控件的对应属性值
         viewHolder.name_tv.setText(device.getName());
         viewHolder.type_tv.setText(String.valueOf(device.getType()));
-        viewHolder.location_tv.setText(device.getLocation());
+//        viewHolder.location_tv.setText(device.getLocation());
         if (device.getImage() != null) {
             File imageFile = FileUtils.byte2File(device.getImage(), mContext);
             // 显示图片
@@ -136,7 +136,7 @@ public class SearchAdapter extends BaseAdapter {
         private ImageView image_iv;
         private TextView name_tv;
         private TextView type_tv;
-        private TextView location_tv;
+//        private TextView location_tv;
 
     }
 

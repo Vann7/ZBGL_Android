@@ -92,15 +92,15 @@ public class DemoActivity extends AppCompatActivity implements IReflashListener,
     private void initData() {
         Random random = new Random();
         List<DeviceInfo> list = new ArrayList<>();
-        for (int i=0; i< 4; i++) {
-            String name,typyName;
-
-                name = "图片教程";
-                typyName = "图片";
-                int r = random.nextInt(100);
-            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "教程类别为:"+typyName );
-            list.add(device);
-        }
+//        for (int i=0; i< 4; i++) {
+//            String name,typyName;
+//
+//                name = "图片教程";
+//                typyName = "图片";
+//                int r = random.nextInt(100);
+//            DeviceInfo device = new DeviceInfo(String.valueOf(r), name+": "+r,  "教程类别为:"+typyName );
+//            list.add(device);
+//        }
 
         update(list);
     }

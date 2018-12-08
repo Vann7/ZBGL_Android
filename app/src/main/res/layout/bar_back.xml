@@ -47,5 +47,36 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/upload_more"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/more_white"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/select_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:textColor="@color/lightgray"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="全选"/>
+
+    <TextView
+        android:id="@+id/unselect_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:textColor="@color/lightgray"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="全不选"/>
 
 </RelativeLayout>

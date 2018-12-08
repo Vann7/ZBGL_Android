@@ -7,10 +7,10 @@ import java.util.Date;
 public class DeviceDto {
     private String id;
     private String name;
-    private int type;
+    private String type;
     private String location;
     private int count;
-    private int status;
+    private String status;
     private String belongSys;
     private String description;
     private String createrId;
@@ -38,6 +38,7 @@ public class DeviceDto {
                 '}';
     }
 
+
     public String getId() {
         return id;
     }
@@ -54,11 +55,11 @@ public class DeviceDto {
         this.name = name;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -78,11 +79,11 @@ public class DeviceDto {
         this.count = count;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -126,16 +127,16 @@ public class DeviceDto {
         this.createTime = createTime;
     }
 
-    public boolean isValid() {
-        return isValid;
-    }
-
     public byte[] getImage() {
         return image;
     }
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public boolean isValid() {
+        return isValid;
     }
 
     public void setValid(boolean valid) {
@@ -149,6 +150,4 @@ public class DeviceDto {
     public void setUpload(boolean upload) {
         isUpload = upload;
     }
-
-
 }

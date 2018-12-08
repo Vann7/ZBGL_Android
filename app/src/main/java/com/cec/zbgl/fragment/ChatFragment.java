@@ -134,7 +134,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
 
         devices = new ArrayList<>();
         for (int i=0; i< 20; i++) {
-            device = new DeviceInfo("tony"+i,i,"Beijing"+i);
+            device = new DeviceInfo("tony"+i,""+i,"Beijing"+i);
             devices.add(device);
         }
 
@@ -158,7 +158,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
     private void setReflashData() {
         devices.removeAll(devices);
         for (int i=100; i< 120; i++) {
-            device = new DeviceInfo("GiGi "+i,i,"Ice Land"+i);
+            device = new DeviceInfo("GiGi "+i,""+i,"Ice Land"+i);
             devices.add(device);
         }
     }
@@ -168,7 +168,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
      */
     private void getLoadData() {
         for (int i=120; i< 140; i++) {
-            device = new DeviceInfo("Mix "+i,i,"Green Land"+i);
+            device = new DeviceInfo("Mix "+i,""+i,"Green Land"+i);
             devices.add(device);
         }
         dAdapter.onDateChange(devices);
@@ -180,7 +180,7 @@ public class ChatFragment extends Fragment implements IReflashListener,ILoadList
     private void reloadData(String name) {
         devices = new ArrayList<>();
         for (int i=0; i< 40; i++) {
-            device = new DeviceInfo("Mac OS " + i, i, "USA-"+ name);
+            device = new DeviceInfo("Mac OS " + i, ""+i, "USA-"+ name);
             devices.add(device);
         }
         showList(devices);

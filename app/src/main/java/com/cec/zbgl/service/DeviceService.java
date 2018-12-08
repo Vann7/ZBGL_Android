@@ -126,21 +126,34 @@ public class DeviceService {
         List<DeviceInfo> list = new ArrayList<>();
         if (type.size() != 0)  {
             for (String column : type) {
-                List<DeviceInfo> temps = LitePal.where("type = ?", column)
+                if (status.size() != 0) {
+                    for (String column2 : status) {
+                        List<DeviceInfo> temps = LitePal.where("type = ? and status = ?" +
+                                " and belongSys = ? " + "and isValid = ?", column, column2, belongSys, "1")
+                                .find(DeviceInfo.class);
+                        list.addAll(temps);
+                    }
+                } else {
+                    List<DeviceInfo> temps = LitePal.where("type = ? " +
+                            " and belongSys = ? " + "and isValid = ?", column,  belongSys, "1")
+                            .find(DeviceInfo.class);
+                    list.addAll(temps);
+                }
+            }
+        } else {
+            if (status.size() != 0) {
+                for (String column : status) {
+                    List<DeviceInfo> temps = LitePal.where("status = ? and belongSys = ?" +
+                            " and isValid = ?", column, belongSys,"1")
+                            .find(DeviceInfo.class);
+                    list.addAll(temps);
+                }
+            } else {
+                List<DeviceInfo> temps = LitePal.where("belongSys = ? and isValid = ?", belongSys,"1")
                         .find(DeviceInfo.class);
                 list.addAll(temps);
             }
         }
-        if (status.size() != 0) {
-            for (String column : status) {
-                List<DeviceInfo> temps = LitePal.where("status = ?", column)
-                        .find(DeviceInfo.class);
-                list.addAll(temps);
-            }
-        }
-        List<DeviceInfo> temps = LitePal.where("belongSys = ? and isValid = ?", belongSys,"1")
-                    .find(DeviceInfo.class);
-        list.addAll(temps);
         return list;
     }
 

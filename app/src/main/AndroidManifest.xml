@@ -48,9 +48,12 @@
         <activity android:name=".activity.DemoActivity" />
         <activity android:name=".activity.UserActivity" />
         <activity android:name=".activity.WXActivity" />
+        <activity android:name=".activity.VideoDownloadActivity"/>
+        <activity android:name=".activity.VideoUploadActivity"/>
         <!-- <activity android:name=".activity.HomeActivity"/> -->
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.MediaActivity" />
+        <activity android:name=".activity.MediaActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"/>
 
         <!-- Image Selector Entry -->
         <activity

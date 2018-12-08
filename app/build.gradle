@@ -46,6 +46,8 @@ dependencies {
     implementation 'cglib:cglib:2.2.2'
     implementation project(path: ':multi-image-selector')
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'commons-net:commons-net:3.6'
+//    implementation 'com.github.xiaoyanger0825:NiceVieoPlayer:v2.2'
 //    implementation files ('/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/rt.jar')
 
 }

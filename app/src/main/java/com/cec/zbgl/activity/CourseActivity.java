@@ -1,6 +1,7 @@
 package com.cec.zbgl.activity;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -36,19 +39,24 @@ import android.widget.Toast;
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.CourseAdapter;
 import com.cec.zbgl.adapter.CourseAddAdapter;
+import com.cec.zbgl.adapter.ImageAdapter;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
 import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.CourseService;
+import com.cec.zbgl.transformer.ScalePageTransformer;
 import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.OpenFileUtil;
-import com.cec.zbgl.utils.ToastUtils;
+import com.cec.zbgl.view.MatrixImageView;
 import com.cec.zbgl.view.ScaleImageView;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +65,8 @@ import java.util.UUID;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 import me.nereo.multi_image_selector.MultiImageSelectorFragment;
+import me.nereo.multi_image_selector.MultiVideoSelectorActivity;
+import me.nereo.multi_image_selector.bean.Video;
 import me.nereo.multi_image_selector.utils.FileUtils;
 
 import static android.view.View.GONE;
@@ -92,6 +102,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private final int CONS_VIDEO = 1;
     private final int CONS_DOCUMENT = 2;
     private final int CONS_LEAD_PHOTO = 3;
+    private final int CONS_LEAD_VIDEO = 4;
     private int mGridWidth;
     private CourseService courseService;
     private String deviceId; //装备id
@@ -103,10 +114,20 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private List<DeviceCourse> mData_Video =new ArrayList<>();
     private List<DeviceCourse> mData_Doc =new ArrayList<>();
 
+    private FrameLayout mPager_fl;
+    private ViewPager mViewPager;
+    private TextView pagerCount_tv;
+    private ImageAdapter mImageAdapter;
+    private ScaleImageView imageView;
+    private ImageView mCancle_iv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.BLACK);
+        }
         //x 将屏幕设置为竖屏()
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         courseService = new CourseService();
@@ -120,7 +141,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         initData();
         initView();
         initEvent();
+        initPager();
     }
+
+
+
 
     private void initWidth() {
         WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
@@ -169,6 +194,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         list.add("拍摄视频");
         list.add("导入文档");
         list.add("导入照片");
+        list.add("导入视频");
 
         addAdapter = new CourseAddAdapter(R.layout.course_add,this,list,course_lv);
         course_lv.setAdapter(addAdapter);
@@ -178,8 +204,15 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
         image_iv = (ScaleImageView) findViewById(R.id.show_image_iv);
 
+
+
+
+
     }
 
+    /**
+     * 初始化教程数据
+     */
     private void initData() {
         getSession();
         deviceId = getIntent().getStringExtra("deviceId");
@@ -187,10 +220,15 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
         String name = getIntent().getStringExtra("name");
         if (name != null){
-            head_tv.setText(name);
+            head_tv.setText(name + " — 使用教程信息");
         } else {
-            head_tv.setText(sysId);
+            head_tv.setText(sysId + " — 使用教程信息");
         }
+
+        if (mData.size() != 0) {
+            mData = new ArrayList<>();
+        }
+
         if(deviceId != null) {
             mData_Imag = courseService.loadByDid(deviceId, Constant.COURSE_IMAGE);
             mData_Video = courseService.loadByDid(deviceId, Constant.COURSE_VIDEO);
@@ -202,7 +240,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             mData_Video = courseService.loadBySysid(sysId, Constant.COURSE_VIDEO);
             mData_Doc = courseService.loadBySysid(sysId, Constant.COURSE_DOCUMENT);
         }
-
 
         //对分类标题进行初始化
         DeviceCourse c1 = new DeviceCourse(true,"图片教程",101);
@@ -234,8 +271,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 Intent intent;
                 switch (mData.get(position).getCourseType()) {
                     case Constant.COURSE_IMAGE :
-                        String src = mData.get(position).getLocation();
-                        showImage(src);
+                        showPager(position);
                         break;
                     case Constant.COURSE_VIDEO :
                         intent = new Intent(CourseActivity.this, MediaActivity.class);
@@ -287,14 +323,49 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                     break;
                 case CONS_LEAD_PHOTO :
                     pickPhoto();
+                    break;
+                case CONS_LEAD_VIDEO :
+                    pickVideo();
+                    break;
             }
             disappear();
         });
 
         image_iv.setOnClickListener(this);
+    }
 
 
+    /**
+     * 初始化图片展示ViewPager
+     */
+    private void initPager() {
+        mPager_fl = (FrameLayout) findViewById(R.id.image_pager_fl);
+        mViewPager = (ViewPager) findViewById(R.id.image_pager);
+        mViewPager.setBackgroundColor(Color.rgb(0,0,0));
+        pagerCount_tv = (TextView) findViewById(R.id.image_num_tv);
+        mCancle_iv = (ImageView) findViewById(R.id.image_cancle_iv);
+        mCancle_iv.setOnClickListener(this);
+        pagerCount_tv.setBackgroundColor(Color.argb(55, 0, 0,0));
+        mImageAdapter = new ImageAdapter(getPages());
 
+        mViewPager.setAdapter(mImageAdapter);
+        mViewPager.setPageTransformer(true, new ScalePageTransformer());
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                pagerCount_tv.setText( (position + 1) + " / " + (mData_Imag.size() - 1));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -308,17 +379,22 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 new TakePhotoTask().execute();
                 break;
             case Constant.CODE_VIDEO_REQUEST: //拍摄视频 回调存储
-                new TakeVedioTask().execute(this);
+                new TakeVideoTask().execute(this);
                 break;
             case Constant.CODE_PHOTO_REQUEST:  //相册获取照片 回调存储
                 List<String> paths = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
                 new PickPhotoTask().execute(paths);
-
                 break;
+            case Constant.CODE_PICK_VIDEO_REQUEST: //相册获取视频 回调存储
+//                List<Video> videos = data.getStringArrayListExtra(MultiVideoSelectorActivity.EXTRA_RESULT);
 
+                List<String> paths2 = data.getStringArrayListExtra(MultiVideoSelectorActivity.EXTRA_RESULT);
+                new PickVideoTask().execute(paths2);
+                break;
         }
-
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -340,6 +416,10 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.show_image_iv :
                 image_iv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
                 image_iv.setVisibility(GONE);
+                break;
+            case R.id.image_cancle_iv :
+                pagerCount_tv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
+                mPager_fl.setVisibility(GONE);
         }
     }
 
@@ -357,18 +437,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         course_lv.setVisibility(GONE);
     }
 
-    /**
-     * 相册选取照片(支持拍照)
-     */
-    private void pickPhoto() {
-        ArrayList<String> defaultDataArray = new ArrayList<>();
-        Intent intent = new Intent(this, MultiImageSelectorActivity.class);
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
-        intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
-        startActivityForResult(intent, Constant.CODE_PHOTO_REQUEST);
-    }
 
     /**
      * 拍摄照片
@@ -397,6 +465,33 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(this, me.nereo.multi_image_selector.R.string.mis_msg_no_camera, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+
+    /**
+     * 相册选取照片(支持拍照)
+     */
+    private void pickPhoto() {
+        ArrayList<String> defaultDataArray = new ArrayList<>();
+        Intent intent = new Intent(this, MultiImageSelectorActivity.class);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
+        startActivityForResult(intent, Constant.CODE_PHOTO_REQUEST);
+    }
+
+
+    /**
+     * 相册选取视频
+     */
+    private void pickVideo() {
+        ArrayList<String> defaultDataArray = new ArrayList<>();
+        Intent intent = new Intent(this, MultiVideoSelectorActivity.class);
+        intent.putExtra(MultiVideoSelectorActivity.EXTRA_SELECT_COUNT, 9);
+        intent.putExtra(MultiVideoSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+        intent.putStringArrayListExtra(MultiVideoSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
+        startActivityForResult(intent, Constant.CODE_PICK_VIDEO_REQUEST);
     }
 
 
@@ -520,28 +615,59 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         mData.addAll(mData_Video);
         mData.addAll(mData_Doc);
         mAdapter.onDateChange(mData);
+        List<View> views = getPages();
+        mImageAdapter.onDateChange(views);
     }
 
-    private void showImage(String uri) {
-        image_iv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_in));
-        image_iv.setVisibility(VISIBLE);
-        if (uri != null) {
-           File imageFile = new File(uri);
-            // 显示图片
-             Picasso.with(this)
-                    .load(imageFile)
-                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
-                    .tag(MultiImageSelectorFragment.TAG)
-                    .resize(mGridWidth, mGridWidth)
-                    .centerCrop()
-                    .into(image_iv);
-//          Bitmap bitmap = BitmapFactory.decodeFile(uri);
-//           image_iv.setImageBitmap(bitmap);
-        } else {
-            image_iv.setImageResource(R.mipmap.default_image);
+    private void showPager(int position) {
+        pagerCount_tv.setText( position + " / " + (mData_Imag.size() - 1));
+        pagerCount_tv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_in));
+        mPager_fl.setVisibility(VISIBLE);
+        mViewPager.setCurrentItem(position-1);
+    }
+
+    /**
+     * 获取pagerView 照片List
+     * @return
+     */
+    private List<View> getPages() {
+        List<View> pages = new ArrayList<>();
+        for (int i = 1; i < mData_Imag.size(); i++) {
+//            ImageView imageView = new ImageView(this);
+            imageView = new ScaleImageView(this);
+            String uri  = mData_Imag.get(i).getLocation();
+            if (uri != null) {
+                File imageFile = new File(uri);
+                // 显示图片
+                Picasso.with(this)
+                        .load(imageFile)
+                        .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                        .tag(MultiImageSelectorFragment.TAG)
+                        .resize(mGridWidth, mGridWidth)
+                        .into(imageView);
+//                    view.setImageResource(R.mipmap.nba);
+//                    view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }else {
+                imageView.setImageResource(R.mipmap.default_image);
+            }
+            pages.add(imageView);
         }
+        return pages;
     }
 
+    private void getSession() {
+        SharedPreferences setting = getSharedPreferences("User", 0);
+        user = new User(setting.getString("name",""),setting.getString("password",""));
+        user.setmId(setting.getString("mid","0"));
+    }
+
+
+
+
+
+
+
+    /**************************************内部类****************************************/
 
     /**
      * 选取照片异步任务
@@ -577,7 +703,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 c0.setSysId(sysId);
                 c0.setValid(true);
                 courseService.insert(c0);
-                mData_Imag.add(c0);
+                mData_Imag.add(1,c0);
             }
             return mData_Imag;
         }
@@ -624,7 +750,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 c0.setSysId(sysId);
                 c0.setValid(true);
                 courseService.insert(c0);
-                mData_Imag.add(c0);
+                mData_Imag.add(1,c0);
             }
             return null;
         }
@@ -637,10 +763,60 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+
     /**
      * 选取视频异步任务
      */
-    class TakeVedioTask extends AsyncTask<Context, Void, Void>{
+    class PickVideoTask extends AsyncTask<List<String>, Void, Void> {
+
+
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(List<String>... lists) {
+            List<String> paths = lists[0];
+            for (String result : paths) {
+               String[] strs = result.split(" ");
+                String path = strs[0];
+                String vId = strs[1];
+                Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(getContentResolver(),
+                        Integer.valueOf(vId), MediaStore.Video.Thumbnails.MINI_KIND, null);
+                DeviceCourse c0 = new DeviceCourse(UUID.randomUUID().toString(),"text123",
+                        Constant.COURSE_VIDEO,"教程类别为:"+"视频",false,"item "+(121+1));
+                c0.setLocation(path);
+                ImageUtil imageUtil = new ImageUtil();
+                if (bitmap != null) {
+                    byte[] images_small = imageUtil.imageToByte(bitmap);
+                    c0.setImage(images_small);
+                }
+                c0.setDeviceId(deviceId);
+                c0.setCreaterName(user.getName());
+                c0.setCreaterId(user.getmId());
+                c0.setCreateTime(new Date());
+                c0.setSysId(sysId);
+                c0.setValid(true);
+                courseService.insert(c0);
+                mData_Video.add(c0);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            progressBar.setVisibility(GONE);
+            collectData();
+        }
+    }
+
+
+    /**
+     * 拍摄视频异步任务
+     */
+    class TakeVideoTask extends AsyncTask<Context, Void, Void>{
 
         @Override
         protected void onPreExecute() {
@@ -669,7 +845,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 course.setCreaterId(user.getmId());
                 course.setCreateTime(new Date());
                 courseService.insert(course);
-                mData_Video.add(course);
+                mData_Video.add(1,course);
                 mmr.release();
             }
             return null;
@@ -680,12 +856,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             progressBar.setVisibility(GONE);
             collectData();
         }
-    }
-
-    private void getSession() {
-        SharedPreferences setting = getSharedPreferences("User", 0);
-        user = new User(setting.getString("name",""),setting.getString("password",""));
-        user.setmId(setting.getString("mid","0"));
     }
 
 

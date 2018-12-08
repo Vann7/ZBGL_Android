@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.activity.VideoDownloadActivity;
+import com.cec.zbgl.activity.VideoUploadActivity;
 import com.cec.zbgl.adapter.OrgsAdapter;
 import com.cec.zbgl.dto.OrgnizationDto;
 import com.cec.zbgl.event.MessageEvent;
@@ -43,7 +45,8 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
 
 
     private TextView tv_syncData;
-    private TextView tv_syncFile;
+    private TextView tv_uFile;
+    private TextView tv_dFile;
     private ProgressBar progressBar;
     private LinearLayout rl_sync;
     private SyncService syncService;
@@ -69,7 +72,8 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
 
     private void initView() {
         tv_syncData = (TextView) getActivity().findViewById(R.id.sync_data);
-        tv_syncFile = (TextView) getActivity().findViewById(R.id.sync_file);
+        tv_uFile = (TextView) getActivity().findViewById(R.id.sync_upload_file);
+        tv_dFile = (TextView) getActivity().findViewById(R.id.sync_download_file);
         rl_sync = (LinearLayout) getActivity().findViewById(R.id.sync_ll);
         rl_sync.setVisibility(View.GONE);
         rl_sync.bringToFront();
@@ -77,7 +81,8 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
 
     private void initEvent() {
         tv_syncData.setOnClickListener(this);
-        tv_syncFile.setOnClickListener(this);
+        tv_uFile.setOnClickListener(this);
+        tv_dFile.setOnClickListener(this);
 
         syncService = new SyncService(getActivity());
     }
@@ -89,8 +94,13 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
             case R.id.sync_data :
                 new SyncTask().execute();
                 break;
-            case R.id.sync_file :
-
+            case R.id.sync_upload_file :
+                Intent intent = new Intent(getActivity(), VideoUploadActivity.class);
+                getActivity().startActivity(intent);
+                break;
+            case R.id.sync_download_file :
+                Intent intent2 = new Intent(getActivity(), VideoDownloadActivity.class);
+                getActivity().startActivity(intent2);
                 break;
         }
 

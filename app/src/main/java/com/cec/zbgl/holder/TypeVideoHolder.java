@@ -36,6 +36,7 @@ public class TypeVideoHolder extends RecyclerView.ViewHolder {
         mContext = context;
         this.mGridWidth = gridWidth;
         imageView = (ImageView) itemView.findViewById(R.id.course_vedio_img);
+        imageView.setBackgroundColor(Color.rgb(0,0,0));
         time_tv = (TextView) itemView.findViewById(R.id.course_vedio_time);
         size_tv = (TextView) itemView.findViewById(R.id.course_vedio_size);
         desc_tv = (TextView) itemView.findViewById(R.id.course_vedio_desc);
@@ -45,12 +46,6 @@ public class TypeVideoHolder extends RecyclerView.ViewHolder {
         time_tv.setText("00:12:36");
         size_tv.setText(String.valueOf("2.69 MB"));
         desc_tv.setText("装备使用教程视频01.MP4");
-//        Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-//                + mContext.getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
-//        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-//        mmr.setDataSource(mContext,uri);
-//        Bitmap bitmap = mmr.getFrameAtTime();
-
         if (course.getLocation() != null && course.getImage() != null ) {
             File imageFile = FileUtils.byte2File(course.getImage(), mContext);
             // 显示图片

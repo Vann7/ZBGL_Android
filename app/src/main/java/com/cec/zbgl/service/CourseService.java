@@ -66,7 +66,7 @@ public class CourseService {
     public List<DeviceCourse> loadByDid(String deviceId, int type){
         List<DeviceCourse> courses = LitePal
                 .where("deviceid = ? and coursetype = ? " +
-                "and isvalid = ?",deviceId, String.valueOf(type),"1")
+                "and isValid = ?",deviceId, String.valueOf(type),"1")
                 .order("createTime DESC")
                 .find(DeviceCourse.class);
         return courses;

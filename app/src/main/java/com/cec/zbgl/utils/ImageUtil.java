@@ -2,6 +2,7 @@ package com.cec.zbgl.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,8 @@ import com.cec.zbgl.common.Constant;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageUtil {
 
@@ -263,11 +266,29 @@ public class ImageUtil {
      * @param bitmap
      * @return
      */
-    public byte[]imageToByte(Bitmap bitmap){
+    public byte[] imageToByte(Bitmap bitmap){
         if (bitmap == null) return  null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 80, baos);
         return baos.toByteArray();
+    }
+
+    public final Bitmap getBitmap(ContentResolver cr, Uri url) {
+         InputStream input = null;
+         Bitmap bitmap = null;
+         try {
+            input = cr.openInputStream(url);
+            bitmap = BitmapFactory.decodeStream(input);
+         } catch (FileNotFoundException e) {
+             e.printStackTrace();
+         }finally {
+             try {
+                 input.close();
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+         }
+        return bitmap;
     }
 
 }

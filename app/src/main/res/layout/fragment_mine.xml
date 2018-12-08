@@ -39,7 +39,7 @@
             android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
             android:textSize="20dp"
-            android:textStyle="bold"
+            android:textColor="@color/black"
             android:text="用户名"/>
 
         <TextView
@@ -49,7 +49,6 @@
             android:gravity="center_vertical"
             android:layout_alignParentRight="true"
             android:textSize="18dp"
-            android:textStyle="bold"
             android:layout_marginRight="20dp"
             android:text="管理员"/>
     </RelativeLayout>
@@ -69,7 +68,7 @@
             android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
             android:textSize="20dp"
-            android:textStyle="bold"
+            android:textColor="@color/black"
             android:text="清除缓存"/>
         
         <TextView
@@ -80,7 +79,6 @@
             android:gravity="center_vertical"
             android:layout_marginRight="20dp"
             android:textSize="18dp"
-            android:textStyle="bold"
             android:text="0MB"
             />
     </RelativeLayout>
@@ -100,7 +98,7 @@
             android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
             android:textSize="20dp"
-            android:textStyle="bold"
+            android:textColor="@color/black"
             android:text="服务器配置"/>
 
         <Button
@@ -128,7 +126,7 @@
             android:layout_marginLeft="20dp"
             android:gravity="center_vertical"
             android:textSize="20dp"
-            android:textStyle="bold"
+            android:textColor="@color/black"
             android:text="账号与安全"/>
 
         <Button
@@ -147,10 +145,9 @@
         android:layout_height="60dp"
         android:background="@color/white"
         android:text="退出当前账号"
+        android:textColor="@color/black"
         android:gravity="center"
         android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="@color/gray"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"/>

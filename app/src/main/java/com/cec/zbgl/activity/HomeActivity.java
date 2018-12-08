@@ -1,8 +1,6 @@
 package com.cec.zbgl.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
-import com.cec.zbgl.adapter.PagerAdapter;
-import com.cec.zbgl.fragment.ChatFragment;
-import com.cec.zbgl.fragment.ContactFragment;
+import com.cec.zbgl.adapter.MainAdapter;
 import com.cec.zbgl.fragment.DeviceFragment;
-import com.cec.zbgl.fragment.DiscoverFragment;
 import com.cec.zbgl.fragment.MineFragment;
 import com.cec.zbgl.fragment.SyncFragment;
 
@@ -33,7 +28,7 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
-    private PagerAdapter mAdapter;
+    private MainAdapter mAdapter;
     private List<Fragment> mDatas;
 
     private TextView tv_device;
@@ -125,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mDatas.add(tab02);
         mDatas.add(tab03);
 
-        mAdapter = new PagerAdapter(getSupportFragmentManager(),mDatas);
+        mAdapter = new MainAdapter(getSupportFragmentManager(),mDatas);
 
         mViewPager.setAdapter(mAdapter);
 

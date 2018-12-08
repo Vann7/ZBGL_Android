@@ -13,10 +13,10 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
 //    @Column(unique = true, nullable = false)
     private String mId;
     private java.lang.String name;
-    private int type;
+    private String type;
     private java.lang.String location;
     private int count;
-    private int status;
+    private String status;
     private String belongSys;
     private java.lang.String description;
     private java.lang.String createrId;
@@ -29,14 +29,14 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
 
     public DeviceInfo() {}
 
-    public DeviceInfo(String name, String belongSys, String location) {
-        this.name = name;
-        this.belongSys = belongSys;
-        this.location = location;
-    }
+//    public DeviceInfo(String name, String belongSys, String location) {
+//        this.name = name;
+//        this.belongSys = belongSys;
+//        this.location = location;
+//    }
 
     
-    public DeviceInfo(String name, int type, String location) {
+    public DeviceInfo(String name, String type, String location) {
         this.name = name;
         this.type = type;
         this.location = location;
@@ -87,11 +87,11 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
         this.name = name;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -111,11 +111,11 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
         this.count = count;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -2,8 +2,11 @@ package com.cec.zbgl.activity;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
@@ -33,12 +36,17 @@ import com.cec.zbgl.utils.TimeUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static android.media.MediaPlayer.*;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Callback, View.OnClickListener ,MediaPlayer.OnVideoSizeChangedListener {
+public class MediaActivity extends AppCompatActivity implements View.OnClickListener ,OnVideoSizeChangedListener {
+
+    private RelativeLayout media_rl;
 
     private SurfaceView surfaceView;
 
@@ -70,7 +78,6 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private ImageView image_iv;
 
-    private RelativeLayout media_rl;
     private RelativeLayout play_rl;
 
     private TextView masker_tv;
@@ -87,6 +94,10 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
 
     private int currentPosition;
 
+    private String path;
+
+    private FileInputStream fis;
+
 //    private boolean isPlaying = false;
 
     @Override
@@ -100,7 +111,7 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_media);
         //TODO　将屏幕设置为横屏()
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //TODO 将屏幕设置为竖屏()
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -109,20 +120,46 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         initEvent();
 
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //TODO　将屏幕设置为横屏()
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //TODO 将屏幕设置为竖屏()
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mediaPlayer == null) {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.seekTo(currentPosition);
+        }
+//        setVideoSize();
+    }
 
 
     private void initView() {
+        media_rl = (RelativeLayout) findViewById(R.id.media_rl);
+        media_rl.setBackgroundColor(Color.rgb(0,0,0));
         mediaPlayer = new MediaPlayer();
         handler = new Handler();
         screenWidth = getResources().getDisplayMetrics().widthPixels;
         surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+//        surfaceView.bringToFront();
+//        surfaceView.setBackgroundColor(Color.rgb(0,0,0));
+
         holder = surfaceView.getHolder();
         tvSound = (TextView) findViewById(R.id.tv_sound);
         tvCurrentT = (TextView) findViewById(R.id.tv_current);
         tvDuration = (TextView) findViewById(R.id.tv_duration);
         progressBar = (ProgressBar) findViewById(R.id.progress);
         progressBar_filled = (ProgressBar) findViewById(R.id.progress_filled);
-        media_rl = (RelativeLayout) findViewById(R.id.rl_media);
         play_rl = (RelativeLayout) findViewById(R.id.play_rl);
         back_iv = (ImageView) findViewById(R.id.surface_back);
         play_iv = (ImageView) findViewById(R.id.surface_play);
@@ -137,6 +174,13 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         id = getIntent().getLongExtra("id",0);
         course = courseService.getDevice(id);
 
+        File file = new File(course.getLocation());
+        fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             Point size = new Point();
@@ -156,105 +200,41 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
                 .into(image_iv);
 
 
-
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-            try {
-                mediaPlayer.setDataSource(this, uri);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
 
     private void initEvent() {
-        surfaceView.setOnTouchListener((v, event) -> {
-            switch (event.getAction())
-            {
-                case MotionEvent.ACTION_DOWN:
-                    downX = event.getX();
-                    downY = event.getY();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    // TODO 音量
-                    float distanceX = event.getX() - downX;
-                    float distanceY = event.getY() - downY;
-                    if (downX > screenWidth - 200
-                            && Math.abs(distanceX) < 50
-                            && distanceY > FACTOR)
-                    {
-                        // TODO 减小音量
-                        setVolume(false);
-                    }
-                    else if (downX > screenWidth - 200
-                            && Math.abs(distanceX) < 50
-                            && distanceY < -FACTOR)
-                    {
-                        // TODO 增加音量
-                        setVolume(true);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+       holder.addCallback(new MyCallBack());
 
-                    }
-                    // TODO 播放进度调节
-                    if (Math.abs(distanceY) < 50 && distanceX > FACTOR)
-                    {
-                        // TODO 快进
-                        int currentT = mediaPlayer.getCurrentPosition();//播放的位置
-                        mediaPlayer.seekTo(currentT + 15000);
-                        downX = event.getX();
-                        downY = event.getY();
-                        LogUtil.i("info", "distanceX快进=" + distanceX);
-                    }
-                    else if (Math.abs(distanceY) < 50
-                            && distanceX < -FACTOR)
-                    {
-                        // TODO 快退
-                        int currentT = mediaPlayer.getCurrentPosition();
-                        mediaPlayer.seekTo(currentT - 15000);
-                        downX = event.getX();
-                        downY = event.getY();
-                        LogUtil.i("info", "distanceX=" + distanceX);
-                    }
-                    break;
-            }
-            return true;
-        });
-
-        holder.addCallback(this);
-
-
-        // TODO　给videoview设置播放源(通过本地存储卡来设置)
-        // uri = Uri.fromFile(new File("/sdcard/download/video1.mp4"));
-        uri = Uri.fromFile(new File(course.getLocation()));
-        //TODO 给viedeoview设置播放源（通过资源文件来设置），PS 在调用资源文件时，在协议头后加上如“://”
-//        uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-//                + getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
-
-        mediaPlayer.setOnPreparedListener(mp -> {
-            // 开始播放视频
-//            mediaPlayer.start();
-            // 设置总时长
-            tvDuration.setText(TimeUtils.stringForTime(mp.getDuration()));
+       mediaPlayer.setOnPreparedListener(mp -> {
+       // 开始播放视频
+//         mediaPlayer.start();
+       // 设置总时长
+       tvDuration.setText(TimeUtils.stringForTime(mp.getDuration()));
 //            tvCurrentT.setText(mp.getCurrentPosition() / 1000 + "");
-            tvCurrentT.setText("00:00");
-            progressBar.setMax(mp.getDuration());
-            progressBar_filled.setMax(mp.getDuration());
-            updateView();
-        });
+       tvCurrentT.setText("00:00");
+       progressBar.setMax(mp.getDuration());
+       progressBar_filled.setMax(mp.getDuration());
+       updateView();
+           });
 
-//        mediaPlayer.setOnCompletionListener(mp -> mediaPlayer.start());
+       mediaPlayer.setOnCompletionListener(mp -> {
+           play_finish();
+       });
+
+       mediaPlayer.setOnVideoSizeChangedListener(this::onVideoSizeChanged);
+
+       mediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener() {
+           @Override
+           public void onSeekComplete(MediaPlayer mp) {
+               mp.start();
+           }
+       });
 
         back_iv.setOnClickListener(this);
         play_iv.setOnClickListener(this);
@@ -263,6 +243,8 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         pause_iv.setOnClickListener(this);
 
     }
+
+
 
 
     private void setVolume(boolean flag)
@@ -294,50 +276,7 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
          */
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder)
-    {
-        // 当surfaceView被创建完成之前才能绘制画布,所以只能在此回调方法之后开始播放
-        try
-        {
-            // 1.指定播放源
-            mediaPlayer.setDataSource(this, uri);
-            // 2.将mediaplayer和surfaceView时行绑定
-            mediaPlayer.setDisplay(holder);
-            // 3.准备进行异步播放(当prepareAsync被调用后会执行mediaPlayer的onPrepared回调方法)
-            mediaPlayer.prepareAsync();
 
-            setVideoSize();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height)
-    {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
-        try{
-            if (mediaPlayer != null) {
-                currentPosition = mediaPlayer.getCurrentPosition();
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 更新播放进度的递归
@@ -345,7 +284,6 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
     private void updateView()
     {
         handler.postDelayed(() -> {
-            // TODO 设置进度控件
             if (mediaPlayer != null && mediaPlayer.isPlaying())
             {
                 tvCurrentT.setText(TimeUtils.stringForTime(mediaPlayer.getCurrentPosition()));
@@ -366,17 +304,12 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
             case R.id.surface_play :
                 image_iv.setVisibility(GONE);
                 disappear();
-//                play_iv.setVisibility(GONE);
-//                pause_iv.setVisibility(VISIBLE);
                 mediaPlayer.start();
-//                handler.postDelayed(() -> {
-//                    disappear();
-//                },2000);
                 break;
             case R.id.surface_back :
                 finish();
                 break;
-            case R.id.rl_media :
+            case R.id.media_rl :
                 appear();
                 break;
             case R.id.surface_pause :
@@ -397,6 +330,17 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         progressBar_filled.setVisibility(VISIBLE);
     }
 
+    private void play_finish() {
+        image_iv.setVisibility(VISIBLE);
+        masker_tv.setVisibility(GONE);
+        back_iv.setVisibility(VISIBLE);
+        play_iv.setVisibility(VISIBLE);
+        pause_iv.setVisibility(GONE);
+        tvSound.setVisibility(GONE);
+        play_rl.setVisibility(GONE);
+        progressBar_filled.setVisibility(GONE);
+    }
+
     private void appear() {
         masker_tv.setVisibility(VISIBLE);
         if (mediaPlayer.isPlaying()){
@@ -409,6 +353,8 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         play_rl.setVisibility(VISIBLE);
         progressBar_filled.setVisibility(GONE);
     }
+
+
 
     /**
      * 重新设置mediaPlayer 长宽比例
@@ -424,19 +370,22 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
         float max;
         if (getResources().getConfiguration().orientation==ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             //竖屏模式下按视频宽度计算放大倍数值
-//            max = Math.max((float) videoWidth / (float) surfaceWidth,(float) videoHeight / (float) surfaceHeight);
+            max = Math.max((float) videoWidth / (float) surfaceWidth,(float) videoHeight / (float) surfaceHeight);
+//            width = (int)(scale * surfaceHeight);
         } else{
             //横屏模式下按视频高度计算放大倍数值
-//            max = Math.max(((float) videoWidth/(float) surfaceHeight),(float) videoHeight/(float) surfaceWidth);
-            width = (int)(scale * surfaceHeight);
+            max = Math.max(((float) videoWidth/(float) surfaceHeight),(float) videoHeight/(float) surfaceWidth);
+//            width = (int)(scale * surfaceHeight);
         }
 
         //视频宽高分别/最大倍数值 计算出放大后的视频尺寸
-//        videoWidth = (int) Math.ceil((float) videoWidth / max);
-//        videoHeight = (int) Math.ceil((float) videoHeight / max);
+        videoWidth = (float) Math.ceil(videoWidth / max);
+        videoHeight = (float) Math.ceil(videoHeight / max);
 
         //无法直接设置视频尺寸，将计算出的视频尺寸设置到surfaceView 让视频自动填充。
-         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+//         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
+         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                 Float.valueOf(videoWidth).intValue(), Float.valueOf(videoHeight).intValue());
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         surfaceView.setLayoutParams(params);
 
@@ -446,4 +395,57 @@ public class MediaActivity extends AppCompatActivity implements SurfaceHolder.Ca
     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
         setVideoSize();
     }
+
+
+    /**
+     * SurfaceHolder  内部类
+     */
+    private class MyCallBack implements SurfaceHolder.Callback {
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder)
+        {
+
+            // 当surfaceView被创建完成之前才能绘制画布,所以只能在此回调方法之后开始播放
+            try {
+                // 1.指定播放源
+                uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                + getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
+//                mediaPlayer.setDataSource(getApplicationContext(),uri);
+                mediaPlayer.setDataSource(fis.getFD());
+                // 2.将mediaplayer和surfaceView时行绑定
+                mediaPlayer.setDisplay(holder);
+                // 3.准备进行异步播放(当prepareAsync被调用后会执行mediaPlayer的onPrepared回调方法)
+                mediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            setVideoSize();
+
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                                   int height)
+        {
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder)
+        {
+            try{
+                if (mediaPlayer != null) {
+                    currentPosition = mediaPlayer.getCurrentPosition();
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

@@ -2,74 +2,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item01_ll"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="90dp"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="2"
-        android:layout_height="0dp"
+        android:layout_height="60dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/item01_img"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
             android:src="@mipmap/default_image" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <TextView
                 tools:text="教程名称"
                 android:id="@+id/item01_tv_name"
-                android:textColor="@color/red"
-                android:textStyle="bold"
+                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:gravity="center_vertical"
-                android:layout_weight="1"
-                android:layout_height="0dp" />
+                android:layout_height="30dp" />
 
             <TextView
                 tools:text="教程类别"
                 android:id="@+id/item01_tv_type"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/cadetblue"
+                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:gravity="center_vertical"
-                android:layout_weight="1"
-                android:layout_height="0dp"  />
+                android:layout_height="30dp"  />
         </LinearLayout>
     </LinearLayout>
 
     <TextView
         tools:text="教程描述"
         android:id="@+id/item01_tv_desc"
-        android:layout_marginTop="5dp"
-        android:textSize="16dp"
-        android:textStyle="bold"
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="0dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_height="20dp"
+        android:lines="1"
+        android:textSize="12dp"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="15dp"/>
 
 
 

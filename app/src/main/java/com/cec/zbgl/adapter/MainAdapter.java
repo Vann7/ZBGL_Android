@@ -14,14 +14,14 @@ import java.util.List;
 /**
  * 首页滚动pager 适配器
  */
-public class PagerAdapter extends FragmentPagerAdapter {
+public class MainAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
     private FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction;
 
 
-    public PagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public MainAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         this.mFragments = fragments;
         this.mFragmentManager = fm;

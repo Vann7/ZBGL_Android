@@ -44,17 +44,19 @@
                     android:text="没有数据"
                     android:textSize="16dp" />
 
-                <android.support.v4.widget.SwipeRefreshLayout
-                    android:id="@+id/swipeRefreshLayout"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp">
+                    android:layout_height="match_parent" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </android.support.v4.widget.SwipeRefreshLayout>
+                <!--<android.support.v4.widget.SwipeRefreshLayout-->
+                    <!--android:id="@+id/swipeRefreshLayout"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginTop="10dp">-->
+
+                    <!---->
+                <!--</android.support.v4.widget.SwipeRefreshLayout>-->
             </LinearLayout>
 
 

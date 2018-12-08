@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/download_name"
+            android:layout_width="match_parent"
+            android:layout_toRightOf="@id/upload_image"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+
+            android:layout_height="25dp"
+            android:text="demo"
+            android:gravity="center_vertical"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/download_size"
+            android:layout_width="match_parent"
+            android:layout_below="@id/download_name"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:text="demo"
+            android:gravity="center_vertical"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/download_uncheck_btn"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"
+        android:background="@mipmap/roundcheck"
+        android:textSize="18sp"/>
+
+    <ImageView
+        android:id="@+id/download_check_btn"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"
+        android:background="@mipmap/roundcheckfill"
+        android:visibility="gone"
+        android:textSize="18sp"/>
+
+
+</RelativeLayout>

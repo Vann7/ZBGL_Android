@@ -69,8 +69,8 @@ public class DeviceRecyclerAdapter extends RecyclerView.Adapter <RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-
-        return devices.get(position).getType();
+//        return devices.get(position).getType();
+        return position;
     }
 
 

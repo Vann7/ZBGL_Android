@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
-import com.cec.zbgl.adapter.PagerAdapter;
+import com.cec.zbgl.adapter.MainAdapter;
 import com.cec.zbgl.fragment.ChatFragment;
 import com.cec.zbgl.fragment.ContactFragment;
 import com.cec.zbgl.fragment.DiscoverFragment;
@@ -31,7 +31,7 @@ import java.util.List;
 public class WXActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
-    private PagerAdapter mAdapter;
+    private MainAdapter mAdapter;
     private List<Fragment> mDatas;
 
     private TextView mChatTextView;
@@ -131,7 +131,7 @@ public class WXActivity extends AppCompatActivity implements View.OnClickListene
         mDatas.add(tab03);
         mDatas.add(tab04);
 
-        mAdapter = new PagerAdapter(getSupportFragmentManager(),mDatas);
+        mAdapter = new MainAdapter(getSupportFragmentManager(),mDatas);
 
         mViewPager.setAdapter(mAdapter);
 

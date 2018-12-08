@@ -32,12 +32,9 @@ public class CourseAddAdapter extends BaseAdapter {
 
 
 
-      course_lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-              if (mListener != null) {
-                  mListener.onClick(position);
-              }
+      course_lv.setOnItemClickListener((parent, view, position, id) -> {
+          if (mListener != null) {
+              mListener.onClick(position);
           }
       });
     }
@@ -72,9 +69,12 @@ public class CourseAddAdapter extends BaseAdapter {
         } else if (position == 2){
             viewHolder.name.setText("导入文档");
             viewHolder.image.setImageResource(R.mipmap.file);
-        } else {
+        } else if (position == 3){
             viewHolder.name.setText("导入照片");
-            viewHolder.image.setImageResource(R.mipmap.forward);
+            viewHolder.image.setImageResource(R.mipmap.pic);
+        } else {
+            viewHolder.name.setText("导入视频");
+            viewHolder.image.setImageResource(R.mipmap.video_light);
         }
 
         return  convertView;

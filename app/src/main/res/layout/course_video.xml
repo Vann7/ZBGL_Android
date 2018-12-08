@@ -9,16 +9,29 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/course_vedio_img"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:layout_marginLeft="10dp"
-        android:background="@color/lightgray"
-        android:src="@mipmap/nba" />
+        android:layout_weight="6">
+        <ImageView
+            android:id="@+id/course_vedio_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/nba" />
+        <ImageView
+            android:id="@+id/surface_play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/playfill"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true"/>
+    </FrameLayout>
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"
