@@ -2,10 +2,13 @@ package me.nereo.multi_image_selector.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static android.os.Environment.MEDIA_MOUNTED;
@@ -124,6 +127,22 @@ public class FileUtils {
     private static boolean hasExternalStoragePermission(Context context) {
         int perm = context.checkCallingOrSelfPermission(EXTERNAL_STORAGE_PERMISSION);
         return perm == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static File bitmap2File(Bitmap bitmap, Context mContext) {
+        File file = null;
+        try {
+            file = createTmpFile(mContext);
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            }
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
 }

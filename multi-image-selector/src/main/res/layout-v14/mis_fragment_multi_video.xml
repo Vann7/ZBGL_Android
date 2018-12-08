@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/grid_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="@dimen/mis_space_size"
+        android:verticalSpacing="@dimen/mis_space_size"
+        android:paddingBottom="?android:attr/actionBarSize"
+        android:clipToPadding="false"
+        android:numColumns="auto_fit"
+    android:columnWidth="@dimen/mis_image_size"/>
+
+</RelativeLayout>
