@@ -45,6 +45,7 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,6 +95,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private String types[] = {"移动Pad","交换机","服务器","磁盘阵列","计算机","显示终端","笔记本","打印机","网线","水晶头"};
     private String systems[];
     private String icons[] = {"从相册选取","拍摄"};
+    private HashMap<String, String> sysMap = new HashMap<>();
+    private List<SpOrgnization> orgList;
 
 
     @Override
@@ -146,6 +149,16 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      * 初始化et数据
      */
     private void initData() {
+
+        orgList = orgsService.loadNames();
+
+        for (SpOrgnization org : orgList) {
+            sysMap.put(org.getName(), org.getmId());
+        }
+        systems = new String[orgList.size()];
+        List<String> names = orgList.stream().map(SpOrgnization::getName).collect(Collectors.toList());
+        names.toArray(systems);
+
         mid = getIntent().getStringExtra("mid");
         add = getIntent().getBooleanExtra("add",false);
         if (!add) {
@@ -155,6 +168,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             location_Et.setText(device.getLocation());
             count_Et.setText(String.valueOf(device.getCount()));
             status_Et.setText(String.valueOf(device.getStatus()));
+//            belongSys_Et.setText(orgsService.getName(device.getBelongSys()));
             belongSys_Et.setText(device.getBelongSys());
             createName_Et.setText(device.getCreaterName());
             if (device.getCreateTime() != null) {
@@ -180,10 +194,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             delete_tv.setVisibility(GONE);
         }
 
-        List<SpOrgnization> list = orgsService.loadNames();
-        systems = new String[list.size()];
-        List<String> names = list.stream().map(SpOrgnization::getName).collect(Collectors.toList());
-        names.toArray(systems);
+
     }
 
     /**
@@ -205,10 +216,15 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.check_course_btn :
-                Intent intent = new Intent(this,CourseActivity.class);
-                intent.putExtra("deviceId", device.getmId());
-                intent.putExtra("name",device.getName());
-                startActivityForResult(intent,1);
+                if (!add) {
+                    Intent intent = new Intent(this,CourseActivity.class);
+                    intent.putExtra("deviceId", device.getmId());
+                    intent.putExtra("name",device.getName());
+                    startActivityForResult(intent,1);
+                }else {
+                    ToastUtils.showShort("请先保存该设备信息！");
+                }
+
                 break;
             case R.id.id_device_image :
                 popView(CONTENT_ICON, icons);
@@ -485,6 +501,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         }
         device.setStatus(status_Et.getText().toString());
         device.setCreaterName(createName_Et.getText().toString());
+//        device.setBelongSys(sysMap.get(belongSys_Et.getText().toString()));
         device.setBelongSys(belongSys_Et.getText().toString());
         device.setDescription(description_Et.getText().toString());
         device.setCreateTime(new Date());

@@ -13,8 +13,8 @@ public class ImageAdapter extends PagerAdapter {
 
     private List<View> datas;
 
-    public ImageAdapter(List<View> datas) {
-        this.datas = datas;
+    public ImageAdapter(List<View> mData) {
+        datas = mData;
     }
 
     @Override
@@ -39,8 +39,14 @@ public class ImageAdapter extends PagerAdapter {
         return view == object;
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
     public void onDateChange(List<View> list) {
-        this.datas = list;
+        datas.clear();
+        datas.addAll(list);
         notifyDataSetChanged();
     }
 

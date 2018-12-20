@@ -9,6 +9,7 @@ import java.util.Date;
 
 /** 备品备件_设备教程 */
 public class DeviceCourse extends LitePalSupport implements Serializable {
+    private static final long serialVersionUID = -6470574927973900913L;
     public static final int TYPE_ONE = 1;
     public static final int TYPE_TWO = 2;
     public static final int TYPE_THREE = 3;
@@ -83,8 +84,6 @@ public class DeviceCourse extends LitePalSupport implements Serializable {
                 ", location='" + location + '\'' +
                 ", description='" + description + '\'' +
                 ", isValid=" + isValid +
-                ", image=" + Arrays.toString(image) +
-                ", image_full=" + Arrays.toString(image_full) +
                 ", message='" + message + '\'' +
                 ", isTitle=" + isTitle +
                 ", isUpload=" + isUpload +

@@ -55,6 +55,71 @@ public class DeviceService {
 
     }
 
+
+    /**
+     * 加载更多装备信息(自定义查询)
+     * @param page
+     * @param belongSys
+     * @param type
+     * @param status
+     * @return
+     */
+    public List<DeviceInfo> loadMoreList(int page, String belongSys, List<String> type, List<String> status) {
+        int count = 0;
+        if (page != 0) {
+            count = 20 * page;
+        }
+        List<DeviceInfo> list = new ArrayList<>();
+        if (type.size() != 0)  {
+            for (String column : type) {
+                if (status.size() != 0) {
+                    for (String column2 : status) {
+                        List<DeviceInfo> temps = LitePal.where("type = ? and status = ?" +
+                                " and belongSys = ? " + "and isValid = ?", column, column2, belongSys, "1")
+                                .limit(20)
+                                .offset(count)
+                                .order("createTime DESC")
+                                .find(DeviceInfo.class);
+                        list.addAll(temps);
+                    }
+                } else {
+                    List<DeviceInfo> temps = LitePal.where("type = ? " +
+                            " and belongSys = ? " + "and isValid = ?", column,  belongSys, "1")
+                            .limit(20)
+                            .offset(count)
+                            .order("createTime DESC")
+                            .find(DeviceInfo.class);
+                    list.addAll(temps);
+                }
+            }
+        } else {
+            if (status.size() != 0) {
+                for (String column : status) {
+                    List<DeviceInfo> temps = LitePal.where("status = ? and belongSys = ?" +
+                            " and isValid = ?", column, belongSys,"1")
+                            .limit(20)
+                            .offset(count)
+                            .order("createTime DESC")
+                            .find(DeviceInfo.class);
+                    list.addAll(temps);
+                }
+            } else {
+                List<DeviceInfo> temps = LitePal.where("belongSys = ? and isValid = ?", belongSys,"1")
+                        .limit(20)
+                        .offset(count)
+                        .order("createTime DESC")
+                        .find(DeviceInfo.class);
+                list.addAll(temps);
+            }
+        }
+        return list;
+    }
+
+
+
+
+
+
     public List<DeviceInfo> loadBySys(String belongSys) {
         List<DeviceInfo> devices = LitePal
                 .where("isValid = ? and belongSys = ?",
@@ -122,45 +187,12 @@ public class DeviceService {
         return list;
     }
 
-    public List<DeviceInfo> filterByType(List<String> type, List<String> status, String belongSys) {
-        List<DeviceInfo> list = new ArrayList<>();
-        if (type.size() != 0)  {
-            for (String column : type) {
-                if (status.size() != 0) {
-                    for (String column2 : status) {
-                        List<DeviceInfo> temps = LitePal.where("type = ? and status = ?" +
-                                " and belongSys = ? " + "and isValid = ?", column, column2, belongSys, "1")
-                                .find(DeviceInfo.class);
-                        list.addAll(temps);
-                    }
-                } else {
-                    List<DeviceInfo> temps = LitePal.where("type = ? " +
-                            " and belongSys = ? " + "and isValid = ?", column,  belongSys, "1")
-                            .find(DeviceInfo.class);
-                    list.addAll(temps);
-                }
-            }
-        } else {
-            if (status.size() != 0) {
-                for (String column : status) {
-                    List<DeviceInfo> temps = LitePal.where("status = ? and belongSys = ?" +
-                            " and isValid = ?", column, belongSys,"1")
-                            .find(DeviceInfo.class);
-                    list.addAll(temps);
-                }
-            } else {
-                List<DeviceInfo> temps = LitePal.where("belongSys = ? and isValid = ?", belongSys,"1")
-                        .find(DeviceInfo.class);
-                list.addAll(temps);
-            }
-        }
-        return list;
-    }
 
     public List<DeviceInfo> searchBySys(String belongSys) {
         List<DeviceInfo> list = LitePal
                 .where("belongSys = ? and isValid = ?", belongSys,"1")
                 .limit(20)
+                .order("createTime DESC")
                 .find(DeviceInfo.class);
         return list;
     }

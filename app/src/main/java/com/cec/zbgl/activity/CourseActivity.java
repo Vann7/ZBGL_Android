@@ -1,6 +1,7 @@
 package com.cec.zbgl.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,9 +19,12 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +41,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cec.zbgl.BuildConfig;
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.CourseAdapter;
 import com.cec.zbgl.adapter.CourseAddAdapter;
@@ -43,20 +49,25 @@ import com.cec.zbgl.adapter.ImageAdapter;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceCourse;
+import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.CourseService;
+import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.transformer.ScalePageTransformer;
 import com.cec.zbgl.utils.ImageUtil;
 import com.cec.zbgl.utils.OpenFileUtil;
+import com.cec.zbgl.utils.ToastUtils;
 import com.cec.zbgl.view.MatrixImageView;
-import com.cec.zbgl.view.ScaleImageView;
+import com.cec.zbgl.view.ScaleView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,7 +92,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private GridLayoutManager mGridLayoutManager;
     private ListView course_lv;
     private TextView marsker_tv;
-    private ScaleImageView image_iv; //图片展示iv
+
     private CourseAddAdapter addAdapter;
     private ProgressBar progressBar; //加载按钮
     private boolean isShowing = false;
@@ -107,6 +118,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private CourseService courseService;
     private String deviceId; //装备id
     private String sysId; //组织机构id
+    private String sysName; //组织机构名称
     private User user;
 
     private List<DeviceCourse> mData =new ArrayList<>();
@@ -114,12 +126,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private List<DeviceCourse> mData_Video =new ArrayList<>();
     private List<DeviceCourse> mData_Doc =new ArrayList<>();
 
-    private FrameLayout mPager_fl;
-    private ViewPager mViewPager;
-    private TextView pagerCount_tv;
-    private ImageAdapter mImageAdapter;
-    private ScaleImageView imageView;
-    private ImageView mCancle_iv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,11 +144,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         builder.detectFileUriExposure();
 
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
+        deviceId = getIntent().getStringExtra("deviceId");
         initWidth();
-        initData();
         initView();
         initEvent();
-        initPager();
+        initData();
     }
 
 
@@ -161,6 +168,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initView() {
+
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         add_iv = (ImageView) findViewById(R.id.device_media_add);
         add_iv.setVisibility(VISIBLE);
@@ -201,28 +209,25 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         marsker_tv = (TextView) findViewById(R.id.course_masker);
         marsker_tv.bringToFront();
         course_lv.bringToFront();
-
-        image_iv = (ScaleImageView) findViewById(R.id.show_image_iv);
-
-
-
-
-
     }
 
     /**
      * 初始化教程数据
      */
     private void initData() {
+        OrgsService orgsService = new OrgsService();
         getSession();
         deviceId = getIntent().getStringExtra("deviceId");
-        sysId = getIntent().getStringExtra("sysId");
 
+        sysId = getIntent().getStringExtra("sysId");
+        if (sysId != null) {
+            sysName = orgsService.getName(sysId);
+        }
         String name = getIntent().getStringExtra("name");
         if (name != null){
             head_tv.setText(name + " — 使用教程信息");
         } else {
-            head_tv.setText(sysId + " — 使用教程信息");
+            head_tv.setText(sysName + " — 使用教程信息");
         }
 
         if (mData.size() != 0) {
@@ -267,11 +272,15 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onItemClick(View v, int position) {
                 DeviceCourse c = mData.get(position);
-                String fileName;
+
                 Intent intent;
                 switch (mData.get(position).getCourseType()) {
                     case Constant.COURSE_IMAGE :
-                        showPager(position);
+                        intent = new Intent(CourseActivity.this, PhotoActivity.class);
+                        intent.putExtra("position", position );
+                        intent.putExtra("deviceId", deviceId);
+                        intent.putExtra("sysId", sysId);
+                        startActivity(intent);
                         break;
                     case Constant.COURSE_VIDEO :
                         intent = new Intent(CourseActivity.this, MediaActivity.class);
@@ -279,15 +288,14 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                         startActivity(intent);
                         break;
                     case Constant.COURSE_DOCUMENT :
-//                        fileName = "storage/emulated/0/Download/11111.txt";
-                        fileName = "android.resource://" + getPackageName()
-                                + "/" + R.raw.demo3;
-                        intent = OpenFileUtil.getTextFileIntent(fileName,false);
-                        startActivity(intent);
+                        DeviceCourse c0 = mData.get(position);
+                        openDoc(c0);
                         break;
                 }
 
             }
+
+
 
             //长按item 删除指定条目item
             @Override
@@ -318,7 +326,21 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                     takeVideo();
                     break;
                 case CONS_DOCUMENT:
-
+                    DeviceCourse c1 = new DeviceCourse();
+                    c1.setCourseType(Constant.COURSE_DOCUMENT);
+                    c1.setDeviceId(deviceId);
+                    c1.setSysId(sysId);
+                    c1.setmId(UUID.randomUUID().toString());
+                    c1.setValid(true);
+                    c1.setCreaterName(user.getName());
+                    c1.setCreaterId(user.getmId());
+                    c1.setCreateTime(new Date());
+                    String filePath = Environment.getExternalStorageDirectory().getPath().concat("/Documents/");
+                    c1.setName("a.doc");
+                    c1.setLocation(filePath+"a.doc");
+//                    c1.setName("Android.pdf");
+//                    c1.setLocation(filePath+"Android.pdf");
+                    courseService.insert(c1);
 
                     break;
                 case CONS_LEAD_PHOTO :
@@ -331,42 +353,55 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             disappear();
         });
 
-        image_iv.setOnClickListener(this);
     }
-
 
     /**
-     * 初始化图片展示ViewPager
+     * 通过第三方app打开文档教程
+     * @param course
      */
-    private void initPager() {
-        mPager_fl = (FrameLayout) findViewById(R.id.image_pager_fl);
-        mViewPager = (ViewPager) findViewById(R.id.image_pager);
-        mViewPager.setBackgroundColor(Color.rgb(0,0,0));
-        pagerCount_tv = (TextView) findViewById(R.id.image_num_tv);
-        mCancle_iv = (ImageView) findViewById(R.id.image_cancle_iv);
-        mCancle_iv.setOnClickListener(this);
-        pagerCount_tv.setBackgroundColor(Color.argb(55, 0, 0,0));
-        mImageAdapter = new ImageAdapter(getPages());
+    private void openDoc(DeviceCourse course) {
+//        String filepath = course.getLocation();
+        String filepath = Environment.getExternalStorageDirectory().getPath().concat("/Documents/");
+        String fileName = course.getName();
+        File file = new File(filepath+fileName);
+        Uri uri;
+        if (!file.exists()) {
+            ToastUtils.showShort("本地文件不存在!");
+            return;
+        }
+        String type = course.getName().substring(fileName.lastIndexOf("."),fileName.length());
+        Intent intent = new Intent("android.intent.action.VIEW");
+        intent.addCategory("android.intent.category.DEFAULT");
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        mViewPager.setAdapter(mImageAdapter);
-        mViewPager.setPageTransformer(true, new ScalePageTransformer());
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID+".provider",file);
+        } else {
+            uri = Uri.fromFile(file);
+        }
 
-            }
+        switch (type) {
+            case ".doc" :
+                intent.setDataAndType(uri,"application/msword");
+                break;
+            case ".docx" :
+                intent.setDataAndType(uri,"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                break;
+            case ".pdf" :
+                intent.setDataAndType(uri,"application/pdf");
+                break;
+            default:
+                ToastUtils.showShort("该类型文件无法打开!");
+                break;
+        }
 
-            @Override
-            public void onPageSelected(int position) {
-                pagerCount_tv.setText( (position + 1) + " / " + (mData_Imag.size() - 1));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        final PackageManager packageManager = this.getPackageManager();
+        @SuppressLint("WrongConstant") List<ResolveInfo> list = packageManager.queryIntentActivities(intent, PackageManager.GET_ACTIVITIES);
+        if (list.size() == 0) ToastUtils.showShort("请安装office及相关软件!");
+        startActivity(intent);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -413,13 +448,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.course_masker :
                 disappear();
                 break;
-            case R.id.show_image_iv :
-                image_iv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
-                image_iv.setVisibility(GONE);
-                break;
-            case R.id.image_cancle_iv :
-                pagerCount_tv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_out));
-                mPager_fl.setVisibility(GONE);
         }
     }
 
@@ -559,8 +587,12 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         alertDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
                 .setMessage("删除本条教程")
                 .setPositiveButton("删除", (dialog, which) -> {
-                    mAdapter.removeData(position);
                     courseService.delete(mData.get(position).getId());
+                    if (position < mData_Imag.size()) {
+                        mData_Imag.remove(position);
+                    }
+                    mAdapter.removeData(position);
+
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
 
@@ -615,45 +647,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         mData.addAll(mData_Video);
         mData.addAll(mData_Doc);
         mAdapter.onDateChange(mData);
-        List<View> views = getPages();
-        mImageAdapter.onDateChange(views);
     }
 
-    private void showPager(int position) {
-        pagerCount_tv.setText( position + " / " + (mData_Imag.size() - 1));
-        pagerCount_tv.setAnimation(AnimationUtils.loadAnimation(this, R.anim.dd_mask_in));
-        mPager_fl.setVisibility(VISIBLE);
-        mViewPager.setCurrentItem(position-1);
-    }
 
-    /**
-     * 获取pagerView 照片List
-     * @return
-     */
-    private List<View> getPages() {
-        List<View> pages = new ArrayList<>();
-        for (int i = 1; i < mData_Imag.size(); i++) {
-//            ImageView imageView = new ImageView(this);
-            imageView = new ScaleImageView(this);
-            String uri  = mData_Imag.get(i).getLocation();
-            if (uri != null) {
-                File imageFile = new File(uri);
-                // 显示图片
-                Picasso.with(this)
-                        .load(imageFile)
-                        .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
-                        .tag(MultiImageSelectorFragment.TAG)
-                        .resize(mGridWidth, mGridWidth)
-                        .into(imageView);
-//                    view.setImageResource(R.mipmap.nba);
-//                    view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            }else {
-                imageView.setImageResource(R.mipmap.default_image);
-            }
-            pages.add(imageView);
-        }
-        return pages;
-    }
+
+
 
     private void getSession() {
         SharedPreferences setting = getSharedPreferences("User", 0);
@@ -697,11 +695,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 c0.setImage(images_small);
                 c0.setImage_full(images_full);
                 c0.setDeviceId(deviceId);
+                c0.setSysId(sysId);
+                c0.setValid(true);
                 c0.setCreaterName(user.getName());
                 c0.setCreaterId(user.getmId());
                 c0.setCreateTime(new Date());
-                c0.setSysId(sysId);
-                c0.setValid(true);
                 courseService.insert(c0);
                 mData_Imag.add(1,c0);
             }
@@ -714,6 +712,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             progressBar.setVisibility(GONE);
             collectData();
 
+//            mImageAdapter.onDateChange(getPages());
         }
     }
 
@@ -857,7 +856,5 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
             collectData();
         }
     }
-
-
 
 }

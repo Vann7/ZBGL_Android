@@ -15,8 +15,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -32,8 +35,11 @@ import com.cec.zbgl.utils.ToastUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 import me.nereo.multi_image_selector.MultiVideoSelectorActivity;
@@ -59,6 +65,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private List<Video> mUpList = new ArrayList<>();
     private static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 110;
     private static final int WRITE_PERMISSION = 0x01;
+    private int width;
+    private int height;
 
 
     public static final String FTP_CONNECT_SUCCESSS = "ftp连接成功";
@@ -93,10 +101,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        width = dm.widthPixels;
+        height = dm.heightPixels;
+
         requestWritePermission();
         initView();
         initEvent();
-       new UploadTask().execute();
+        new UploadTask().execute();
     }
 
 
@@ -112,22 +124,21 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(MEDIA_COLUMNS[0]));
             String path = cursor.getString(cursor.getColumnIndexOrThrow(MEDIA_COLUMNS[1]));
             String name = cursor.getString(cursor.getColumnIndexOrThrow(MEDIA_COLUMNS[2]));
-//                long dateTime = cursor.getLong(cursor.getColumnIndexOrThrow(MEDIA_COLUMNS[3]));
+                long dateTime = cursor.getLong(cursor.getColumnIndexOrThrow(MEDIA_COLUMNS[3]));
             Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(this.getContentResolver(),
                     id, MediaStore.Video.Thumbnails.MINI_KIND, null);
-
             String thumbPath = cursor.getString(cursor.getColumnIndexOrThrow(MEDIA_COLUMNS[4]));
-
             if(!fileExist(path)){continue;}
             Video video = null;
             if (!TextUtils.isEmpty(name)) {
 //                    video = new Video(id,path, name);
                 video = new Video(id,path, name, bitmap);
                 video.setThumbPath(thumbPath);
+                video.setDateTime(dateTime);
                 list.add(video);
             }
         }while(cursor.moveToNext());
-        return list;
+        return list.stream().sorted(Video::compareTo).collect(Collectors.toList());
     }
 
 
@@ -147,6 +158,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         masker_rl = (RelativeLayout) findViewById(R.id.upload_masker_rl);
         masker_rl.setBackgroundColor(Color.alpha(55));
         upload_value_tv = (TextView) findViewById(R.id.upload_ProgressBar_tv);
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) upload_lv.getLayoutParams();
+//        System.out.println(height);
+//        int h = upload_btn.getLineHeight();
+//        System.out.println(h);
+//        params.height = height/2;
+//        upload_lv.setLayoutParams(params);
     }
 
     private void initEvent() {

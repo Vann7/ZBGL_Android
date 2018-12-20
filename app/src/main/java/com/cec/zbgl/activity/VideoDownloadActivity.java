@@ -34,7 +34,9 @@ import com.cec.zbgl.adapter.DownloadDocAdapter;
 import com.cec.zbgl.adapter.UploadAdapter;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.model.FileFtp;
+import com.cec.zbgl.model.ServerConfig;
 import com.cec.zbgl.service.FTPService;
+import com.cec.zbgl.service.ServerService;
 import com.cec.zbgl.utils.LogUtil;
 import com.cec.zbgl.utils.ToastUtils;
 import com.google.gson.Gson;
@@ -284,7 +286,11 @@ public class VideoDownloadActivity extends AppCompatActivity implements View.OnC
     }
 
     private void initiData() {
-        hostName = "172.18.3.101";
+        ServerService service = new ServerService();
+        ServerConfig config = service.load();
+        hostName = config.getHostName();
+//        serverPort = config.getServerPort();
+//        hostName = "172.18.3.101";
         serverPort = 21;
         userName = "ftpadmin";
         password = "Rjs123456";
@@ -469,6 +475,7 @@ public class VideoDownloadActivity extends AppCompatActivity implements View.OnC
      */
     public void loadFile() {
         String filePath = Environment.getExternalStorageDirectory().getPath() + "/Documents/";
+        System.out.println(filePath);
         File file = new File(filePath);
         if (file.exists()) {
             if (file.isDirectory()) {
@@ -615,7 +622,6 @@ public class VideoDownloadActivity extends AppCompatActivity implements View.OnC
         @Override
         protected Integer doInBackground(List<FileFtp>... lists) {
             List<FileFtp> list = lists[0];
-
             String localPath;
             String path;
             FTPService ftpService = new FTPService();

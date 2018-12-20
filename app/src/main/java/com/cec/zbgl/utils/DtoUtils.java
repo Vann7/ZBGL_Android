@@ -75,6 +75,7 @@ public class DtoUtils {
         courseDto.setId(course.getmId());
         courseDto.setDeviceId(course.getDeviceId());
         courseDto.setName(course.getName());
+        courseDto.setSysId(course.getSysId());
         courseDto.setDeviceType(course.getDeviceType());
         courseDto.setCourseType(course.getCourseType());
         courseDto.setCreaterId(course.getCreaterId());
@@ -95,6 +96,7 @@ public class DtoUtils {
         DeviceCourse course = new DeviceCourse();
         course.setmId(courseDto.getId());
         course.setName(courseDto.getName());
+        course.setSysId(courseDto.getSysId());
         course.setDeviceId(courseDto.getDeviceId());
         course.setDeviceType(courseDto.getDeviceType());
         course.setCourseType(courseDto.getCourseType());

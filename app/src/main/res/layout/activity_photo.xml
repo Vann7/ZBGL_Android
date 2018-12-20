@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.PhotoActivity">
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/image_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/image_num_tv"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:textSize="28sp"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:paddingTop="10dp"/>
+
+    <ImageView
+        android:id="@+id/image_cancle_iv"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@mipmap/close_w"/>
+
+    <ProgressBar
+        android:id="@+id/course_load_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"/>
+</FrameLayout>

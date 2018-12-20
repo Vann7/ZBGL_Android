@@ -128,16 +128,76 @@
     </RelativeLayout>
 
 
+    <RelativeLayout
+        android:id="@+id/ftp_ip_rl"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/server_port_rl"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/shape_wihte_frame" >
+
+        <TextView
+            android:id="@+id/ftp_ip_tv"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:padding="1dp"
+            android:text="FTP地址"
+            android:textSize="16dp" />
+
+        <View
+            android:id="@+id/ftp_ip_v"
+            android:layout_width="1dip"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_toRightOf="@+id/ftp_ip_tv"
+            android:background="#EEEFFF"/>
+
+        <EditText
+            android:id="@+id/ftp_ip_et"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/ftp_ip_v"
+            android:background="@drawable/transparent"
+            android:ems="19"
+            android:hint="请输入FTP地址"
+            android:inputType="textPostalAddress"
+            android:padding="1dp"
+            android:textSize="16dp">
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/ftp_ip_del"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="3dp"
+            android:src="@mipmap/text_del"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+
+
     <TextView
         android:id="@+id/server_submit_tv"
         android:layout_width="400dp"
-        android:layout_height="60dp"
-        android:layout_below="@+id/server_port_rl"
+        android:layout_height="50dp"
+        android:layout_below="@+id/ftp_ip_rl"
         android:background="@drawable/login_button_selector"
         android:text="设置"
         android:gravity="center"
         android:textSize="20dp"
-        android:textStyle="bold"
         android:textColor="@color/white"
         android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true" />

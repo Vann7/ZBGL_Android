@@ -1,12 +1,16 @@
 package com.cec.zbgl.service;
 
+import android.app.Activity;
+import android.content.SharedPreferences;
+
 import com.cec.zbgl.activity.VideoUploadActivity;
+import com.cec.zbgl.model.ServerConfig;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-
+import android.content.SharedPreferences;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +49,9 @@ public class FTPService {
     private FTPClient ftpClient;
 
     public FTPService() {
-        this.hostName = "172.18.3.101";
+        ServerService service = new ServerService();
+        ServerConfig config = service.load();
+        this.hostName = config.getHostName();
         this.serverPort = 21;
         this.userName = "ftpadmin";
         this.password = "Rjs123456";

@@ -81,11 +81,27 @@ public class OrgsService {
 
     public List<SpOrgnization> loadNames() {
         List<SpOrgnization> list = LitePal
-                .select("name")
+                .select("mid","name")
                 .where("isValid = ?", "1")
                 .order("code ASC")
                 .find(SpOrgnization.class);
         return list;
+    }
+
+    public String getName(String mid) {
+        List<SpOrgnization> orgs = LitePal
+                .select("name")
+                .where("mid = ?", mid)
+                .find(SpOrgnization.class);
+       return  (orgs.size() == 0) ? "" :orgs.get(0).getName();
+    }
+
+    public String getmId(String name) {
+        List<SpOrgnization> orgs = LitePal
+                .select("mid")
+                .where("name = ?", name)
+                .find(SpOrgnization.class);
+       return  (orgs.size() == 0) ? "" :orgs.get(0).getmId();
     }
 
 }

@@ -1,11 +1,12 @@
 package me.nereo.multi_image_selector.bean;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.io.Serializable;
 
-public class Video implements Serializable {
+public class Video implements Serializable, Comparable<Video> {
     private int id;
     public String path;
     public String name;
@@ -13,6 +14,7 @@ public class Video implements Serializable {
     public Bitmap bitmap;
     private String thumbPath;
     private boolean isUpload;
+    private long DateTime;
 
 
 
@@ -112,5 +114,23 @@ public class Video implements Serializable {
 
     public void setUpload(boolean upload) {
         isUpload = upload;
+    }
+
+    public long getDateTime() {
+        return DateTime;
+    }
+
+    public void setDateTime(long dateTime) {
+        DateTime = dateTime;
+    }
+
+
+    @Override
+    public int compareTo(@NonNull Video o) {
+        if (this.getDateTime() > o.getDateTime()) {
+            return -1;
+        }else {
+            return 1;
+        }
     }
 }

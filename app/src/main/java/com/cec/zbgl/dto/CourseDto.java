@@ -8,6 +8,7 @@ public class CourseDto {
 
     private String id;
     private String deviceId;
+    private String sysId;
     private String name;
     private int deviceType;
     private int courseType;
@@ -148,5 +149,13 @@ public class CourseDto {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getSysId() {
+        return sysId;
+    }
+
+    public void setSysId(String sysId) {
+        this.sysId = sysId;
     }
 }

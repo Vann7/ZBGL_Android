@@ -188,13 +188,12 @@
     <TextView
         android:id="@+id/user_submit_tv"
         android:layout_width="400dp"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/user_rl_02"
         android:background="@drawable/login_button_selector"
         android:text="修改密码"
         android:gravity="center"
         android:textSize="20dp"
-        android:textStyle="bold"
         android:textColor="@color/white"
         android:layout_marginTop="60dp"
         android:layout_centerHorizontal="true" />

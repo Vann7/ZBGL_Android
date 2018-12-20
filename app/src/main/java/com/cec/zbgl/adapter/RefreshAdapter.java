@@ -56,7 +56,7 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }else{
             height = wm.getDefaultDisplay().getHeight();
         }
-        flag = ((height -110 )/ 120);
+        flag = ((height -110 )/ 100);
     }
 
     @Override

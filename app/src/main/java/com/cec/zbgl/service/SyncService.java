@@ -11,6 +11,7 @@ import com.cec.zbgl.dto.UserDto;
 import com.cec.zbgl.event.MessageEvent;
 import com.cec.zbgl.model.DeviceCourse;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.model.ServerConfig;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.model.User;
 import com.cec.zbgl.utils.DtoUtils;
@@ -64,7 +65,17 @@ public class SyncService {
 
     public void syncData() {
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-        String url = "http://172.18.3.253:8081/sync/data";
+        ServerService service = new ServerService();
+        ServerConfig config = service.load();
+        String ip = config.getIp();
+        String port = String.valueOf(config.getPort());
+        String url ="";
+        if (ip != null && port != null) {
+          url = "http://"+ip + ":" + port + "/sync/data";
+        } else {
+          url = "http://172.18.3.253:8081/sync/data";
+        }
+//        String url = "http://172.18.3.253:8081/sync/data";
         String json = collectData();
         String requestBody = json;
         final Request request = new Request.Builder()

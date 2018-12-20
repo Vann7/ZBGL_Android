@@ -24,20 +24,20 @@ public class TypeDocmentHolder extends RecyclerView.ViewHolder {
     public TypeDocmentHolder(View itemView, Context context) {
         super(itemView);
         this.mContext = context;
-        imageView = (ImageView) itemView.findViewById(R.id.course_document_img);
+//        imageView = (ImageView) itemView.findViewById(R.id.course_document_img);
         name = (TextView) itemView.findViewById(R.id.course_document_name);
-        desc = (TextView) itemView.findViewById(R.id.course_document_desc);
+//        desc = (TextView) itemView.findViewById(R.id.course_document_desc);
     }
 
     public void  bindHolder(DeviceCourse course) {
-        if (course.getImage() != null) {
-            byte[] bytes = course.getImage();
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            imageView.setImageBitmap(bitmap);
-        }else {
-            imageView.setImageResource(R.mipmap.default_image);
-        }
+//        if (course.getImage() != null) {
+//            byte[] bytes = course.getImage();
+//            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//            imageView.setImageBitmap(bitmap);
+//        }else {
+//            imageView.setImageResource(R.mipmap.default_image);
+//        }
         name.setText(course.getName());
-        desc.setText(course.getDescription());
+//        desc.setText(course.getDescription());
     }
 }

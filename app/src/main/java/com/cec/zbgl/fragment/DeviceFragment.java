@@ -73,7 +73,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private OrgsAdapter<SpOrgnization> mAdapter;
     private List<SpOrgnization> orgs;
     private RecyclerView mRecyclerView;
-//    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RefreshAdapter mRefreshAdapter;
     private GridLayoutManager mGridLayoutManager;
     private List<DeviceInfo> devices = new ArrayList<>();
@@ -111,6 +111,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     private String current_node;
     private String belongSys = "";
+    private String sysId = "";
     private String status[] = {"未入库","已入库","已出库"};
     private String types[] = {"移动Pad","交换机","服务器","磁盘阵列","计算机","显示终端","笔记本","打印机","网线","水晶头"};
 //    private String systems[] = {"系统1","系统2","系统3","系统4"};
@@ -146,7 +147,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 String mid = data.getStringExtra("result");
                 boolean flag = deviceService.check(mid);
                 if (flag) {
-                    ToastUtils.showShort("装备信息存在, id为:"+ mid);
+//                    ToastUtils.showShort("装备信息存在, id为:"+ mid);
                     Intent intent = new Intent(getActivity(), ContentActivity.class);
                     intent.putExtra("mid", mid);
                     intent.putExtra("add", false);
@@ -180,8 +181,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         //主界面RV
         mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view);
         mRecyclerView.setItemViewCacheSize(20);
-//        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefreshLayout);
-//        mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
 
         //没有数据view
         listTip = (AppCompatTextView) getActivity().findViewById(R.id.list_tip_message);
@@ -250,7 +251,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         }else {
             org_course_rl.setVisibility(GONE);
         }
-
+        if (orgs.size() > 0) {
+            sysId = orgs.get(0).getmId();
+        }
 //        orgs = orgs2;
     }
 
@@ -292,9 +295,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 //                reloadData(node.getName());
                 filterDevice();
                 current_node = node.getName();
+
                 org_course_name.setText(node.getName()+ "：使用教程信息");
             }
 //            if (node.isLeaf()) reloadData(node.getName());
+            sysId = orgsService.getmId(node.getName());
 
         });
 
@@ -415,7 +420,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     //初始化监听接口
     private void initListener() {
-//        initPullRefresh();
+        initPullRefresh();
         initLoadMoreListener();
 
     }
@@ -429,21 +434,21 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     }
 
     //刷新Listener监听
-  /*  private void initPullRefresh() {
+    private void initPullRefresh() {
         mSwipeRefreshLayout.setOnRefreshListener(() -> new Handler().postDelayed(() -> {
-            Random random = new Random();
-            List<DeviceInfo> headDatas = new ArrayList<>();
 //            List<DeviceInfo> headDatas = deviceService.loadList(0,belongSys);
-            mRefreshAdapter.AddHeaderItem(headDatas);
+            List<DeviceInfo> headDatas = loadFilterDevice();
+//            mRefreshAdapter.AddHeaderItem(headDatas);
+            mRefreshAdapter.changeData(headDatas);
             //刷新完成
             mSwipeRefreshLayout.setRefreshing(false);
             if (headDatas.size() == 0) {
                 ToastUtils.showShort("没有更新的数据了...");
             }else {
-                ToastUtils.showShort("新增了 "+headDatas.size()+" 条数据");
+                ToastUtils.showShort("刷新完毕");
             }
-        }, 20));
-    }*/
+        }, 1000));
+    }
 
     //加载更多Listener监听
     private void initLoadMoreListener() {
@@ -454,17 +459,24 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
+                if (devices.size() <= 18) return;
                 //判断RecyclerView的状态 是空闲时，同时，是最后一个可见的ITEM时才加载
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && lastVisibleItem + 1 == mRefreshAdapter.getItemCount()) {
                     //设置正在加载更多
                     mRefreshAdapter.changeMoreStatus(mRefreshAdapter.LOADING_MORE);
                     //改为网络请求
                     new Handler().postDelayed(() -> {
-                        Random random = new Random();
-                        List<DeviceInfo> footerDatas = new ArrayList<>();
-
-                        footerDatas = deviceService.loadList(++page, belongSys);
+                        List<String> types = new ArrayList<>();
+                        List<String> status = new ArrayList<>();
+                        for (String key : selectedMaps.keySet()) {
+                            if (selectedMaps.get(key) == 1) {
+                                status.add(key);
+                            }else {
+                                types.add(key);
+                            }
+                        }
+//                        List<DeviceInfo> footerDatas = deviceService.loadList(++page, belongSys);
+                        List<DeviceInfo> footerDatas = deviceService.loadMoreList(++page, belongSys,types, status);
 
                         mRefreshAdapter.AddFooterItem(footerDatas);
                         //设置回到上拉加载更多
@@ -522,7 +534,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.org_course_btn :
                 Intent intent = new Intent(getActivity(), CourseActivity.class);
-                intent.putExtra("sysId", belongSys);
+                intent.putExtra("sysId", sysId);
                 startActivityForResult(intent,1);
 
         }
@@ -532,6 +544,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      * 筛选装备信息
      */
     private void filterDevice() {
+        List<DeviceInfo> deviceInfos = loadFilterDevice();
+        mRefreshAdapter.changeData(deviceInfos);
+        showData();
+    }
+
+
+    private List<DeviceInfo> loadFilterDevice() {
         List<String> types = new ArrayList<>();
         List<String> status = new ArrayList<>();
         for (String key : selectedMaps.keySet()) {
@@ -541,9 +560,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 types.add(key);
             }
         }
-       devices = deviceService.filterByType(types, status, belongSys);
-        mRefreshAdapter.changeData(devices);
-        showData();
+//        devices = deviceService.filterByType(types, status, belongSys);
+        devices = deviceService.loadMoreList(0, belongSys,types, status);
+        return devices;
     }
 
 

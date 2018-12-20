@@ -28,12 +28,20 @@
         </activity>
         <activity
             android:name=".activity.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.CourseActivity" />
-        <activity android:name=".activity.ContentActivity" />
-        <activity android:name=".thirdLibs.zxing.activity.CaptureActivity" />
+        <activity
+            android:name=".activity.CourseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ContentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".thirdLibs.zxing.activity.CaptureActivity"
+            android:screenOrientation="portrait" />
 
         <!-- FileProvider配置访问路径，适配7.0及其以上 -->
+        <!-- android:authorities="${applicationId}.provider" -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -44,33 +52,44 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.BaseActivity" />
+        <activity
+            android:name=".activity.BaseActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.DemoActivity" />
-        <activity android:name=".activity.UserActivity" />
+        <activity
+            android:name=".activity.UserActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.WXActivity" />
-        <activity android:name=".activity.VideoDownloadActivity"/>
-        <activity android:name=".activity.VideoUploadActivity"/>
+        <activity
+            android:name=".activity.VideoDownloadActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.VideoUploadActivity"
+            android:screenOrientation="portrait" />
         <!-- <activity android:name=".activity.HomeActivity"/> -->
-        <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.MediaActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MediaActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <!-- Image Selector Entry -->
         <activity
             android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".activity.ServerActivity"></activity>
+        <activity android:name=".activity.ServerActivity" />
 
-        <receiver android:name=".receiver.MyBroadcastReceiver"
+        <receiver
+            android:name=".receiver.MyBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="MY_BROADCAST"/>
+                <action android:name="MY_BROADCAST" />
             </intent-filter>
-
         </receiver>
 
-
+        <activity android:name=".activity.PhotoActivity"></activity>
     </application>
 
 </manifest>
