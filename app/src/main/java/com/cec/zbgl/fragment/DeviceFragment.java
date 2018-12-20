@@ -475,6 +475,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                                 types.add(key);
                             }
                         }
+
 //                        List<DeviceInfo> footerDatas = deviceService.loadList(++page, belongSys);
                         List<DeviceInfo> footerDatas = deviceService.loadMoreList(++page, belongSys,types, status);
 
