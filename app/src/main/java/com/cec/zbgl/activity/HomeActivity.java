@@ -1,6 +1,8 @@
 package com.cec.zbgl.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -52,12 +54,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        transition();
+
         setContentView(R.layout.activity_home);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
+        }
         initTabLine();
         initView();
         initEvent();
     }
+
+//    private void transition() {
+//        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        Fade fade = new Fade();
+//        fade.setDuration(200);
+//        getWindow().setEnterTransition(fade);
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

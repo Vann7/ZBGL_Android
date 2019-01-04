@@ -2,6 +2,7 @@ package com.cec.zbgl.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -133,7 +134,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(Color.BLACK);
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
         }
         //x 将屏幕设置为竖屏()
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -280,12 +281,14 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                         intent.putExtra("position", position );
                         intent.putExtra("deviceId", deviceId);
                         intent.putExtra("sysId", sysId);
-                        startActivity(intent);
+//                        startActivity(intent);
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(CourseActivity.this).toBundle());
                         break;
                     case Constant.COURSE_VIDEO :
                         intent = new Intent(CourseActivity.this, MediaActivity.class);
                         intent.putExtra("id", mData.get(position).getId());
                         startActivity(intent);
+//                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(CourseActivity.this).toBundle());
                         break;
                     case Constant.COURSE_DOCUMENT :
                         DeviceCourse c0 = mData.get(position);
@@ -436,6 +439,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.bar_back_iv :
                 finish();
+                overridePendingTransition(R.anim.dd_mask_in, R.anim.dd_mask_out);
                 break;
             case R.id.device_media_add :
                 isShowing = (isShowing == false) ? true : false;

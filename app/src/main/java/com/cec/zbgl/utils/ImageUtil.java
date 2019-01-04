@@ -40,12 +40,12 @@ public class ImageUtil {
     private Activity activity;
 
     public ImageUtil(Activity activity) {
-        mExtStorDir = Environment.getExternalStorageDirectory().toString();
+        mExtStorDir = Environment.getExternalStorageDirectory().getPath().concat("/images/");
         this.activity = activity;
     }
 
     public ImageUtil() {
-        mExtStorDir = Environment.getExternalStorageDirectory().toString();
+        mExtStorDir = Environment.getExternalStorageDirectory().getPath().concat("/images/");
     }
 
     // 从本地相册选取图片作为头像
@@ -65,6 +65,8 @@ public class ImageUtil {
     // 启动手机相机拍摄照片作为头像
     public void choseHeadImageFromCameraCapture() {
         String savePath = mExtStorDir;
+//        String savePath = Environment.getExternalStorageDirectory().getPath().concat("/images/") ;
+
 
         Intent intent = null;
         // 判断存储卡是否可以用，可用进行存储

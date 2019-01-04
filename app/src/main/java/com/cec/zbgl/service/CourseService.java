@@ -40,15 +40,17 @@ public class CourseService {
      * @param list
      */
     public void batchInsert(List<CourseDto> list) {
-        LitePal.deleteAll(DeviceCourse.class);
+//        LitePal.deleteAll(DeviceCourse.class);
         for (CourseDto courseDto : list) {
             DeviceCourse course = DtoUtils.toCourse(courseDto);
             course.setUpload(true);
             course.setValid(true);
             course.save();
         }
+    }
 
-
+    public void deleteAll() {
+        LitePal.deleteAll(DeviceCourse.class);
     }
 
     public List<DeviceCourse> loadList() {
@@ -59,8 +61,7 @@ public class CourseService {
     }
 
     public List<DeviceCourse> getAll() {
-        List<DeviceCourse> list = LitePal.findAll(DeviceCourse.class);
-        return list.stream().filter(d -> d.isEdited() == true).collect(Collectors.toList());
+        return LitePal.where("isEdited = ? and isValid = ?", "1", "1").find(DeviceCourse.class);
     }
 
     public List<DeviceCourse> loadByDid(String deviceId, int type){
@@ -97,4 +98,17 @@ public class CourseService {
 //        return LitePal.delete(DeviceCourse.class, id);
     }
 
+    public int getCount() {
+        return LitePal.where("isEdited = ? ", "1").count(DeviceCourse.class);
+    }
+
+    public List<DeviceCourse> loadByPage(int page) {
+
+        List<DeviceCourse> list = LitePal.where("isEdited = ? ", "1")
+                .order("id asc")
+                .limit(20)
+                .offset(page)
+                .find(DeviceCourse.class);
+        return list.subList(0, list.size() > 20 ? 20 : list.size());
+    }
 }

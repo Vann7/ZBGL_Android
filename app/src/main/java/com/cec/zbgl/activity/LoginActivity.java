@@ -1,6 +1,7 @@
 package com.cec.zbgl.activity;
 
 import android.Manifest;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -64,8 +66,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
+//            getWindow().setStatusBarColor(Color.BLACK);
+        }
         authority();
         init();
     }
@@ -109,6 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent.putExtra("user", user);
                     setResult(RESULT_OK, intent);
                     startActivityForResult(intent, 1);
+//                    startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
                     this.finish();
                 } else {
                     ToastUtils.showShort("当前用户名或密码错误");

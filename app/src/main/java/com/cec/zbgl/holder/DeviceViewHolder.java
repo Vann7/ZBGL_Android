@@ -44,8 +44,8 @@ public class DeviceViewHolder extends RecyclerView.ViewHolder {
     public void bindHolder(DeviceInfo device) {
         imageView.setVisibility(View.VISIBLE);
         name.setText(device.getName());
-        type.setText(device.getBelongSys());
-        desc.setText(device.getLocation());
+        type.setText(device.getType());
+        desc.setText(device.getDescription());
         if (imageView.getTag().equals(device.getId())) {
             if (device.getImage() != null) {
                 File imageFile = FileUtils.byte2File(device.getImage(), mContext);

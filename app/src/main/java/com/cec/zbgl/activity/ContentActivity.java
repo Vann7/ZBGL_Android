@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -103,6 +104,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
+//            getWindow().setStatusBarColor(Color.BLACK);
+        }
         mExtStorDir = Environment.getExternalStorageDirectory().toString();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 //        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
@@ -188,6 +193,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             String name = setting.getString("name","");
             device = new DeviceInfo();
             device.setmId(mid);
+            belongSys_Et.setText(orgList.get(0).getName());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             createTime_Et.setText(sdf.format(new Date()));
             createName_Et.setText(name);
@@ -267,7 +273,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             case Constant.CODE_CAMERA_REQUEST:
                 if ( imageUtil.hasSdcard()) {
                     File tempFile = new File(
-                            Environment.getExternalStorageDirectory(),
+                            Environment.getExternalStorageDirectory().getPath().concat("/images/"),
                             Constant.IMAGE_FILE_NAME);
                     mUriPath = imageUtil.cropRawPhoto(imageUtil.getImageContentUri(tempFile));
                 } else {
@@ -427,7 +433,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             startActivityForResult(intent, Constant.CODE_PHOTO_REQUEST);
         } else {
             imageUtil = new ImageUtil(this);
-//        imageUtil.checkReadPermission();
+//            imageUtil.checkReadPermission();
             imageUtil.checkStoragePermission();
         }
 

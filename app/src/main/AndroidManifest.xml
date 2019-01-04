@@ -89,7 +89,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.PhotoActivity"></activity>
+        <activity android:name=".activity.PhotoActivity"/>
     </application>
 
 </manifest>

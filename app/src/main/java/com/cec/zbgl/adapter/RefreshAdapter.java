@@ -171,7 +171,8 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      */
     public void changeMoreStatus(int status){
         mLoadMoreStatus=status;
-        notifyDataSetChanged();
+        notifyItemChanged(mDatas.size());
+//        notifyDataSetChanged();
     }
 
     public void changeData(List<DeviceInfo> items) {

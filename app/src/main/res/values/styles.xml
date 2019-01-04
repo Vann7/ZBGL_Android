@@ -55,7 +55,17 @@
         <item name="android:gravity">center_vertical|center_horizontal</item>
     </style>
 
-    <!-- ProgressBar 样式 -->
+    <style name="animationUp" parent="android:Animation">
+        <item name="android:activityOpenEnterAnimation">@anim/dd_mask_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/dd_mask_out</item>
+    </style>
+
+    <style name="ThemeActivity">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/animationUp</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
 
 </resources>

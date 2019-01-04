@@ -15,13 +15,22 @@ import com.cec.zbgl.model.ServerConfig;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.model.User;
 import com.cec.zbgl.utils.DtoUtils;
+import com.cec.zbgl.utils.LogUtil;
 import com.cec.zbgl.utils.ToastUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +48,7 @@ public class SyncService {
     private CourseService courseService;
     private OrgsService orgsService;
     private UserService userService;
+    private ServerService service;
 
     private OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -49,6 +59,8 @@ public class SyncService {
     private SyncDto syncDto;
     private Gson gson;
     private Activity mActivity;
+    private String adress;
+    private int port;
 
 
 
@@ -142,4 +154,131 @@ public class SyncService {
 
         return gson.toJson(syncDto);
     }
+
+
+
+    public void socketSync(){
+        service = new ServerService();
+        ServerConfig config = service.load();
+        OutputStream os = null;
+        InputStream is = null;
+        Socket socket = null;
+        if (config != null && !config.getIp().equals("")) {
+            adress = config.getIp();
+            port = 8088;
+        }else {
+            EventBus.getDefault().post(new MessageEvent("刷新UI"));
+            return;
+        }
+
+        try {
+            socket = new Socket(adress, 8088);
+            if (!socket.isConnected()) {
+                EventBus.getDefault().post(new MessageEvent("刷新UI"));
+                return;
+            }
+            os = socket.getOutputStream();
+            is = socket.getInputStream();
+            InputStreamReader reader = new InputStreamReader(is, "UTF-8");
+//            OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
+            PrintStream out = new PrintStream(os);
+            sendMsg(out); //发送APP数据至服务器
+            socket.shutdownOutput();
+
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            receiveMsg(bufferedReader); //接受服务器端数据
+            reader.close();
+            is.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            EventBus.getDefault().post(new MessageEvent("刷新UI"));
+        }
+    }
+
+
+    /**
+     * 将app端数据发送至服务器
+     * @param out
+     */
+    public void sendMsg(PrintStream out) {
+        int flag = 0; int flag0 = 0; int count = 0; int count0 = 0;
+        //备品信息
+        count0 = deviceService.getCount();
+        while (flag0 <= count0) {
+            SyncDto syncDto = new SyncDto();
+            List<DeviceDto> dDtoList = new ArrayList<>();
+            List<DeviceInfo> deviceInfos = deviceService.loadByPage(flag0);
+            deviceInfos.stream().forEach( deviceInfo -> {
+                DeviceDto dto = DtoUtils.toDeviceDto(deviceInfo);
+                dDtoList.add(dto);
+            });
+            syncDto.setdList(dDtoList);
+            out.println(gson.toJson(syncDto));
+            out.flush();
+            flag0 += 20;
+        }
+
+        //教程信息
+        count = courseService.getCount();
+        flag = 0;
+        while (flag <= count) {
+            SyncDto syncDto = new SyncDto();
+            List<CourseDto> cDtoList = new ArrayList<>();
+            List<DeviceCourse> courses = courseService.loadByPage(flag);
+            courses.stream().forEach( course -> {
+                CourseDto dto = DtoUtils.toCourseDto(course);
+                cDtoList.add(dto);
+            });
+            syncDto.setcList(cDtoList);
+            out.println(gson.toJson(syncDto));
+            out.flush();
+            flag += 20;
+        }
+    }
+
+
+    /**
+     * 同步服务端数据
+     * @param br
+     * @throws IOException
+     */
+    public void receiveMsg(BufferedReader br) throws IOException {
+        String result = "";
+
+        //清空旧数据
+        courseService.deleteAll();
+        deviceService.deleteAll();
+        orgsService.deleteAll();
+        //插入服务端同步数据
+        while ( (result = br.readLine()) != null) {
+           SyncDto syncDto = gson.fromJson(result, SyncDto.class);
+            if (syncDto.getcList() != null && syncDto.getcList().size() > 0) {
+                cList = syncDto.getcList();
+                courseService.batchInsert(cList);
+                LogUtil.i("cList", String.valueOf(cList.size()));
+            }
+            if (syncDto.getdList() != null && syncDto.getdList().size() > 0) {
+                dList = syncDto.getdList();
+                deviceService.batchInsert(dList);
+                LogUtil.i("dList", String.valueOf(dList.size()));
+            }
+            if (syncDto.getoList() != null && syncDto.getoList().size() > 0) {
+                oList = syncDto.getoList();
+                orgsService.batchInsert(oList);
+                LogUtil.i("oList", String.valueOf(oList.size()));
+            }
+        }
+
+        br.close();
+    }
+
 }

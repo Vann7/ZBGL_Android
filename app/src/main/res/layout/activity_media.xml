@@ -52,17 +52,17 @@
             android:visibility="gone"
             android:layout_centerInParent="true"/>
 
-        <TextView
-            android:id="@+id/tv_sound"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerInParent="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:background="#33de1d1d"
-            android:padding="8dp"
-            android:text="音量"
-            android:textColor="#fff" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv_sound"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginRight="20dp"-->
+            <!--android:background="#33de1d1d"-->
+            <!--android:padding="8dp"-->
+            <!--android:text="音量"-->
+            <!--android:textColor="#fff" />-->
 
         <RelativeLayout
             android:id="@+id/play_rl"

@@ -21,7 +21,11 @@ public class ServerConfig extends LitePalSupport {
         this.ip = ip;
         this.port = port;
         this.hostName = hostName;
-        this.hostName = hostName;
+    }
+
+    public ServerConfig(String ip, String ftp) {
+        this.ip = ip;
+        this.hostName = ftp;
     }
 
     public long getId() {

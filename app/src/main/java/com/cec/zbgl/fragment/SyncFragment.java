@@ -118,7 +118,8 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            syncService.syncData();
+//            syncService.syncData();
+            syncService.socketSync();
             return null;
         }
 

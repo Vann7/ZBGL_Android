@@ -1,6 +1,8 @@
 package com.cec.zbgl.activity;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -31,6 +33,9 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
+        }
         service = new ServerService();
         initView();
         initData();
@@ -60,7 +65,11 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
         ServerConfig config = service.load();
         if (config != null) {
             ip_et.setText(config.getIp());
-            port_et.setText(String.valueOf(config.getPort()));
+            if (config.getPort() == 0) {
+                port_et.setText("");
+            }else {
+                port_et.setText(String.valueOf(config.getPort()));
+            }
             ftp_et.setText(config.getHostName());
         }
 
@@ -94,7 +103,13 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
 //        editor.putString("port", port);
 //        editor.putString("ftp", ftp);
 //        editor.commit();
-        ServerConfig config = new ServerConfig(ip, Integer.valueOf(port), ftp);
+        ServerConfig config;
+        if (!port.equals("")){
+            config = new ServerConfig(ip, Integer.valueOf(port), ftp);
+        } else {
+            config = new ServerConfig(ip, ftp);
+        }
+
         if (service.load() != null) {
             service.update(config);
         } else {

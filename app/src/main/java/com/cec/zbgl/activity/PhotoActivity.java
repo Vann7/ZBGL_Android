@@ -5,10 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Fade;
 import android.view.View;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -44,10 +47,22 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        transition();
         setContentView(R.layout.activity_photo);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 0, 0));
+        }
         initData();
         initView();
 
+    }
+
+    private void transition() {
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        Fade fade = new Fade();
+//
+//        fade.setDuration(200);
+//        getWindow().setEnterTransition(fade);
     }
 
     private void initData() {
@@ -100,6 +115,7 @@ public class PhotoActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.image_cancle_iv :
                 this.finish();
+                overridePendingTransition(R.anim.dd_mask_in, R.anim.dd_mask_out);
         }
     }
 

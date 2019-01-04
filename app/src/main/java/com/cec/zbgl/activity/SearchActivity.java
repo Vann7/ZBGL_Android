@@ -1,6 +1,8 @@
 package com.cec.zbgl.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -22,6 +24,9 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // 2. 绑定视图
         setContentView(R.layout.activity_search);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
+        }
 
         // 3. 绑定组件
         searchView = (SearchView) findViewById(R.id.search_view);

@@ -25,23 +25,23 @@ public class DtoUtils {
             device.setmId(deviceDto.getId());
             device.setType(deviceDto.getType());
             if (deviceDto.getName() != null){
-                device.setName(new String(deviceDto.getName().getBytes("iso-8859-1"),"GBK"));
+                device.setName(new String(deviceDto.getName()));
             }
             if (deviceDto.getLocation() != null) {
-                device.setLocation(new String(deviceDto.getLocation().getBytes("iso-8859-1"),"utf-8"));
+                device.setLocation(new String(deviceDto.getLocation()));
             }
 
             device.setCount(deviceDto.getCount());
             device.setStatus(deviceDto.getStatus());
             device.setBelongSys(deviceDto.getBelongSys());
             if (deviceDto.getDescription() != null) {
-                device.setDescription(new String(deviceDto.getDescription().getBytes("iso-8859-1"),"utf-8"));
+                device.setDescription(new String(deviceDto.getDescription()));
             }
 
             device.setCreaterId(deviceDto.getCreaterId());
             device.setCreateTime(deviceDto.getCreateTime());
             if (deviceDto.getCreaterName() != null) {
-                device.setCreaterName(new String(deviceDto.getCreaterName().getBytes("iso-8859-1"),"GBK"));
+                device.setCreaterName(new String(deviceDto.getCreaterName()));
             }
 
             device.setImage(deviceDto.getImage());

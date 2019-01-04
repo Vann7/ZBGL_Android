@@ -135,7 +135,7 @@ public class DeviceService {
      * @param list
      */
     public void batchInsert(List<DeviceDto> list) {
-        LitePal.deleteAll(DeviceInfo.class);
+
         for (DeviceDto deviceDto : list) {
             deviceDto.setUpload(true);
             DeviceInfo device = null;
@@ -147,6 +147,10 @@ public class DeviceService {
             device.save();
         }
 
+    }
+
+    public void deleteAll() {
+        LitePal.deleteAll(DeviceInfo.class);
     }
 
     public List<DeviceInfo> getAll() {
@@ -193,6 +197,20 @@ public class DeviceService {
                 .where("belongSys = ? and isValid = ?", belongSys,"1")
                 .limit(20)
                 .order("createTime DESC")
+                .find(DeviceInfo.class);
+        return list;
+    }
+
+    public int getCount() {
+        return LitePal.where("isEdited = ? ", "1")
+                .count(DeviceInfo.class);
+    }
+
+    public List<DeviceInfo> loadByPage(int page) {
+        List<DeviceInfo> list = LitePal.where("isEdited = ? ", "1")
+                .order("id desc")
+                .limit(20)
+                .offset(page)
                 .find(DeviceInfo.class);
         return list;
     }

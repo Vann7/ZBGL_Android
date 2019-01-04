@@ -71,6 +71,10 @@ public class OrgsService {
 
     }
 
+    public void deleteAll() {
+        LitePal.deleteAll(SpOrgnization.class);
+    }
+
     public List<SpOrgnization> loadList() {
         List<SpOrgnization> orgs = LitePal.
                 where("isValid = ?", "1")

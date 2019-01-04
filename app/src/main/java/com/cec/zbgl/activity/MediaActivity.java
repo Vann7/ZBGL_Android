@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -52,7 +54,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
 
     private SurfaceHolder holder;
 
-    private TextView tvSound, tvCurrentT, tvDuration;
+    private TextView tvCurrentT, tvDuration;
 
     private ProgressBar progressBar;
 
@@ -98,18 +100,26 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
 
     private FileInputStream fis;
 
+    private GestureDetector mGestureDetector;
+
+    private AudioManager mAudioManager;
+
 //    private boolean isPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        transition();
         // 隐藏标题栏
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_media);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
+        }
         //TODO　将屏幕设置为横屏()
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //TODO 将屏幕设置为竖屏()
@@ -120,6 +130,14 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         initEvent();
 
     }
+
+    private void transition() {
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        Fade fade = new Fade();
+        fade.setDuration(200);
+        getWindow().setEnterTransition(fade);
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -155,7 +173,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
 //        surfaceView.setBackgroundColor(Color.rgb(0,0,0));
 
         holder = surfaceView.getHolder();
-        tvSound = (TextView) findViewById(R.id.tv_sound);
+//        tvSound = (TextView) findViewById(R.id.tv_sound);
         tvCurrentT = (TextView) findViewById(R.id.tv_current);
         tvDuration = (TextView) findViewById(R.id.tv_duration);
         progressBar = (ProgressBar) findViewById(R.id.progress);
@@ -203,7 +221,17 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mGestureDetector.onTouchEvent(event)) {
+            return true;
+        }
+        switch(event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_UP :
+                break;
+        }
+        return true;
+    }
 
 
 
@@ -242,6 +270,10 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         media_rl.setOnClickListener(this);
         pause_iv.setOnClickListener(this);
 
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mGestureDetector = new GestureDetector(this, new MyGestureListener());
+
+
     }
 
 
@@ -263,9 +295,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         }
         manager.setStreamVolume(AudioManager.STREAM_MUSIC, curretnV,
                 AudioManager.FLAG_SHOW_UI);
-        tvSound.setVisibility(View.VISIBLE);
-        tvSound.setText("音量:" + curretnV);
-        handler.postDelayed(() -> tvSound.setVisibility(View.GONE), 1000);
+
         /**
          * 1.AudioManager.STREAM_MUSIC 多媒体 2.AudioManager.STREAM_ALARM 闹钟
          * 3.AudioManager.STREAM_NOTIFICATION 通知 4.AudioManager.STREAM_RING 铃音
@@ -275,7 +305,6 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
          * AudioManager.FLAG_SHOW_UI:显示音量控件
          */
     }
-
 
 
     /**
@@ -308,6 +337,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.surface_back :
                 finish();
+                overridePendingTransition(R.anim.dd_mask_in, R.anim.dd_mask_out);
                 break;
             case R.id.media_rl :
                 appear();
@@ -325,7 +355,6 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         back_iv.setVisibility(GONE);
         play_iv.setVisibility(GONE);
         pause_iv.setVisibility(GONE);
-        tvSound.setVisibility(GONE);
         play_rl.setVisibility(GONE);
         progressBar_filled.setVisibility(VISIBLE);
     }
@@ -336,7 +365,6 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
         back_iv.setVisibility(VISIBLE);
         play_iv.setVisibility(VISIBLE);
         pause_iv.setVisibility(GONE);
-        tvSound.setVisibility(GONE);
         play_rl.setVisibility(GONE);
         progressBar_filled.setVisibility(GONE);
     }
@@ -349,7 +377,6 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
             play_iv.setVisibility(VISIBLE);
         }
         back_iv.setVisibility(VISIBLE);
-        tvSound.setVisibility(VISIBLE);
         play_rl.setVisibility(VISIBLE);
         progressBar_filled.setVisibility(GONE);
     }
@@ -446,6 +473,34 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+    }
+
+
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        /**
+         * 双击
+         * @param e
+         * @return
+         */
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return super.onDoubleTap(e);
+        }
+
+        /**
+         * 滑动
+         * @param e1
+         * @param e2
+         * @param distanceX
+         * @param distanceY
+         * @return
+         */
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
     }
 
 }

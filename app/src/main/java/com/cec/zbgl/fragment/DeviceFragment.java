@@ -48,6 +48,7 @@ import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
+import com.cec.zbgl.utils.LogUtil;
 import com.cec.zbgl.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -163,10 +164,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             case SEARCH_BACK :
                 String name = data.getStringExtra("result");
                 search(name);
-                ToastUtils.showShort("检索词: "+ name);
+//                ToastUtils.showShort("检索词: "+ name);
                 break;
             case BACK_REFRESH :
-                devices = deviceService.loadList(page,belongSys);
+                devices = deviceService.loadList(0,belongSys);
+                showData();
                 mRefreshAdapter.changeData(devices);
         }
     }
@@ -317,8 +319,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onItemLongClick(View v, int position) {
-                deviceService.delete(devices.get(position).getId());
+//                deviceService.delete(devices.get(position).getId());
                 deleteItem(position);
+                LogUtil.i("position", String.valueOf(position));
             }
 
         });
@@ -439,15 +442,15 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 //            List<DeviceInfo> headDatas = deviceService.loadList(0,belongSys);
             List<DeviceInfo> headDatas = loadFilterDevice();
 //            mRefreshAdapter.AddHeaderItem(headDatas);
-            mRefreshAdapter.changeData(headDatas);
-            //刷新完成
-            mSwipeRefreshLayout.setRefreshing(false);
             if (headDatas.size() == 0) {
                 ToastUtils.showShort("没有更新的数据了...");
             }else {
+                mRefreshAdapter.changeData(headDatas);
                 ToastUtils.showShort("刷新完毕");
             }
-        }, 1000));
+            //刷新完成
+            mSwipeRefreshLayout.setRefreshing(false);
+        }, 500));
     }
 
     //加载更多Listener监听
@@ -478,16 +481,19 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 //                        List<DeviceInfo> footerDatas = deviceService.loadList(++page, belongSys);
                         List<DeviceInfo> footerDatas = deviceService.loadMoreList(++page, belongSys,types, status);
 
-                        mRefreshAdapter.AddFooterItem(footerDatas);
-                        //设置回到上拉加载更多
-                        mRefreshAdapter.changeMoreStatus(mRefreshAdapter.PULLUP_LOAD_MORE);
-                        //没有加载更多了
-                        //mRefreshAdapter.changeMoreStatus(mRefreshAdapter.NO_LOAD_MORE);
                         if (footerDatas.size() == 0){
+                            //没有加载更多了
+                            mRefreshAdapter.changeMoreStatus(mRefreshAdapter.NO_LOAD_MORE);
                             ToastUtils.showShort("没有数据了...");
                         } else  {
+                            mRefreshAdapter.AddFooterItem(footerDatas);
+                            //设置回到上拉加载更多
+                            mRefreshAdapter.changeMoreStatus(mRefreshAdapter.PULLUP_LOAD_MORE);
                             ToastUtils.showShort("加载" + footerDatas.size() + "条信息");
                         }
+
+
+
                     }, 10);
                 }
             }
@@ -501,6 +507,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             }
         });
     }
+
+
 
     //控件点击事件监听
     @Override
@@ -653,9 +661,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         alertDialog = new AlertDialog.Builder(getContext(),R.style.appalertdialog)
                 .setMessage("删除本条信息")
                 .setPositiveButton("删除", (dialog, which) -> {
-                    mRefreshAdapter.removeData(position);
                     deviceService.delete(devices.get(position).getId());
-//                    mList.remove(position);
+                    mRefreshAdapter.removeData(position);
+                    mList.remove(position);
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
 
