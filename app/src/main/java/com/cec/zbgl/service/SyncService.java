@@ -180,7 +180,6 @@ public class SyncService {
             os = socket.getOutputStream();
             is = socket.getInputStream();
             InputStreamReader reader = new InputStreamReader(is, "UTF-8");
-//            OutputStreamWriter writer = new OutputStreamWriter(os, "UTF-8");
             PrintStream out = new PrintStream(os);
             sendMsg(out); //发送APP数据至服务器
             socket.shutdownOutput();
