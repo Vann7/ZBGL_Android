@@ -44,7 +44,7 @@
         android:layout_marginTop="50dp"
         android:background="@color/lightgray"
         android:gravity="center"
-        android:text="同步数据"
+        android:text="数据同步"
         android:textSize="22sp"
         android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:background="@color/lightgray"
-        android:text="上传文件"/>
+        android:text="文件上传"/>
 
     <TextView
         android:id="@+id/sync_download_file"
@@ -73,7 +73,7 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:background="@color/lightgray"
-        android:text="下载文件"/>
+        android:text="文件下载"/>
 
 
 

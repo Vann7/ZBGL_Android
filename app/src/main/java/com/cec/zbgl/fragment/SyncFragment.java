@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.activity.SyncDataActivity;
 import com.cec.zbgl.activity.VideoDownloadActivity;
 import com.cec.zbgl.activity.VideoUploadActivity;
 import com.cec.zbgl.adapter.OrgsAdapter;
@@ -47,9 +48,8 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
     private TextView tv_syncData;
     private TextView tv_uFile;
     private TextView tv_dFile;
-    private ProgressBar progressBar;
     private LinearLayout rl_sync;
-    private SyncService syncService;
+    public static final int RESULT_OK  = -1;
 
 
     @Override
@@ -62,13 +62,19 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-//        EventBus.getDefault().register(this);
         initView();
         initEvent();
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case RESULT_OK :
+                //EventBus 发送事件
+                EventBus.getDefault().post(new MessageEvent("UI"));
+        }
+    }
 
     private void initView() {
         tv_syncData = (TextView) getActivity().findViewById(R.id.sync_data);
@@ -83,8 +89,6 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
         tv_syncData.setOnClickListener(this);
         tv_uFile.setOnClickListener(this);
         tv_dFile.setOnClickListener(this);
-
-        syncService = new SyncService(getActivity());
     }
 
     @Override
@@ -92,11 +96,12 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.sync_data :
-                new SyncTask().execute();
+                Intent intent = new Intent(getActivity(), SyncDataActivity.class);
+                startActivityForResult(intent, 1);
                 break;
             case R.id.sync_upload_file :
-                Intent intent = new Intent(getActivity(), VideoUploadActivity.class);
-                getActivity().startActivity(intent);
+                Intent intent1 = new Intent(getActivity(), VideoUploadActivity.class);
+                getActivity().startActivity(intent1);
                 break;
             case R.id.sync_download_file :
                 Intent intent2 = new Intent(getActivity(), VideoDownloadActivity.class);
@@ -106,60 +111,5 @@ public class SyncFragment extends Fragment implements View.OnClickListener {
 
     }
 
-
-    class SyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            rl_sync.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-//            syncService.syncData();
-            syncService.socketSync();
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-    }
-
-    /**
-     * 数据同步完成后刷新界面UI
-     * POSTING (默认) 表示事件处理函数的线程跟发布事件的线程在同一个线程。
-     * MAIN 表示事件处理函数的线程在主线程(UI)线程，因此在这里不能进行耗时操作。
-     * BACKGROUND 表示事件处理函数的线程在后台线程，因此不能进行UI操作。如果发布事件的线程是主线程(UI线程)，那么事件处理函数将会开启一个后台线程，如果果发布事件的线程是在后台线程，那么事件处理函数就使用该线程。
-     * ASYNC 表示无论事件发布的线程是哪一个，事件处理函数始终会新建一个子线程运行，同样不能进行UI操作。
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void Event(MessageEvent messageEvent) {
-        rl_sync.setVisibility(View.GONE);
-        ToastUtils.showShort("同步数据已完成");
-    }
-
-
-    /**
-     * 绑定EventBus
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    /**
-     * 解除绑定EventBus
-     */
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
 
 }

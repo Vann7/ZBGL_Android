@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.support.v7.app.AlertDialog;
 import com.cec.zbgl.R;
 import com.cec.zbgl.activity.ContentActivity;
+import com.cec.zbgl.activity.ContentOrgActivity;
 import com.cec.zbgl.activity.CourseActivity;
 import com.cec.zbgl.activity.SearchActivity;
 import com.cec.zbgl.adapter.FilterAdapter;
@@ -63,6 +64,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static android.app.Activity.RESULT_OK;
@@ -146,6 +149,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             case RESULT_OK:
 //                long id = (long)Integer.valueOf(data.getStringExtra("result"));
                 String mid = data.getStringExtra("result");
+                //判断mid长度及非中文
+                String ref_charset = "[\u4e00-\u9fa5]";
+                Pattern p = Pattern.compile(ref_charset);
+                Matcher m = p.matcher(mid);
+                if (mid.length() > 36 || mid == null || m.find()){
+                    ToastUtils.showShort("该二维码/条形码 无效");
+                    return;
+                }
                 boolean flag = deviceService.check(mid);
                 if (flag) {
 //                    ToastUtils.showShort("装备信息存在, id为:"+ mid);
@@ -154,9 +165,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                     intent.putExtra("add", false);
                     startActivityForResult(intent,1);
                 }else {
-                    ToastUtils.showShort("装备信息不存在");
+//                    ToastUtils.showShort("装备信息不存在");
                     Intent intent = new Intent(getActivity(), ContentActivity.class);
-                    intent.putExtra("mid", UUID.randomUUID().toString());
+                    intent.putExtra("mid", mid);
                     intent.putExtra("add",true);
                     startActivityForResult(intent,1);
                 }
@@ -167,7 +178,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 //                ToastUtils.showShort("检索词: "+ name);
                 break;
             case BACK_REFRESH :
-                devices = deviceService.loadList(0,belongSys);
+                devices = deviceService.loadList(0,sysId);
                 showData();
                 mRefreshAdapter.changeData(devices);
         }
@@ -224,7 +235,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         //组织机构教程rl
         org_course_rl = (RelativeLayout) getActivity().findViewById(R.id.org_course);
         //组织机构查看btn
-        org_course_btn = (TextView) getActivity().findViewById(R.id.org_course_btn);
+        org_course_btn = (TextView) getActivity().findViewById(R.id.org_content_btn);
         org_course_name = (TextView) getActivity().findViewById(R.id.org_course_name);
 //        org_course_name.setText("组织机构-XX部门" + "：使用教程信息");
 //        org_course_desc.setText("组织机构描述信息——XX部门信息使用教程");
@@ -244,11 +255,12 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initOrgs() {
+
         orgsService = new OrgsService(getContext());
         orgs = orgsService.loadList();
         if (orgs != null && orgs.size() > 0){
             belongSys = orgs.get(0).getName();
-            org_course_name.setText(belongSys + "：使用教程信息");
+            org_course_name.setText(belongSys + "：详情信息");
             org_course_rl.setVisibility(VISIBLE);
         }else {
             org_course_rl.setVisibility(GONE);
@@ -261,7 +273,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     private void initData() {
         page = 0;
-        devices = deviceService.loadList(0,belongSys);
+        devices = deviceService.loadList(0,sysId);
         //初始化filter数据
         HashMap<Integer, String>  map = new HashMap<Integer, String>();
         map.put(0,"设备状态");
@@ -291,6 +303,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      */
     private void initEvent() {
         mAdapter.setOnTreeNodeClickListener((node, position) -> {
+            sysId = orgsService.getmId(node.getName());
             if (current_node != node.getName()) {
                 page = 0;
                 belongSys = node.getName();
@@ -298,10 +311,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 filterDevice();
                 current_node = node.getName();
 
-                org_course_name.setText(node.getName()+ "：使用教程信息");
+                org_course_name.setText(node.getName()+ "：详情信息");
             }
 //            if (node.isLeaf()) reloadData(node.getName());
-            sysId = orgsService.getmId(node.getName());
+
 
         });
 
@@ -479,7 +492,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                             }
                         }
 //                        List<DeviceInfo> footerDatas = deviceService.loadList(++page, belongSys);
-                        List<DeviceInfo> footerDatas = deviceService.loadMoreList(++page, belongSys,types, status);
+                        List<DeviceInfo> footerDatas = deviceService.loadMoreList(++page, sysId,types, status);
 
                         if (footerDatas.size() == 0){
                             //没有加载更多了
@@ -514,9 +527,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.list_tip_message :
-                reloadData("根目录2-1");
-                break;
             case R.id.top_scan_btn :
                 scanQc();
                 break;
@@ -540,8 +550,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 filterDevice();
                 disappear();
                 break;
-            case R.id.org_course_btn :
-                Intent intent = new Intent(getActivity(), CourseActivity.class);
+            case R.id.org_content_btn :
+                Intent intent = new Intent(getActivity(), ContentOrgActivity.class);
                 intent.putExtra("sysId", sysId);
                 startActivityForResult(intent,1);
 
@@ -569,7 +579,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             }
         }
 //        devices = deviceService.filterByType(types, status, belongSys);
-        devices = deviceService.loadMoreList(0, belongSys,types, status);
+        devices = deviceService.loadMoreList(0, sysId,types, status);
         return devices;
     }
 
@@ -578,6 +588,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      * 开启二维码扫描
      */
     public void scanQc() {
+        if (orgs.size() == 0) {
+            ToastUtils.showShort("请先对系统信息进行数据同步！");
+            return;
+        }
         if (authority()) {
             startActivityForResult(new Intent(getActivity(),
                     CaptureActivity.class), 1);
@@ -648,12 +662,16 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private void appear() {
         isShowing = true;
         search_filter.setTextColor(this.getResources().getColor(R.color.orange));
-        filter_rl.setVisibility(VISIBLE);
-        filter_rl.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
-        filter_rv.setVisibility(VISIBLE);
-        filter_rv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
         masker_tv.setVisibility(VISIBLE);
         masker_tv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+        masker_tv.bringToFront();
+        filter_rl.setVisibility(VISIBLE);
+        filter_rl.bringToFront();
+        filter_rl.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+        filter_rv.setVisibility(VISIBLE);
+        filter_rv.bringToFront();
+        filter_rv.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_in));
+
     }
 
     //删除指定item
@@ -663,7 +681,6 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 .setPositiveButton("删除", (dialog, which) -> {
                     deviceService.delete(devices.get(position).getId());
                     mRefreshAdapter.removeData(position);
-                    mList.remove(position);
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
 
@@ -692,19 +709,23 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void Event(MessageEvent messageEvent) {
-        initOrgs();
-        try {
-            mAdapter = new OrgsAdapter<>(mTreeView, getContext(),
-                    orgs, 0);
-            mTreeView.setAdapter(mAdapter);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        devices = deviceService.loadList(0,belongSys);
-        showData();
-        mRefreshAdapter.changeData(devices);
+        if (messageEvent.getMessage().equals("UI")) {
+            initOrgs();
+            try {
+                mAdapter = new OrgsAdapter<>(mTreeView, getContext(),
+                        orgs, 0);
+                mTreeView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            devices = deviceService.loadList(0,sysId);
+            showData();
+            mRefreshAdapter.changeData(devices);
 //        initData();
-        initEvent();
+            initEvent();
+        }
+
     }
 
     /**
@@ -713,15 +734,18 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
     }
 
     /**
      * 解除绑定EventBus
      */
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
 }

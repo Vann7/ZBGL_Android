@@ -1,0 +1,76 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/upload_header"
+            layout="@layout/bar_back"/>
+
+        <ListView
+            android:id="@+id/sync_lv"
+            android:layout_below="@+id/upload_header"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/lightgray"
+            android:layout_alignParentBottom="true">
+            <TextView
+                android:id="@+id/sync_btn"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="同步"
+                android:textColor="@color/white"
+                android:background="@color/gray"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/sync_bar"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+
+    <RelativeLayout
+        android:id="@+id/sync_masker_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray"
+        android:visibility="gone">
+        <View
+            android:id="@+id/sync_masker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/red"
+            android:visibility="gone"/>
+
+            <ProgressBar
+                android:id="@+id/sync_ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+            <TextView
+                android:id="@+id/sync_ProgressBar_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/sync_ProgressBar"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:text="正在同步中，请不要退出应用"/>
+    </RelativeLayout>
+
+</FrameLayout>

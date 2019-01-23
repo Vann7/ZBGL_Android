@@ -37,6 +37,7 @@
         <mapping class="com.cec.zbgl.model.DeviceInfo"/>
         <mapping class="com.cec.zbgl.model.DeviceCourse"/>
         <mapping class="com.cec.zbgl.model.ServerConfig"/>
+        <mapping class="com.cec.zbgl.model.DeviceRele"/>
     </list>
 
     <!--

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.cec.zbgl.db.DatabaseHelper;
 import com.cec.zbgl.dto.OrgnizationDto;
+import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.utils.DtoUtils;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class OrgsService {
     private Context mContext;
@@ -68,7 +70,19 @@ public class OrgsService {
             SpOrgnization org = DtoUtils.toOrgnization(orgDto);
             org.save();
         }
+    }
 
+
+    public int update(SpOrgnization org) {
+        org.setUpload(true);
+        return org.update(org.getId());
+    }
+
+    public SpOrgnization getOrg(String mId){
+        List<SpOrgnization> orgs = LitePal.
+                where("isValid = ? and mId = ?", "1", mId)
+                .find(SpOrgnization.class);
+        return (orgs.size()==0)? new SpOrgnization() : orgs.get(0);
     }
 
     public void deleteAll() {
@@ -108,4 +122,22 @@ public class OrgsService {
        return  (orgs.size() == 0) ? "" :orgs.get(0).getmId();
     }
 
+    public List<SpOrgnization> getAll() {
+        List<SpOrgnization> list = LitePal.findAll(SpOrgnization.class);
+        return list.stream().filter( org -> org.isUpload() == true).collect(Collectors.toList());
+    }
+
+
+    public int getCount() {
+        return LitePal.count(SpOrgnization.class);
+    }
+
+    public List<SpOrgnization> loadByPage(int page) {
+        List<SpOrgnization> list = LitePal.where("isUpload = ? ", "1")
+                .order("id asc")
+                .limit(20)
+                .offset(page)
+                .find(SpOrgnization.class);
+        return list.subList(0, list.size() > 20 ? 20 : list.size());
+    }
 }

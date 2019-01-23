@@ -17,7 +17,7 @@
         tools:text="教程名称" />
 
     <TextView
-        android:id="@+id/org_course_btn"
+        android:id="@+id/org_content_btn"
         android:layout_width="50dp"
         android:layout_height="40dp"
         android:background="@color/lightgray"

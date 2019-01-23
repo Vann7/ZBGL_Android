@@ -11,6 +11,9 @@ public class OrgnizationDto {
     private boolean isSys;
     private Date createTime;
     private String createrId;
+    private String description;
+    private byte[] image;
+    private boolean isUpload; //是否已上传服务器
     private boolean isValid;
 
     @Override
@@ -42,6 +45,14 @@ public class OrgnizationDto {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public boolean isUpload() {
+        return isUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        isUpload = upload;
     }
 
     public String getParentCode() {
@@ -98,5 +109,21 @@ public class OrgnizationDto {
 
     public void setValid(boolean valid) {
         isValid = valid;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }

@@ -112,9 +112,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private long sizeLimit = 1024*1024*1024L;//(1GB视频大小限制)
     private final int CONS_IMAGE = 0;
     private final int CONS_VIDEO = 1;
-    private final int CONS_DOCUMENT = 2;
-    private final int CONS_LEAD_PHOTO = 3;
-    private final int CONS_LEAD_VIDEO = 4;
+//    private final int CONS_DOCUMENT = 2;
+    private final int CONS_LEAD_PHOTO = 2;
+    private final int CONS_LEAD_VIDEO = 3;
     private int mGridWidth;
     private CourseService courseService;
     private String deviceId; //装备id
@@ -201,7 +201,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         List<String> list = new ArrayList<>();
         list.add("拍摄照片");
         list.add("拍摄视频");
-        list.add("导入文档");
+//        list.add("导入文档");
         list.add("导入照片");
         list.add("导入视频");
 
@@ -226,9 +226,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         }
         String name = getIntent().getStringExtra("name");
         if (name != null){
-            head_tv.setText(name + " — 使用教程信息");
+            head_tv.setText(name + " — 详情信息");
         } else {
-            head_tv.setText(sysName + " — 使用教程信息");
+            head_tv.setText(sysName + " — 详情信息");
         }
 
         if (mData.size() != 0) {
@@ -285,6 +285,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(CourseActivity.this).toBundle());
                         break;
                     case Constant.COURSE_VIDEO :
+                        File file = new File(mData.get(position).getLocation());
+                        if (!file.exists()) {
+                            ToastUtils.showShort("该教程视频不存在，请检查!");
+                            return;
+                        }
                         intent = new Intent(CourseActivity.this, MediaActivity.class);
                         intent.putExtra("id", mData.get(position).getId());
                         startActivity(intent);
@@ -328,7 +333,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 case CONS_VIDEO :
                     takeVideo();
                     break;
-                case CONS_DOCUMENT:
+              /*  case CONS_DOCUMENT:
                     DeviceCourse c1 = new DeviceCourse();
                     c1.setCourseType(Constant.COURSE_DOCUMENT);
                     c1.setDeviceId(deviceId);
@@ -341,11 +346,8 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                     String filePath = Environment.getExternalStorageDirectory().getPath().concat("/Documents/");
                     c1.setName("a.doc");
                     c1.setLocation(filePath+"a.doc");
-//                    c1.setName("Android.pdf");
-//                    c1.setLocation(filePath+"Android.pdf");
                     courseService.insert(c1);
-
-                    break;
+                    break;*/
                 case CONS_LEAD_PHOTO :
                     pickPhoto();
                     break;
@@ -365,14 +367,14 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     private void openDoc(DeviceCourse course) {
 //        String filepath = course.getLocation();
         String filepath = Environment.getExternalStorageDirectory().getPath().concat("/Documents/");
-        String fileName = course.getName();
+        String fileName = course.getLocation();
         File file = new File(filepath+fileName);
         Uri uri;
         if (!file.exists()) {
             ToastUtils.showShort("本地文件不存在!");
             return;
         }
-        String type = course.getName().substring(fileName.lastIndexOf("."),fileName.length());
+        String type = course.getLocation().substring(fileName.lastIndexOf("."),fileName.length());
         Intent intent = new Intent("android.intent.action.VIEW");
         intent.addCategory("android.intent.category.DEFAULT");
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -592,11 +594,13 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 .setMessage("删除本条教程")
                 .setPositiveButton("删除", (dialog, which) -> {
                     courseService.delete(mData.get(position).getId());
+                    int count = mData_Imag.size() + mData_Video.size();
                     if (position < mData_Imag.size()) {
                         mData_Imag.remove(position);
+                    } else if (position < count){
+                        mData_Video.remove(position - mData_Imag.size());
                     }
                     mAdapter.removeData(position);
-
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
 
@@ -788,8 +792,8 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 String vId = strs[1];
                 Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(getContentResolver(),
                         Integer.valueOf(vId), MediaStore.Video.Thumbnails.MINI_KIND, null);
-                DeviceCourse c0 = new DeviceCourse(UUID.randomUUID().toString(),"text123",
-                        Constant.COURSE_VIDEO,"教程类别为:"+"视频",false,"item "+(121+1));
+                DeviceCourse c0 = new DeviceCourse(UUID.randomUUID().toString(),"video",
+                        Constant.COURSE_VIDEO,"教程类别为:"+"视频",false,"item");
                 c0.setLocation(path);
                 ImageUtil imageUtil = new ImageUtil();
                 if (bitmap != null) {
@@ -803,7 +807,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
                 c0.setSysId(sysId);
                 c0.setValid(true);
                 courseService.insert(c0);
-                mData_Video.add(c0);
+                mData_Video.add(1,c0);
             }
             return null;
         }

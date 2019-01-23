@@ -24,7 +24,10 @@ public class SpOrgnization extends LitePalSupport implements Serializable {
     private boolean isSys;
     private java.util.Date createTime;
     private java.lang.String createrId;
+    private String description;
+    private byte[] image;
     private boolean isValid;
+    private boolean isUpload; //是否已上传服务器
 
     public SpOrgnization() {}
 
@@ -48,6 +51,22 @@ public class SpOrgnization extends LitePalSupport implements Serializable {
                 ", createrId='" + createrId + '\'' +
                 ", isValid=" + isValid +
                 '}';
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public String getmId() {
@@ -128,5 +147,13 @@ public class SpOrgnization extends LitePalSupport implements Serializable {
 
     public void setValid(boolean valid) {
         isValid = valid;
+    }
+
+    public boolean isUpload() {
+        return isUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        isUpload = upload;
     }
 }

@@ -167,7 +167,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/nba" />
+        android:src="@mipmap/people" />
 
     <Button
         android:id="@+id/loginButton"

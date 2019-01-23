@@ -176,7 +176,9 @@ public class RefreshAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void changeData(List<DeviceInfo> items) {
-        mDatas = items;
+//        mDatas = items;
+        mDatas.clear();
+        mDatas.addAll(items);
         notifyDataSetChanged();
     }
 

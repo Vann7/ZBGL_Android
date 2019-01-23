@@ -6,8 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.cec.zbgl.db.DatabaseHelper;
 import com.cec.zbgl.dto.DeviceDto;
+import com.cec.zbgl.dto.DeviceReleDto;
 import com.cec.zbgl.model.DeviceCourse;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.model.DeviceRele;
+import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.utils.DtoUtils;
 
 import org.litepal.LitePal;
@@ -83,6 +86,22 @@ public class DeviceService {
                         list.addAll(temps);
                     }
                 } else {
+
+                  /*  List<SpOrgnization> pCode = LitePal.where("mId = ? and isValid = ?", belongSys, "1")
+                            .find(SpOrgnization.class);
+                    List<SpOrgnization> sysIds = LitePal.where("parentCode = ? and isValid = ?", pCode.get(0).getCode())
+                            .find(SpOrgnization.class);
+
+                    sysIds.stream().forEach( org -> {
+                        List<DeviceInfo> temps = LitePal.where("type = ? " +
+                                " and belongSys = ? " + "and isValid = ?", column,  belongSys, "1")
+                                .limit(20)
+                                .offset(count)
+                                .order("createTime DESC")
+                                .find(DeviceInfo.class);
+                        list.addAll(temps);
+                    });*/
+
                     List<DeviceInfo> temps = LitePal.where("type = ? " +
                             " and belongSys = ? " + "and isValid = ?", column,  belongSys, "1")
                             .limit(20)
@@ -169,6 +188,7 @@ public class DeviceService {
     }
 
     public DeviceInfo getDeviceByMid(String mid) {
+       if (mid == null) return null;
        DeviceInfo deviceInfo = LitePal.where("mid = ?", mid).findFirst(DeviceInfo.class);
        return deviceInfo;
     }
@@ -213,6 +233,76 @@ public class DeviceService {
                 .offset(page)
                 .find(DeviceInfo.class);
         return list;
+    }
+
+    public boolean releDevice(String deviceId, String releDeviceId) {
+        DeviceRele deviceRele = new DeviceRele(deviceId, releDeviceId);
+        return deviceRele.save();
+    }
+
+    public int unReleDevice(long id) {
+        ContentValues values = new ContentValues();
+        values.put("isValid", false);
+        return LitePal.update(DeviceRele.class, values, id);
+//       return LitePal.delete(DeviceRele.class, id);
+    }
+
+
+    /**
+     * 加载关联设备列表
+     * @param deviceId
+     * @return
+     */
+    public List<DeviceRele> getDeviceReleList(String deviceId) {
+        List<DeviceRele> resultList = new ArrayList<>();
+
+            List<DeviceRele> list = LitePal.where("isValid = ? and deviceId = ? "
+                    , "1", deviceId)
+                    .find(DeviceRele.class);
+            resultList.addAll(list);
+
+            List<DeviceRele> list2 =  LitePal.where("isValid = ? and releDeviceId = ? "
+                    , "1", deviceId)
+                    .find(DeviceRele.class);
+            list2.stream().forEach( rele2 -> {
+                DeviceRele rele0 = new DeviceRele(rele2.getId(),rele2.getmId(),rele2.getReleDeviceId(), rele2.getDeviceId());
+                resultList.add(rele0);
+            });
+        return resultList;
+    }
+
+    public int getCountbyRele() {
+       return LitePal.count(DeviceRele.class);
+    }
+
+    public List<DeviceRele> getSyncReleList() {
+        return LitePal.findAll(DeviceRele.class);
+    }
+
+    public DeviceInfo getDevicebyRele(Long id) {
+        DeviceRele rele = LitePal.find(DeviceRele.class, id);
+        if (rele == null) return null;
+        List<DeviceInfo> list = LitePal.where("isValid = ? and mId = ?", "1", rele.getReleDeviceId())
+                .find(DeviceInfo.class);
+        return (list.size() == 0) ? null : list.get(0);
+    }
+
+    /**
+     * 清空已有装备关联数据
+     */
+    public void deleteReleAll() {
+        LitePal.deleteAll(DeviceRele.class);
+    }
+
+    /**
+     * 批量插入装备关联数据
+     * @param rList
+     */
+    public void batchInsertRele(List<DeviceReleDto> rList) {
+        for (DeviceReleDto releDto : rList) {
+            DeviceRele rele = DtoUtils.toRele(releDto);
+            rele.save();
+        }
     }
 
 }

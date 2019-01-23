@@ -2,10 +2,12 @@ package com.cec.zbgl.utils;
 
 import com.cec.zbgl.dto.CourseDto;
 import com.cec.zbgl.dto.DeviceDto;
+import com.cec.zbgl.dto.DeviceReleDto;
 import com.cec.zbgl.dto.OrgnizationDto;
 import com.cec.zbgl.dto.UserDto;
 import com.cec.zbgl.model.DeviceCourse;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.model.DeviceRele;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.model.User;
 
@@ -109,6 +111,7 @@ public class DtoUtils {
         course.setUpload(courseDto.isUpload());
         course.setImage(courseDto.getImage());
         course.setImage_full(courseDto.getImage_full());
+        course.setUpload(courseDto.isUpload());
         course.setEdited(false);
         return course;
     }
@@ -124,7 +127,28 @@ public class DtoUtils {
         org.setCreateTime(orgDto.getCreateTime());
         org.setCreaterId(orgDto.getCreaterId());
         org.setValid(orgDto.isValid());
+        org.setDescription(orgDto.getDescription());
+        org.setImage(orgDto.getImage());
+        org.setUpload(false);
         return org;
+    }
+
+
+    public static OrgnizationDto toOrgDto(SpOrgnization org) {
+        OrgnizationDto orgDto = new OrgnizationDto();
+        orgDto.setId(org.getmId());
+        orgDto.setCode(org.getCode());
+        orgDto.setParentCode(org.getParentCode());
+        orgDto.setValue(org.getValue());
+        orgDto.setName(org.getName());
+        orgDto.setSys(org.isSys());
+        orgDto.setCreateTime(org.getCreateTime());
+        orgDto.setCreaterId(org.getCreaterId());
+        orgDto.setValid(org.isValid());
+        orgDto.setDescription(org.getDescription());
+        orgDto.setImage(org.getImage());
+        orgDto.setUpload(org.isUpload());
+        return orgDto;
     }
 
     public static User toUser(UserDto userDto) {
@@ -143,6 +167,28 @@ public class DtoUtils {
         userDto.setPassword(user.getPassword());
         return userDto;
     }
+
+    public static DeviceRele toRele(DeviceReleDto releDto) {
+        DeviceRele rele = new DeviceRele();
+        rele.setmId(releDto.getId());
+        rele.setDeviceId(releDto.getDeviceId());
+        rele.setReleDeviceId(releDto.getReleDeviceId());
+        rele.setCreateTime(releDto.getCreateTime());
+        rele.setValid(releDto.isValid());
+        return rele;
+
+    }
+
+    public static DeviceReleDto toReleDto(DeviceRele deviceRele) {
+        DeviceReleDto releDto = new DeviceReleDto();
+        releDto.setId(deviceRele.getmId());
+        releDto.setDeviceId(deviceRele.getDeviceId());
+        releDto.setReleDeviceId(deviceRele.getReleDeviceId());
+        releDto.setCreateTime(deviceRele.getCreateTime());
+        releDto.setValid(deviceRele.isValid());
+        return releDto;
+    }
+
 
 /*    public static Blob bytetoBlob(byte[] bytes) {
         //creat a new blob

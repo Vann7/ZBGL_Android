@@ -437,7 +437,7 @@ public class MediaActivity extends AppCompatActivity implements View.OnClickList
             try {
                 // 1.指定播放源
                 uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-                + getPackageName() + "/" + R.raw.demo);//TODO 在raw下添加video1视频（）
+                + getPackageName() + "/" + R.raw.beep);//TODO 在raw下添加video1视频（）
 //                mediaPlayer.setDataSource(getApplicationContext(),uri);
                 mediaPlayer.setDataSource(fis.getFD());
                 // 2.将mediaplayer和surfaceView时行绑定

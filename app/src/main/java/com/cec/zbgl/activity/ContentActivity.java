@@ -17,11 +17,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -29,13 +31,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.adapter.ReleAdapter;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.model.DeviceRele;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.utils.ImageUtil;
+import com.cec.zbgl.utils.LogUtil;
 import com.cec.zbgl.utils.ToastUtils;
 
 import org.w3c.dom.Text;
@@ -70,6 +75,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private EditText count_Et;
     private TextView status_Et;
     private TextView belongSys_Et;
+    private String belongSys_Value;
     private EditText createName_Et;
     private EditText createTime_Et;
     private EditText description_Et;
@@ -82,12 +88,14 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private Uri mUriPath;
     private ImageUtil imageUtil;
     private ImageView back_iv;
+    private ImageView rele_device_iv;
     private TextView head_tv;
     private LinearLayout type_ll;
     private LinearLayout status_ll;
     private LinearLayout belongSys_ll;
     private AlertDialog.Builder builder;
     private String mid; //装备mid
+    private String releMid; //装备mid
     private boolean add; //是否新增
     private DeviceService deviceService;
     private OrgsService orgsService;
@@ -95,9 +103,17 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private String status[] = {"未入库","已入库","已出库"};
     private String types[] = {"移动Pad","交换机","服务器","磁盘阵列","计算机","显示终端","笔记本","打印机","网线","水晶头"};
     private String systems[];
+    private String systemIds[];
     private String icons[] = {"从相册选取","拍摄"};
+    private List<String> names;
+    private List<String> mIds;
     private HashMap<String, String> sysMap = new HashMap<>();
     private List<SpOrgnization> orgList;
+    private List<DeviceRele> rele_dList;
+    private List<DeviceRele> rele_temp_list;
+    private List<DeviceRele> rele_delete_list;
+    private GridView rele_gv;
+    private ReleAdapter releAdapter;
 
 
     @Override
@@ -117,9 +133,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         initView();
         initData();
         initEvent();
+        initGridView();
     }
-
-
 
     /**
      * 初始化界面
@@ -146,61 +161,122 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         type_ll = (LinearLayout)findViewById(R.id.device_type_ll);
         status_ll = (LinearLayout)findViewById(R.id.device_status_ll);
         belongSys_ll = (LinearLayout)findViewById(R.id.device_belongSys_ll);
-
+        rele_gv = (GridView) findViewById(R.id.rele_device_gv);
+        rele_device_iv = (ImageView) findViewById(R.id.rele_device_iv);
+        rele_temp_list = new ArrayList<>();
+        rele_dList = new ArrayList<>();
+        rele_delete_list = new ArrayList<>();
     }
-
 
     /**
      * 初始化et数据
      */
     private void initData() {
-
         orgList = orgsService.loadNames();
-
         for (SpOrgnization org : orgList) {
             sysMap.put(org.getName(), org.getmId());
         }
         systems = new String[orgList.size()];
-        List<String> names = orgList.stream().map(SpOrgnization::getName).collect(Collectors.toList());
+        systemIds = new String[orgList.size()];
+        names = orgList.stream().map(SpOrgnization::getName).collect(Collectors.toList());
+        mIds = orgList.stream().map(SpOrgnization::getmId).collect(Collectors.toList());
         names.toArray(systems);
+        mIds.toArray(systemIds);
 
         mid = getIntent().getStringExtra("mid");
         add = getIntent().getBooleanExtra("add",false);
         if (!add) {
             device = deviceService.getDeviceByMid(mid);
-            name_Et.setText(device.getName());
-            type_Et.setText(String.valueOf(device.getType()));
-            location_Et.setText(device.getLocation());
-            count_Et.setText(String.valueOf(device.getCount()));
-            status_Et.setText(String.valueOf(device.getStatus()));
+            if (device != null) {
+                name_Et.setText(device.getName());
+                type_Et.setText(String.valueOf(device.getType()));
+                location_Et.setText(device.getLocation());
+                count_Et.setText(String.valueOf(device.getCount()));
+                status_Et.setText(String.valueOf(device.getStatus()));
 //            belongSys_Et.setText(orgsService.getName(device.getBelongSys()));
-            belongSys_Et.setText(device.getBelongSys());
-            createName_Et.setText(device.getCreaterName());
-            if (device.getCreateTime() != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                createTime_Et.setText(sdf.format(device.getCreateTime()));
+                LogUtil.i("value",String.valueOf(mIds.indexOf(device.getBelongSys())));
+                if (mIds.indexOf(device.getBelongSys()) >= 0) {
+                    belongSys_Et.setText(names.get(mIds.indexOf(device.getBelongSys())));
+                    belongSys_Value = device.getBelongSys();
+                }
+                createName_Et.setText(device.getCreaterName());
+                if (device.getCreateTime() != null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                    createTime_Et.setText(sdf.format(device.getCreateTime()));
+                }
+                description_Et.setText(device.getDescription());
+                head_tv.setText("设备详情");
+                delete_tv.setVisibility(VISIBLE);
+                if (device.getImage() != null) {
+                    byte[] bytes = device.getImage();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    headImage.setImageBitmap(bitmap);
+                }
             }
-            description_Et.setText(device.getDescription());
-            head_tv.setText(device.getName());
-            delete_tv.setVisibility(VISIBLE);
-            if (device.getImage() != null) {
-                byte[] bytes = device.getImage();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                headImage.setImageBitmap(bitmap);
-            }
+
         }else {
             SharedPreferences setting = getSharedPreferences("User", 0);
             String name = setting.getString("name","");
             device = new DeviceInfo();
             device.setmId(mid);
             belongSys_Et.setText(orgList.get(0).getName());
+            belongSys_Value = orgList.get(0).getmId();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             createTime_Et.setText(sdf.format(new Date()));
             createName_Et.setText(name);
             delete_tv.setVisibility(GONE);
         }
 
+    }
 
+
+
+    /**
+     * 设置关联设备GridView
+     */
+    private void initGridView() {
+        rele_dList = deviceService.getDeviceReleList(mid); //加载关联设备
+        set_GridView();
+        releAdapter = new ReleAdapter(getApplicationContext(),
+                rele_dList, rele_gv);
+        rele_gv.setAdapter(releAdapter);
+        releAdapter.setOnListClickListener(new ReleAdapter.OnListClickListener() {
+            @Override
+            public void onClick(DeviceRele rele, int position) {
+                if (mid.equals(rele.getReleDeviceId())) return;
+
+                Intent intent = new Intent(getApplicationContext(), ContentActivity.class);
+//                intent.putExtra("device",node);
+                intent.putExtra("mid", rele.getReleDeviceId());
+                intent.putExtra("releMid", rele.getDeviceId());
+                intent.putExtra("add", false);
+                startActivityForResult(intent,1);
+            }
+
+            @Override
+            public void onLongClick(DeviceRele deviceRele, int position) {
+                deleteItem(deviceRele.getId(), position);
+            }
+        });
+    }
+
+
+    private void set_GridView() {
+        int size = rele_dList.size();
+        int length = 100;
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        float density = dm.density;
+        int gridviewWidth = (int) (size * (length + 4) * density);
+        int itemWidth = (int) (length * density);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                gridviewWidth, LinearLayout.LayoutParams.MATCH_PARENT);
+        rele_gv.setLayoutParams(params); // 设置GirdView布局参数,横向布局的关键
+        rele_gv.setColumnWidth(itemWidth); // 设置列表项宽
+        rele_gv.setHorizontalSpacing(5); // 设置列表项水平间距
+        rele_gv.setStretchMode(GridView.NO_STRETCH);
+        rele_gv.setNumColumns(size); // 设置列数量=列表集合数
     }
 
     /**
@@ -215,6 +291,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         type_ll.setOnClickListener(this);
         status_ll.setOnClickListener(this);
         belongSys_ll.setOnClickListener(this);
+        rele_device_iv.setOnClickListener(this);
     }
 
 
@@ -239,7 +316,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 this.finish();
                 break;
             case R.id.device_delete :
-                deleteItem();
+                deleteItem(0L,0);
                 break;
             case R.id.device_save_btn :
                 save();
@@ -253,6 +330,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.device_belongSys_ll :
                 popView(CONTENT_STSTEM,systems);
                 break;
+            case R.id.rele_device_iv :
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.putExtra("deviceId", mid);
+                intent.putExtra("is_rele", true);
+                startActivityForResult(intent, 1);
         }
     }
 
@@ -300,9 +382,18 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 setImageToHeadView(intent,bitmap);
                 break;
         }
-
-
+        String releDeviceId = null;
+        if (resultCode == RESULT_FIRST_USER) {
+            releDeviceId  = intent.getStringExtra("releDeviceId");
+                DeviceRele rele = new DeviceRele(mid, releDeviceId);
+                rele_temp_list.add(rele);
+                rele_dList.add(0,rele);
+//            rele_dList = deviceService.getDeviceReleList(mid);
+                set_GridView();
+                releAdapter.onDateChange(rele_dList);
+        }
     }
+
 
     /**
      * 权限申请回调
@@ -370,6 +461,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 builder.setTitle("请选择设备所属系统");
                 builder.setItems(list, ((dialog, which) -> {
                     belongSys_Et.setText(list[which]);
+                    int i = names.indexOf(list[which]);
+                    belongSys_Value = mIds.get(i);
+                    LogUtil.i("value",belongSys_Value);
                 }));
                 break;
             case CONTENT_ICON :
@@ -391,14 +485,28 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //删除指定item
-    private void deleteItem() {
+    private void deleteItem(long id, int position) {
+        String title;
+        if(id == 0L) {
+            title = "删除本条设备信息";
+        } else {
+            title = "删除本条关联信息";
+        }
         AlertDialog deleteDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
-                .setMessage("删除本条信息")
+                .setMessage(title)
                 .setPositiveButton("删除", (dialog, which) -> {
-                    deviceService.delete(device.getId());
-                    Intent intent1 = new Intent();
-                    setResult(-3, intent1);
-                    finish();
+                    if (id == 0L) {
+                        deviceService.delete(device.getId());
+                        Intent intent1 = new Intent();
+                        setResult(-3, intent1);
+                        finish();
+                    } else {
+                        rele_delete_list.add(rele_dList.get(position));
+
+                        rele_dList.remove(position);
+                        releAdapter.removeData(rele_dList);
+                    }
+
                 })
                 .setNegativeButton("取消", (dialog, which) -> {
 
@@ -463,6 +571,17 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             finish();
             ToastUtils.showShort("更新本条信息成功");
         }
+
+        if (rele_temp_list.size() > 0) {
+                rele_temp_list.stream().forEach( rele -> {
+                    deviceService.releDevice(rele.getDeviceId(), rele.getReleDeviceId());
+                });
+        }
+        if (rele_delete_list.size() > 0) {
+            rele_delete_list.stream().forEach(rele -> {
+                    deviceService.unReleDevice(rele.getId());
+            });
+        }
     }
 
     /**
@@ -478,7 +597,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         device.setStatus(status_Et.getText().toString());
-        device.setBelongSys(belongSys_Et.getText().toString());
+//        device.setBelongSys(belongSys_Et.getText().toString());
+        device.setBelongSys(belongSys_Value);
         device.setCreaterName(createName_Et.getText().toString());
         device.setDescription(description_Et.getText().toString());
         device.setCreateTime(new Date());
@@ -508,7 +628,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         device.setStatus(status_Et.getText().toString());
         device.setCreaterName(createName_Et.getText().toString());
 //        device.setBelongSys(sysMap.get(belongSys_Et.getText().toString()));
-        device.setBelongSys(belongSys_Et.getText().toString());
+//        device.setBelongSys(belongSys_Et.getText().toString());
+        device.setBelongSys(belongSys_Value);
         device.setDescription(description_Et.getText().toString());
         device.setCreateTime(new Date());
         device.setValid(true);
