@@ -7,11 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.utils.ToastUtils;
 import com.cec.zbgl.utils.searchview.ICallBack;
 import com.cec.zbgl.utils.searchview.SearchView;
 import com.cec.zbgl.utils.searchview.bCallBack;
+
+import static com.cec.zbgl.common.Constant.RESULT_SEARCH_ORGNIZATION;
 
 
 public class SearchActivity extends AppCompatActivity {
@@ -37,7 +40,7 @@ public class SearchActivity extends AppCompatActivity {
         deviceId = getIntent().getStringExtra("deviceId");
         is_rele = getIntent().getBooleanExtra("is_rele", false);
 
-
+        searchView.setRele(is_rele);
         // 4. 设置点击搜索按键后的操作（通过回调接口）
         // 参数 = 搜索框输入的内容
 /*        searchView.setOnClickSearch(string -> {
@@ -54,19 +57,30 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         // 6. 设置点击item后的操作（通过回调接口）
-        searchView.setOnItemClick((mid, position) ->  {
+        searchView.setOnItemClick((deviceInfo, position) ->  {
             if (!is_rele) {
-                Intent intent = new Intent(this, ContentActivity.class);
-                intent.putExtra("mid", mid);
-                intent.putExtra("add", false);
-                startActivityForResult(intent,1);
+                if (deviceInfo.getSearchType() == Constant.SEARCH_DEVICE) {
+                    Intent intent = new Intent(this, ContentActivity.class);
+                    intent.putExtra("mid", deviceInfo.getmId());
+                    intent.putExtra("add", false);
+                    startActivityForResult(intent,1);
+                } else if (deviceInfo.getSearchType() == Constant.SEARCH_ORGNIZATION) {
+                    Intent intent = new Intent();
+                    intent.putExtra("sysId", deviceInfo.getmId());
+                    intent.putExtra("code", deviceInfo.getCode());
+                    this.setResult(RESULT_SEARCH_ORGNIZATION, intent);
+                    this.finish();
+                } else {
+                    return;
+                }
+
             } else {
                 Intent intent = new Intent();
-                if (mid.equals(deviceId)) {
+                if (deviceInfo.getmId().equals(deviceId)) {
                     ToastUtils.showShort("设备不能与自己进行关联");
                     return;
                 }else {
-                    intent.putExtra("releDeviceId", mid);
+                    intent.putExtra("releDeviceId", deviceInfo.getmId());
                     this.setResult(RESULT_FIRST_USER,intent);
                     this.finish();
                 }

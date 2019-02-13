@@ -8,457 +8,468 @@
 
     <include layout="@layout/bar_back"/>
 
-    <LinearLayout
+ <!--   <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/id_device_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="10dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/default_image"/>
+        android:fitsSystemWindows="true"
+        android:scrollbars="vertical">-->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/id_device_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/default_image"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/device_name_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="名称:"/>
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/device_name_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:hint="请输入信息"
-                    android:textSize="16dp"
-                    android:inputType="none"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/transparent">
-                </EditText>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:id="@+id/device_type_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/device_type_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="类别:"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/device_type_et"
-                        android:layout_width="0dp"
-                        android:layout_weight="8"
+                        android:id="@+id/device_name_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="名称:"/>
+
+                    <EditText
+                        android:id="@+id/device_name_et"
+                        android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:hint="请输入信息"
-                        android:textColor="@color/black"
                         android:textSize="16dp"
                         android:inputType="none"
                         android:gravity="center_vertical"
-                        android:background="@drawable/transparent"/>
-
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="15dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@mipmap/right"/>
+                        android:background="@drawable/transparent">
+                    </EditText>
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/device_location_type"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="存放位置:"/>
-
-                <EditText
-                    android:id="@+id/device_location_et"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:hint="请输入信息"
-                    android:textSize="16dp"
-                    android:inputType="none"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/transparent" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/device_count_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="数量:"/>
-
-                <EditText
-                    android:id="@+id/device_count_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:hint="请输入信息"
-                    android:inputType="number"
-                    android:textSize="16dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/transparent"/>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:id="@+id/device_status_ll"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/device_status_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:text="设备状态:"/>
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
 
                 <LinearLayout
+                    android:id="@+id/device_type_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/device_status_et"
-                        android:layout_width="0dp"
-                        android:layout_weight="8"
+                        android:id="@+id/device_type_tv"
+                        android:layout_width="90dp"
                         android:layout_height="50dp"
-                        android:hint="请输入信息"
-                        android:textColor="@color/black"
+                        android:lines="1"
+                        android:padding="8dp"
                         android:textSize="16dp"
                         android:gravity="center_vertical"
-                        android:background="@drawable/transparent" />
+                        android:text="类别:"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/device_type_et"
+                            android:layout_width="0dp"
+                            android:layout_weight="8"
+                            android:layout_height="50dp"
+                            android:hint="请输入信息"
+                            android:textColor="@color/black"
+                            android:textSize="16dp"
+                            android:inputType="none"
+                            android:gravity="center_vertical"
+                            android:background="@drawable/transparent"/>
 
-                    <ImageView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="15dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@mipmap/right"/>
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="15dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@mipmap/right"/>
+                    </LinearLayout>
+
                 </LinearLayout>
 
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:id="@+id/device_belongSys_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/device_belongSys_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="归属系统:"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/device_belongSys_et"
-                        android:layout_width="0dp"
-                        android:layout_weight="8"
+                        android:id="@+id/device_location_type"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="存放位置:"/>
+
+                    <EditText
+                        android:id="@+id/device_location_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="请输入信息"
+                        android:textSize="16dp"
+                        android:inputType="none"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/transparent" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/device_count_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="数量:"/>
+
+                    <EditText
+                        android:id="@+id/device_count_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="请输入信息"
+                        android:inputType="number"
+                        android:textSize="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/transparent"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:id="@+id/device_status_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/device_status_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:text="设备状态:"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/device_status_et"
+                            android:layout_width="0dp"
+                            android:layout_weight="8"
+                            android:layout_height="50dp"
+                            android:hint="请输入信息"
+                            android:textColor="@color/black"
+                            android:textSize="16dp"
+                            android:gravity="center_vertical"
+                            android:background="@drawable/transparent" />
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="15dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@mipmap/right"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:id="@+id/device_belongSys_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/device_belongSys_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="归属系统:"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/device_belongSys_et"
+                            android:layout_width="0dp"
+                            android:layout_weight="8"
+                            android:layout_height="50dp"
+                            android:ems="19"
+                            android:hint="请输入信息"
+                            android:textColor="@color/black"
+                            android:textSize="16dp"
+                            android:gravity="center_vertical"
+                            android:background="@drawable/transparent"/>
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="15dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@mipmap/right"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/device_createrName_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="录入人:"/>
+
+                    <EditText
+                        android:id="@+id/device_createrName_et"
+                        android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:ems="19"
                         android:hint="请输入信息"
-                        android:textColor="@color/black"
                         android:textSize="16dp"
                         android:gravity="center_vertical"
                         android:background="@drawable/transparent"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/device_createrTime_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="录入时间:"/>
+
+                    <EditText
+                        android:id="@+id/device_createrTime_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="请输入信息"
+                        android:inputType="date"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/transparent"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/device_description_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
+                        android:lines="1"
+                        android:padding="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="描述信息:"/>
+
+                    <EditText
+                        android:id="@+id/device_description_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/device_createrTime_tv"
+                        android:layout_toRightOf="@id/device_description_tv"
+                        android:hint="请输入信息"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/transparent" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@color/gray"/>
+
+                //关联设备
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/relation_devices_tv"
+                        android:layout_width="90dp"
+                        android:layout_height="30dp"
+                        android:lines="1"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="8dp"
+                        android:textSize="16dp"
+                        android:gravity="center_vertical"
+                        android:text="关联设备:"/>
 
                     <ImageView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="15dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@mipmap/right"/>
+                        android:id="@+id/rele_device_iv"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="30dp"
+                        android:src="@mipmap/roundaddfill"/>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_marginRight="20dp"
+                    android:orientation="vertical">
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="150dp">
+                            <GridView
+                                android:id="@+id/rele_device_gv"
+                                android:layout_width="match_parent"
+                                android:layout_height="150dp"
+                                android:gravity="center"
+                                android:numColumns="auto_fit"
+                                android:stretchMode="spacingWidthUniform"/>
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
                 </LinearLayout>
 
 
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/device_createrName_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="录入人:"/>
-
-                <EditText
-                    android:id="@+id/device_createrName_et"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:ems="19"
-                    android:hint="请输入信息"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/transparent"/>
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/content_mask_left"
+                        android:layout_width="140dp"
+                        android:layout_height="100dp"
+                        android:background="@mipmap/shadow"
+                        android:alpha="0"/>
+
+                    <Button
+                        android:id="@+id/device_save_btn"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/bt_shape"
+                        android:text="保  存" />
+
+                    <Button
+                        android:id="@+id/check_course_btn"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@id/content_mask_right"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/bt_shape"
+                        android:text="教  程" />
+
+                    <ImageView
+                        android:id="@+id/content_mask_right"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@mipmap/shadow"
+                        android:alpha="0"/>
+                </RelativeLayout>
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/device_createrTime_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="录入时间:"/>
-
-                <EditText
-                    android:id="@+id/device_createrTime_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:hint="请输入信息"
-                    android:inputType="date"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/transparent"/>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginRight="20dp"
-                android:background="@color/gray"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/device_description_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="50dp"
-                    android:lines="1"
-                    android:padding="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="描述信息:"/>
-
-                <EditText
-                    android:id="@+id/device_description_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/device_createrTime_tv"
-                    android:layout_toRightOf="@id/device_description_tv"
-                    android:hint="请输入信息"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/transparent" />
-            </LinearLayout>
-
-            <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/gray"/>
-
-            //关联设备
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/relation_devices_tv"
-                    android:layout_width="90dp"
-                    android:layout_height="30dp"
-                    android:lines="1"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="8dp"
-                    android:textSize="16dp"
-                    android:gravity="center_vertical"
-                    android:text="关联设备:"/>
-
-                <ImageView
-                    android:id="@+id/rele_device_iv"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="30dp"
-                    android:src="@mipmap/roundaddfill"/>
-            </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginRight="20dp"
-                android:orientation="vertical">
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="150dp">
-                        <GridView
-                            android:id="@+id/rele_device_gv"
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp"
-                            android:gravity="center"
-                            android:numColumns="auto_fit"
-                            android:stretchMode="spacingWidthUniform"/>
-                    </LinearLayout>
-                </HorizontalScrollView>
-
-            </LinearLayout>
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/content_mask_left"
-                    android:layout_width="140dp"
-                    android:layout_height="100dp"
-                    android:background="@mipmap/shadow"
-                    android:alpha="0"/>
-
-                <Button
-                    android:id="@+id/device_save_btn"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:textColor="@color/white"
-                    android:background="@drawable/bt_shape"
-                    android:text="保  存" />
-
-                <Button
-                    android:id="@+id/check_course_btn"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/content_mask_right"
-                    android:layout_marginTop="20dp"
-                    android:textColor="@color/white"
-                    android:background="@drawable/bt_shape"
-                    android:text="教  程" />
-
-                <ImageView
-                    android:id="@+id/content_mask_right"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@mipmap/shadow"
-                    android:alpha="0"/>
-            </RelativeLayout>
         </LinearLayout>
-    </LinearLayout>
+
+    <!--</ScrollView>-->
+
+
+
 </LinearLayout>

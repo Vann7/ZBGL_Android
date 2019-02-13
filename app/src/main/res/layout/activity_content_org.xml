@@ -16,24 +16,24 @@
         <ImageView
             android:id="@+id/id_org_image"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="20dp"
             android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             android:src="@mipmap/default_image"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -57,13 +57,11 @@
                     android:background="@drawable/transparent" />
             </LinearLayout>
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -91,7 +89,7 @@
                 android:id="@+id/check_course_org_btn"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="250dp"
+                android:layout_marginTop="200dp"
                 android:textColor="@color/white"
                 android:background="@drawable/bt_shape"
                 android:text="教  程" />

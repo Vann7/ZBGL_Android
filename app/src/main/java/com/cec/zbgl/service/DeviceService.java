@@ -243,6 +243,7 @@ public class DeviceService {
     public int unReleDevice(long id) {
         ContentValues values = new ContentValues();
         values.put("isValid", false);
+        values.put("isUpload", true);
         return LitePal.update(DeviceRele.class, values, id);
 //       return LitePal.delete(DeviceRele.class, id);
     }
@@ -276,7 +277,9 @@ public class DeviceService {
     }
 
     public List<DeviceRele> getSyncReleList() {
-        return LitePal.findAll(DeviceRele.class);
+        List<DeviceRele> list = LitePal.where("isUpload = ?", "1")
+                .find(DeviceRele.class);
+        return list;
     }
 
     public DeviceInfo getDevicebyRele(Long id) {
@@ -301,8 +304,27 @@ public class DeviceService {
     public void batchInsertRele(List<DeviceReleDto> rList) {
         for (DeviceReleDto releDto : rList) {
             DeviceRele rele = DtoUtils.toRele(releDto);
+            rele.setUpload(false);
             rele.save();
         }
     }
 
+    /**
+     * 删除与该id相关的设备关联关系
+     * @param id
+     */
+    public void unReleDevices(String id) {
+        List<DeviceRele> list1 = LitePal.where("deviceId = ?", id)
+                .find(DeviceRele.class);
+        ContentValues values = new ContentValues();
+        values.put("isValid", false);
+        list1.stream().forEach(rele -> {
+            LitePal.update(DeviceRele.class, values, rele.getId());
+        });
+        List<DeviceRele> list2 = LitePal.where("releDeviceId = ?", id)
+                .find(DeviceRele.class);
+        list2.stream().forEach(rele -> {
+            LitePal.update(DeviceRele.class, values, rele.getId());
+        });
+    }
 }

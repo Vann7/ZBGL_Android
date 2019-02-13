@@ -51,6 +51,14 @@ public class Constant {
     public static final int FILE_VIDEO = 1;
     public static final int FILE_DOCUMENT = 2;
 
+    public static final int SEARCH_ITEM = 2;
+    public static final int SEARCH_DEVICE = 0;
+    public static final int SEARCH_ORGNIZATION = 1;
+
+    public static final int RESULT_SEARCH_ORGNIZATION = -4;
+
+
+
 
 
 }

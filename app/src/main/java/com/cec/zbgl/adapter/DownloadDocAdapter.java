@@ -85,8 +85,6 @@ public class DownloadDocAdapter extends BaseAdapter {
         if (viewHolder != null) {
             viewHolder.bindData(mList.get(position));
         }
-
-
         return convertView;
     }
 
@@ -161,7 +159,6 @@ public class DownloadDocAdapter extends BaseAdapter {
                     }
                 }
             }
-
             name_tv.setText(ftpFile.getName());
             long size = ftpFile.getSize();
             size_tv.setText(String.valueOf(CacheUtil.getFormatSize(size)));

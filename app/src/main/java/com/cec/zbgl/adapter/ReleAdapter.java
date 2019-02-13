@@ -1,6 +1,7 @@
 package com.cec.zbgl.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,6 +121,7 @@ public class ReleAdapter extends BaseAdapter {
 
         ViewHolder(View view) {
             name_tv = (TextView) view.findViewById(R.id.rele_name);
+            name_tv.setTextColor(Color.DKGRAY);
             image_iv = (ImageView) view.findViewById(R.id.rele_iv);
             view.setTag(this);
         }
@@ -136,9 +138,9 @@ public class ReleAdapter extends BaseAdapter {
                     // 显示图片
                     Picasso.with(mContext)
                             .load(imageFile)
-//                        .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                        .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
                             .tag("deviceTag")
-                            .resize(80, 80)
+                            .resize(200, 200)
                             .centerCrop()
                             .into(image_iv);
                 }

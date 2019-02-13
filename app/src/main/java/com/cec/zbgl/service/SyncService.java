@@ -252,7 +252,7 @@ public class SyncService {
             }
 
             //设备关联信息
-            int count1 = deviceService.getCountbyRele();
+//            int count1 = deviceService.getCountbyRele();
             List<DeviceReleDto> rDtoList = new ArrayList<>();
             List<DeviceRele> releList = deviceService.getSyncReleList();
             releList.stream().forEach(rele -> {
@@ -311,7 +311,7 @@ public class SyncService {
      */
     public void receiveMsg(BufferedReader br) throws IOException {
         String result = "";
-        if (mList.contains("orgnization")) {
+       /* if (mList.contains("orgnization")) {
             orgsService.deleteAll();
         }
 
@@ -326,32 +326,37 @@ public class SyncService {
 
         if (mList.contains("user")) {
             //TODO 删除人员信息
-        }
+        }*/
 
         //插入服务端同步数据
         while ( (result = br.readLine()) != null) {
            SyncDto syncDto = gson.fromJson(result, SyncDto.class);
             if (syncDto.getcList() != null && syncDto.getcList().size() > 0) {
                 cList = syncDto.getcList();
+                courseService.deleteAll();
                 courseService.batchInsert(cList);
                 LogUtil.i("cList", String.valueOf(cList.size()));
             }
             if (syncDto.getdList() != null && syncDto.getdList().size() > 0) {
                 dList = syncDto.getdList();
+                deviceService.deleteAll();
                 deviceService.batchInsert(dList);
                 LogUtil.i("dList", String.valueOf(dList.size()));
             }
             if (syncDto.getoList() != null && syncDto.getoList().size() > 0) {
                 oList = syncDto.getoList();
+                orgsService.deleteAll();
                 orgsService.batchInsert(oList);
                 LogUtil.i("oList", String.valueOf(oList.size()));
             }
             if(syncDto.getuList() != null && syncDto.getuList().size() > 0) {
                 uList = syncDto.getuList();
                 //Todo 添加人员批量插入接口
+
             }
             if (syncDto.getrList() != null && syncDto.getrList().size() > 0) {
                 rList = syncDto.getrList();
+                deviceService.deleteReleAll();
                 deviceService.batchInsertRele(rList);
             }
         }

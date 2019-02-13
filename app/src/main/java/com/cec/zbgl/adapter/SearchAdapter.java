@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.utils.FileUtils;
 import com.squareup.picasso.Picasso;
@@ -30,10 +31,16 @@ public class SearchAdapter extends BaseAdapter {
     private List<DeviceInfo> mList; //数据源
     private LayoutInflater mInflater; //布局装载器对象
     private ViewHolder viewHolder;
+    private TypeHolder typeHolder;
+    private OrgHolder orgHolder;
     private ListView device_lv;
     private Context mContext;
 
     private OnListClickListener mListener;
+    /**
+     * Item Type 的数量
+     * */
+    private static final int TYPE_ITEM_COUNT = 3;
 
 
     // 通过构造方法将数据源与数据适配器关联起来
@@ -66,6 +73,21 @@ public class SearchAdapter extends BaseAdapter {
         return position;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        DeviceInfo device = mList.get(position);
+        if (device == null) {
+            return -1;
+        } else {
+            return device.getSearchType();
+        }
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return TYPE_ITEM_COUNT;
+    }
+
     /**
      * 利用了ListView的缓存机制，而且使用(自定义)ViewHolder类来实现显示数据视图的缓存，避免多次调用findViewById来寻找控件，以达到优化程序的目的
      * @param position
@@ -75,38 +97,55 @@ public class SearchAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            viewHolder = new ViewHolder();
-            // 由于我们只需要将XML转化为View，并不涉及到具体的布局，所以第二个参数通常设置为null
-            convertView = mInflater.inflate(R.layout.content_wx, null);
-            //对viewHolder的属性进行赋值
-            viewHolder.image_iv = (ImageView) convertView.findViewById(R.id.id_device_image);
-            viewHolder.name_tv = (TextView) convertView.findViewById(R.id.id_device_name);
-            viewHolder.type_tv = (TextView) convertView.findViewById(R.id.id_device_type);
-//            viewHolder.location_tv = (TextView) convertView.findViewById(R.id.id_device_location);
-            //通过setTag将convertView与viewHolder关联
-            convertView.setTag(viewHolder);
-        }else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        //获取相应索引的DeviceInfo对象
         DeviceInfo device = mList.get(position);
-        //设置控件的对应属性值
-        viewHolder.name_tv.setText(device.getName());
-        viewHolder.type_tv.setText(String.valueOf(device.getType()));
-//        viewHolder.location_tv.setText(device.getLocation());
-        if (device.getImage() != null) {
-            File imageFile = FileUtils.byte2File(device.getImage(), mContext);
-            // 显示图片
-            Picasso.with(mContext)
-                    .load(imageFile)
-                    .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
-                    .tag(MultiImageSelectorFragment.TAG)
-                    .resize(60, 60)
-                    .centerCrop()
-                    .into(viewHolder.image_iv);
+        //获取相应索引的DeviceInfo对象
 
+        View itemView = null;
+        View orgView = null;
+        View deviceView = null;
+        int type = getItemViewType(position);
+
+        switch (type) {
+            case Constant.SEARCH_ITEM :
+                typeHolder = null;
+                if (convertView == null) {
+                    itemView = mInflater.inflate(R.layout.content_search_item, null);
+                    typeHolder = new TypeHolder(itemView);
+
+                    itemView.setTag(typeHolder);
+                    convertView = itemView;
+
+                } else {
+                    typeHolder = (TypeHolder) convertView.getTag();
+                }
+                typeHolder.bindData(device);
+               break;
+            case Constant.SEARCH_ORGNIZATION :
+                orgHolder = null;
+                if (convertView == null) {
+                    orgView = mInflater.inflate(R.layout.content_search_org, null);
+                    orgHolder = new OrgHolder(orgView);
+                    orgView.setTag(orgHolder);
+                    orgHolder.image_iv.setTag(device.getId());
+                    convertView = orgView;
+
+                } else {
+                    orgHolder = (OrgHolder) convertView.getTag();
+                }
+                orgHolder.bindData(device);
+                break;
+            case Constant.SEARCH_DEVICE :
+                viewHolder = null;
+                if (convertView == null) {
+                    deviceView = mInflater.inflate(R.layout.content_wx, null);
+                    viewHolder = new ViewHolder(deviceView);
+                    deviceView.setTag(viewHolder);
+                    convertView = deviceView;
+                } else {
+                    viewHolder = (ViewHolder) convertView.getTag();
+                }
+                viewHolder.bindData(device);
+                break;
         }
         return convertView;
     }
@@ -136,7 +175,80 @@ public class SearchAdapter extends BaseAdapter {
         private ImageView image_iv;
         private TextView name_tv;
         private TextView type_tv;
-//        private TextView location_tv;
+
+        ViewHolder(View view) {
+            image_iv = (ImageView) view.findViewById(R.id.search_device_image);
+            name_tv = (TextView) view.findViewById(R.id.search_device_name);
+            type_tv = (TextView) view.findViewById(R.id.search_device_type);
+            view.setTag(this);
+        }
+
+        public void bindData(DeviceInfo device) {
+            name_tv.setText(device.getName());
+            type_tv.setText(String.valueOf(device.getType()));
+            if (device.getImage() != null) {
+                File imageFile = FileUtils.byte2File(device.getImage(), mContext);
+                // 显示图片
+                Picasso.with(mContext)
+                        .load(imageFile)
+                        .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                        .tag(device.getId())
+                        .resize(100, 100)
+                        .centerCrop()
+                        .into(image_iv);
+
+            }
+        }
+
+    }
+
+    /**
+     * 自定义系统信息view 缓存控件
+     */
+    class OrgHolder {
+        private ImageView image_iv;
+        private TextView name_tv;
+
+        OrgHolder(View view) {
+            name_tv = (TextView) view.findViewById(R.id.search_org_name);
+            image_iv = (ImageView) view.findViewById(R.id.search_org_image);
+        }
+
+        public void bindData(DeviceInfo device) {
+            name_tv.setText(device.getName());
+            if (image_iv.getTag().equals(device.getId())) {
+                if (device.getImage() != null) {
+                    File imageFile = FileUtils.byte2File(device.getImage(), mContext);
+                    // 显示图片
+                    Picasso.with(mContext)
+                            .load(imageFile)
+                            .placeholder(me.nereo.multi_image_selector.R.drawable.mis_default_error)
+                            .tag(device.getId())
+                            .resize(100, 100)
+                            .centerCrop()
+                            .into(image_iv);
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 查询结果分类控件
+     */
+    class TypeHolder{
+        private TextView name_tv;
+
+        TypeHolder (View view) {
+            name_tv = (TextView) view.findViewById(R.id.search_item_name);
+            view.setTag(this);
+        }
+
+        public void bindData(DeviceInfo device) {
+            if (device.getName() != null) {
+                name_tv.setText(device.getName());
+            }
+        }
 
     }
 

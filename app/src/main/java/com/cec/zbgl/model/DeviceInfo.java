@@ -27,6 +27,12 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
     private boolean isUpload; //是否已上传服务器
     private boolean isEdited; //是否已编辑
 
+    //(与组织机构共享查询)标识
+    @Column(ignore = true)
+    private String code; //组织机构代码
+    @Column(ignore = true)
+    private int searchType; //默认为false, true为组织机构
+
     public DeviceInfo() {}
 
 //    public DeviceInfo(String name, String belongSys, String location) {
@@ -34,6 +40,11 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
 //        this.belongSys = belongSys;
 //        this.location = location;
 //    }
+
+    public DeviceInfo(String name, Integer searchType) {
+        this.name = name;
+        this.searchType = searchType;
+    }
 
     
     public DeviceInfo(String name, String type, String location) {
@@ -189,5 +200,21 @@ public class DeviceInfo extends LitePalSupport implements Serializable {
 
     public void setEdited(boolean edited) {
         isEdited = edited;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(int searchType) {
+        this.searchType = searchType;
     }
 }

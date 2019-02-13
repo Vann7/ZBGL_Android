@@ -90,8 +90,6 @@ public class UploadAdapter extends BaseAdapter {
         if (viewHolder != null) {
             viewHolder.bindData(mList.get(position));
         }
-
-
         return convertView;
     }
 

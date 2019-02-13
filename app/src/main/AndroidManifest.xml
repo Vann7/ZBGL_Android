@@ -35,6 +35,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ContentActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".thirdLibs.zxing.activity.CaptureActivity"
@@ -75,7 +76,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <activity android:name=".activity.ContentOrgActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:screenOrientation="portrait" />
         <!-- Image Selector Entry -->
         <activity
             android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"

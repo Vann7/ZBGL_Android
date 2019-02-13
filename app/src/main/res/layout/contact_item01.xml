@@ -33,20 +33,23 @@
             android:orientation="vertical">
 
             <TextView
-                tools:text="教程名称"
                 android:id="@+id/item01_tv_name"
-                android:textColor="@color/black"
+                tools:text="教程名称"
                 android:layout_width="match_parent"
+                android:layout_height="30dp"
                 android:gravity="center_vertical"
-                android:layout_height="30dp" />
+                android:textColor="@color/black"
+                android:singleLine="true"
+                android:textSize="16sp" />
 
             <TextView
                 tools:text="教程类别"
                 android:id="@+id/item01_tv_type"
-                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:gravity="center_vertical"
-                android:layout_height="30dp"  />
+                android:singleLine="true"
+                android:layout_height="30dp"
+                android:textSize="15sp"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -58,7 +61,7 @@
         android:lines="1"
         android:textSize="12dp"
         android:gravity="center_vertical"
-        android:layout_marginLeft="15dp"/>
+        android:layout_marginLeft="14sp"/>
 
 
 

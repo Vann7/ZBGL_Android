@@ -19,6 +19,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,6 +48,7 @@ import com.cec.zbgl.holder.FilterItemViewHolder;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.service.CourseService;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.thirdLibs.zxing.activity.CaptureActivity;
@@ -71,6 +74,8 @@ import java.util.stream.Collectors;
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.cec.zbgl.common.Constant.RESULT_SEARCH_ORGNIZATION;
+import static com.cec.zbgl.common.Constant.SEARCH_ORGNIZATION;
 
 public class DeviceFragment extends Fragment implements View.OnClickListener{
     private ListView mTreeView;
@@ -96,6 +101,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private RelativeLayout org_course_rl;
     private TextView org_course_btn;
     private TextView org_course_name;
+
+//    private RelativeLayout org_search_rl;
+//    private EditText org_searh_et;
+//    private ListView org_search_lv;
+//    private OrgsAdapter org_search_adapter;
+
+
 //    private TextView org_course_desc;
 //    private ImageView org_course_image;
     private AlertDialog alertDialog;
@@ -181,6 +193,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 devices = deviceService.loadList(0,sysId);
                 showData();
                 mRefreshAdapter.changeData(devices);
+                break;
+            case RESULT_SEARCH_ORGNIZATION :
+                sysId = data.getStringExtra("sysId");
+                String code = data.getStringExtra("code");
+                filterDevice();
+                mAdapter.focusOnNode(code);
+                org_course_name.setText(orgsService.getName(sysId)+ "：详情信息");
+                break;
         }
     }
 
@@ -252,6 +272,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         {
             e.printStackTrace();
         }
+
+
     }
 
     private void initOrgs() {
@@ -307,15 +329,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             if (current_node != node.getName()) {
                 page = 0;
                 belongSys = node.getName();
-//                reloadData(node.getName());
                 filterDevice();
                 current_node = node.getName();
 
                 org_course_name.setText(node.getName()+ "：详情信息");
             }
-//            if (node.isLeaf()) reloadData(node.getName());
-
-
         });
 
         //装备列表监听 点击事件
@@ -339,7 +357,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
         });
 
-        listTip.setOnClickListener(this);
+
 
         search_ev.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -351,6 +369,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             return false;
         });
 
+        listTip.setOnClickListener(this);
         masker_tv.setOnClickListener(this);
         clear_tv.setOnClickListener(this);
         confirm_tv.setOnClickListener(this);
@@ -680,6 +699,9 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                 .setMessage("删除本条信息")
                 .setPositiveButton("删除", (dialog, which) -> {
                     deviceService.delete(devices.get(position).getId());
+                    deviceService.unReleDevices(devices.get(position).getmId()); //删除关联关系
+                    CourseService courseService = new CourseService();
+                    courseService.deleteByDid(devices.get(position).getmId());
                     mRefreshAdapter.removeData(position);
                 })
                 .setNegativeButton("取消", (dialog, which) -> {

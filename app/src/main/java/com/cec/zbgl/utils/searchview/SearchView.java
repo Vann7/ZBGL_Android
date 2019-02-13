@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
@@ -25,9 +26,15 @@ import android.widget.Toast;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.SearchAdapter;
+import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.listener.ItemClickListener;
+import com.cec.zbgl.model.DeviceCourse;
 import com.cec.zbgl.model.DeviceInfo;
+import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.service.CourseService;
 import com.cec.zbgl.service.DeviceService;
+import com.cec.zbgl.service.OrgsService;
+import com.cec.zbgl.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +89,12 @@ public class SearchView extends LinearLayout {
     private int searchBlockColor;
 
     private List<DeviceInfo> devices = new ArrayList<>();
+    private List<SpOrgnization> orgs = new ArrayList<>();
     private SearchAdapter mAdapter;
-    private DeviceService deviceService = new DeviceService();
+    private DeviceService deviceService;
+    private OrgsService orgsService;
+
+    private boolean isRele;
 
     /**
      * 构造函数
@@ -179,8 +190,7 @@ public class SearchView extends LinearLayout {
          */
         et_search.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                search();
-                showResult();
+                checkAndSearch();
 //                // 1. 点击搜索按键后，根据输入的搜索字段进行查询
 //                // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
 //                if (!(mCallBack == null)){
@@ -240,8 +250,7 @@ public class SearchView extends LinearLayout {
             TextView textView = (TextView) view.findViewById(android.R.id.text1);
             String name = textView.getText().toString();
             et_search.setText(name);
-            showResult();
-            search();
+            checkAndSearch();
 //            if (mListener != null) {
 //                mListener.onClick(name, position);
 //            }
@@ -262,22 +271,36 @@ public class SearchView extends LinearLayout {
         });
 
         search_tv.setOnClickListener(v -> {
-            search();
-            showResult();
+            checkAndSearch();
+
         });
 
         result_lv.setOnItemClickListener((parent, view, position, id) -> {
 
             if (mListener != null) {
-                mListener.onClick(devices.get(position).getmId(), position);
+                mListener.onClick(devices.get(position), position);
             }
 
         });
 
     }
 
+    private void checkAndSearch() {
+        String name = et_search.getText().toString();
+        if (name.trim().equals("")) {
+            ToastUtils.showShort("请输入检索信息!");
+            return;
+        }
+        search();
+        showResult();
+    }
+
+    /**
+     * 检索信息
+     */
     public void search() {
         String name = et_search.getText().toString();
+
         // 1. 点击搜索按键后，根据输入的搜索字段进行查询
         // 注：由于此处需求会根据自身情况不同而不同，所以具体逻辑由开发者自己实现，此处仅留出接口
         if (!(mCallBack == null)){
@@ -294,10 +317,35 @@ public class SearchView extends LinearLayout {
             }
         }
 
-
+        List<DeviceInfo> datas = new ArrayList<>();
+        deviceService = new DeviceService();
+        orgsService = new OrgsService();
         //根据name 查询装备信息list
        devices = deviceService.searchByName(name);
-        mAdapter.onDateChange(devices);
+       if (!isRele) {
+           orgs = orgsService.searchByName(name);
+           if (orgs.size() > 0) {
+               datas.add(new DeviceInfo("系统信息", Constant.SEARCH_ITEM));
+               List<DeviceInfo> courseList = new ArrayList<>();
+               orgs.stream().forEach( org -> {
+                   DeviceInfo d = new DeviceInfo();
+                   d.setName(org.getName());
+                   d.setImage(org.getImage());
+                   d.setmId(org.getmId());
+                   d.setCode(org.getCode());
+                   d.setSearchType(Constant.SEARCH_ORGNIZATION);
+                   datas.add(d);
+               });
+           }
+
+           if (devices.size() > 0) {
+               datas.add(new DeviceInfo("设备信息", Constant.SEARCH_ITEM));
+
+           }
+       }
+        datas.addAll(devices);
+        mAdapter.onDateChange(datas);
+        devices = datas;
     }
 
 
@@ -360,7 +408,7 @@ public class SearchView extends LinearLayout {
                 new int[] { android.R.id.text1 }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         // 3. 设置适配器
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+         adapter.notifyDataSetChanged();
 
         // 当输入框为空 & 数据库中有搜索记录时，显示 "删除搜索记录"按钮
         if (tempName.equals("") && cursor.getCount() != 0){
@@ -439,7 +487,7 @@ public class SearchView extends LinearLayout {
      * listView点击Listener接口
      */
     public interface OnListClickListener {
-        void onClick(String mid, int position);
+        void onClick(DeviceInfo device, int position);
     }
 
 
@@ -449,8 +497,26 @@ public class SearchView extends LinearLayout {
     }
 
     private void showResult() {
+        hideKeyBoard();
         result_ll.setVisibility(VISIBLE);
         list_sv.setVisibility(GONE);
     }
 
+    /**
+     * 隐藏键盘
+     */
+    private void hideKeyBoard() {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(this,InputMethodManager.SHOW_FORCED);
+
+        imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
+    }
+
+    public boolean isRele() {
+        return isRele;
+    }
+
+    public void setRele(boolean rele) {
+        isRele = rele;
+    }
 }

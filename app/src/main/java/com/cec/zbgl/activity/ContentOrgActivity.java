@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -97,9 +98,18 @@ public class ContentOrgActivity extends AppCompatActivity implements View.OnClic
      * 初始化界面
      */
     private void initView() {
+
+        DisplayMetrics dm = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+
+
         name_tv = (TextView) findViewById(R.id.org_name_et);
         description_tv = (TextView) findViewById(R.id.org_description_et);
         headImage = (ImageView) findViewById(R.id.id_org_image);
+        headImage.setMaxWidth(width);
+        headImage.setMaxHeight(width);
+
         course_btn = (Button) findViewById(R.id.check_course_org_btn);
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
@@ -250,7 +260,7 @@ public class ContentOrgActivity extends AppCompatActivity implements View.OnClic
             if (intent != null) {
                 headImage.setImageBitmap(b);
                 ImageUtil imageUtil = new ImageUtil(this);
-                Bitmap bitmap = imageUtil.imageZoom(b,20.00);  //图片压缩
+                Bitmap bitmap = imageUtil.imageZoom(b,30.00);  //图片压缩
                 byte[] images = imageUtil.imageToByte(bitmap);
                 orgnization.setImage(images);
                 orgsService.update(orgnization);

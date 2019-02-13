@@ -140,4 +140,11 @@ public class OrgsService {
                 .find(SpOrgnization.class);
         return list.subList(0, list.size() > 20 ? 20 : list.size());
     }
+
+    public List<SpOrgnization> searchByName(String name) {
+        List<SpOrgnization> list = LitePal.where("name like ?", "%"+name+"%")
+                .find(SpOrgnization.class);
+        return list;
+
+    }
 }

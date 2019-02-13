@@ -18,6 +18,7 @@
     <TextView
         android:layout_centerVertical="true"
         android:id="@+id/id_item_text"
+        android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/id_item_icon"

@@ -1,5 +1,6 @@
 package com.cec.zbgl.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -20,14 +21,25 @@ import com.cec.zbgl.adapter.SyncAdapter;
 import com.cec.zbgl.adapter.UploadAdapter;
 import com.cec.zbgl.event.MessageEvent;
 import com.cec.zbgl.service.SyncService;
+import com.cec.zbgl.utils.TimeUtils;
 import com.cec.zbgl.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import me.nereo.multi_image_selector.bean.Video;
@@ -77,7 +89,13 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
-        head_tv.setText("数据同步");
+        String str = loadTime();
+        if (str != null) {
+            head_tv.setText("数据同步( " + str +" )");
+        } else {
+            head_tv.setText("数据同步");
+        }
+
         checked_tv = (TextView) findViewById(R.id.select_tv);
         unchecked_tv = (TextView) findViewById(R.id.unselect_tv);
         checked_tv.setVisibility(VISIBLE);
@@ -108,6 +126,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         //绑定ListView事件
         sync_lv.setAdapter(mAdapter);
         mAdapter.setOnListClickListener((name, position) -> {
+
             if (flag == true) return;
             if (!mSyncList.contains(name)) {
                 mSyncList.add(name);
@@ -172,6 +191,11 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
 
 
     public void syncData() {
+
+        if (mSyncList.contains("device")) {
+
+        }
+
         AlertDialog alertDialog = new AlertDialog.Builder(this,R.style.appalertdialog)
                 .setMessage("开始同步数据后，请勿进行任何操作")
                 .setPositiveButton("确定", (dialog, which) -> {
@@ -238,6 +262,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         masker_rl.setVisibility(View.GONE);
         if (messageEvent.getMessage().equals("succeed")) {
             ToastUtils.showShort("同步数据已完成!");
+            saveTime();
             has_synced = true;
         } else if (messageEvent.getMessage().equals("failed")){
             ToastUtils.showShort("同步数据发生异常，请联系管理员!");
@@ -263,6 +288,62 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    /**
+     * 保存最新更新时间
+     */
+    public void saveTime() {
+        FileOutputStream out = null;
+        BufferedWriter writer = null;
+        try{
+            out = openFileOutput("timeData", Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            long time = System.currentTimeMillis();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date d1 = new Date(time);
+            String dateTime = sdf.format(d1);
+            writer.write(dateTime);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 加载最新更新时间
+     * @return 更新时间
+     */
+    public String loadTime() {
+        FileInputStream in;
+        BufferedReader reader = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            in = openFileInput("timeData");
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sb.toString();
     }
 
 }

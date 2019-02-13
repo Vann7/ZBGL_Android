@@ -75,8 +75,8 @@ public class DeviceAdapter extends BaseAdapter {
             // 由于我们只需要将XML转化为View，并不涉及到具体的布局，所以第二个参数通常设置为null
             convertView = mInflater.inflate(mResourcedId, null);
             //对viewHolder的属性进行赋值
-            viewHolder.name_tv = (TextView) convertView.findViewById(R.id.id_device_name);
-            viewHolder.type_tv = (TextView) convertView.findViewById(R.id.id_device_type);
+            viewHolder.name_tv = (TextView) convertView.findViewById(R.id.search_device_name);
+            viewHolder.type_tv = (TextView) convertView.findViewById(R.id.search_device_type);
 //            viewHolder.location_tv = (TextView) convertView.findViewById(R.id.id_device_location);
             //通过setTag将convertView与viewHolder关联
             convertView.setTag(viewHolder);

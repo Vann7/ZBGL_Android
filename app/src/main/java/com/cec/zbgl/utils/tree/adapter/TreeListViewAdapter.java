@@ -1,5 +1,6 @@
 package com.cec.zbgl.utils.tree.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -83,9 +84,6 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 
 			}
 		});
-
-
-
 	}
 
 
@@ -118,6 +116,45 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 		}
 	}
 
+	/**
+	 * 根据node节点，聚焦到指定node
+	 */
+	public void focusOnNode(String code) {
+
+		List<String> mList = new ArrayList<>();
+		mAllNodes.stream().forEach(node -> mList.add(node.getId()));
+		int position = mList.indexOf(code);
+//		mSelect = position;
+		Node n = mAllNodes.get(position);
+		if (n != null) {
+			n.setExpand(true);
+			openPNode(n);
+			mVisibleNodes = TreeHelper.filterVisibleNodes(mAllNodes);
+			List<String> tempList = new ArrayList<>();
+			mVisibleNodes.stream().forEach(node -> tempList.add(node.getId()));
+			int temp = tempList.indexOf(code);
+			mSelect = temp;
+			notifyDataSetChanged();
+		}
+	}
+
+	/**
+	 * 递归对上级节点进行展开
+	 * @param node
+	 */
+	private void openPNode(Node node) {
+		mAllNodes.stream().forEach( n -> {
+			Node n1 = node.getParent();
+			if (node.getpId().equals("-1")) {
+				return;
+			}else if (n.getId().equals(node.getParent().getId())) {
+				n.setExpand(true);
+				openPNode(n);
+			}
+
+		});
+	}
+
 	@Override
 	public int getCount()
 	{
@@ -143,7 +180,7 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 		Node node = mVisibleNodes.get(position);
 		convertView = getConvertView(node, position, convertView, parent);
 		// 设置内边距
-		convertView.setPadding(node.getLevel() * 30, 3, 3, 3);
+		convertView.setPadding(node.getLevel() * 12, 3, 0, 3);
 		TextView tv = (TextView) convertView.findViewById(R.id.id_item_text);
 		if (mSelect == position) {
 			tv.setTextColor(Color.DKGRAY);

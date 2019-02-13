@@ -17,6 +17,7 @@ public class DeviceRele extends LitePalSupport implements Serializable {
     private String releDeviceId;
     private Date createTime;
     private boolean isValid;
+    private boolean isUpload;
 
     public DeviceRele(){
     }
@@ -27,6 +28,7 @@ public class DeviceRele extends LitePalSupport implements Serializable {
         this.mId = UUID.randomUUID().toString();
         this.createTime = new Date();
         this.isValid = true;
+        this.isUpload = true;
     }
 
     public DeviceRele(Long id, String mId, String releDeviceId, String deviceId) {
@@ -79,6 +81,14 @@ public class DeviceRele extends LitePalSupport implements Serializable {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
 
+    }
+
+    public boolean isUpload() {
+        return isUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        isUpload = upload;
     }
 
     public void setReleDeviceId(String releDeviceId) {

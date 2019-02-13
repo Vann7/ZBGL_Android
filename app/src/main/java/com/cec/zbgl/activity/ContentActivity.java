@@ -37,6 +37,7 @@ import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.DeviceRele;
 import com.cec.zbgl.model.SpOrgnization;
 import com.cec.zbgl.model.User;
+import com.cec.zbgl.service.CourseService;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.utils.ImageUtil;
@@ -114,6 +115,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private List<DeviceRele> rele_delete_list;
     private GridView rele_gv;
     private ReleAdapter releAdapter;
+    private Bitmap icon_bitmap;
 
 
     @Override
@@ -369,7 +371,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 }*/
                 try {
                     Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(mUriPath));
-                    setImageToHeadView(intent,bitmap);
+
+                    ImageUtil imageUtil = new ImageUtil(this);
+                    icon_bitmap = imageUtil.imageZoom(bitmap,30.00);  //图片压
+
+                    setImageToHeadView(intent,icon_bitmap);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -377,9 +383,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             case Constant.CODE_PHOTO_REQUEST:
                 List<String> paths = intent.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
                 String src = paths.get(0);
-
                 Bitmap bitmap = BitmapFactory.decodeFile(src);
-                setImageToHeadView(intent,bitmap);
+                ImageUtil imageUtil = new ImageUtil(this);
+                icon_bitmap = imageUtil.imageZoom(bitmap,30.00);  //图片压
+                setImageToHeadView(intent,icon_bitmap);
                 break;
         }
         String releDeviceId = null;
@@ -497,12 +504,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 .setPositiveButton("删除", (dialog, which) -> {
                     if (id == 0L) {
                         deviceService.delete(device.getId());
+                        CourseService courseService = new CourseService();
+                        courseService.deleteByDid(device.getmId());
                         Intent intent1 = new Intent();
                         setResult(-3, intent1);
                         finish();
                     } else {
                         rele_delete_list.add(rele_dList.get(position));
-
                         rele_dList.remove(position);
                         releAdapter.removeData(rele_dList);
                     }
@@ -603,14 +611,19 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         device.setDescription(description_Et.getText().toString());
         device.setCreateTime(new Date());
         device.setValid(true);
-        headImage.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(headImage.getDrawingCache());
-        headImage.setDrawingCacheEnabled(false);
+//        headImage.setDrawingCacheEnabled(true);
+//        Bitmap bitmap = Bitmap.createBitmap(headImage.getDrawingCache());
+//        headImage.setDrawingCacheEnabled(false);
 
-        ImageUtil imageUtil = new ImageUtil(this);
-        bitmap = imageUtil.imageZoom(bitmap,20.00);  //图片压缩
-        byte[] images = imageUtil.imageToByte(bitmap);
-        device.setImage(images);
+//        ImageUtil imageUtil = new ImageUtil(this);
+////        bitmap = imageUtil.imageZoom(bitmap,30.00);  //图片压缩
+
+        if (icon_bitmap != null) {
+            ImageUtil imageUtil = new ImageUtil(this);
+            byte[] images = imageUtil.imageToByte(icon_bitmap);
+            device.setImage(images);
+        }
+
         return deviceService.insert(device);
     }
 
@@ -633,13 +646,16 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         device.setDescription(description_Et.getText().toString());
         device.setCreateTime(new Date());
         device.setValid(true);
-        headImage.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(headImage.getDrawingCache());
-        headImage.setDrawingCacheEnabled(false);
-        ImageUtil imageUtil = new ImageUtil(this);
-        bitmap = imageUtil.imageZoom(bitmap,20.00);  //图片压缩
-        byte[] images = imageUtil.imageToByte(bitmap);
-        device.setImage(images);
+//        headImage.setDrawingCacheEnabled(true);
+//        Bitmap bitmap = Bitmap.createBitmap(headImage.getDrawingCache());
+//        headImage.setDrawingCacheEnabled(false);
+
+//        bitmap = imageUtil.imageZoom(bitmap,30.00);  //图片压缩
+        if (icon_bitmap != null) {
+            ImageUtil imageUtil = new ImageUtil(this);
+            byte[] images = imageUtil.imageToByte(icon_bitmap);
+            device.setImage(images);
+        }
         return deviceService.update(device);
     }
 

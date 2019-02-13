@@ -104,11 +104,25 @@ public class CourseService {
 
     public List<DeviceCourse> loadByPage(int page) {
 
-        List<DeviceCourse> list = LitePal.where("isEdited = ? ", "1")
+        List<DeviceCourse> list = LitePal.where("isEdited = ? and isValid = ? ", "1", "1")
                 .order("id asc")
                 .limit(20)
                 .offset(page)
                 .find(DeviceCourse.class);
         return list.subList(0, list.size() > 20 ? 20 : list.size());
+    }
+
+    public void deleteByDid(String deviceId) {
+        List<DeviceCourse> cList = LitePal.where( "deviceId = ? and isValid = ?",
+                deviceId, "1")
+                .find(DeviceCourse.class);
+        if (cList.size() > 0) {
+            cList.stream().forEach(course -> {
+                ContentValues values = new ContentValues();
+                values.put("isValid", false);
+                values.put("isEdited",true);
+                LitePal.update(DeviceCourse.class, values,course.getId());
+            });
+        }
     }
 }
