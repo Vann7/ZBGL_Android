@@ -13,6 +13,8 @@ public class SyncDto {
     private List<UserDto> uList;
     private List<String> mList;
     private List<DeviceReleDto> rList;
+    private List<CourseDto> cAllList; //pad端全部教程信息
+    private List<DeviceDto> dAllList; //pad端全部装备信息
 
     public List<CourseDto> getcList() {
         return cList;
@@ -60,5 +62,21 @@ public class SyncDto {
 
     public void setmList(List<String> mList) {
         this.mList = mList;
+    }
+
+    public List<CourseDto> getcAllList() {
+        return cAllList;
+    }
+
+    public void setcAllList(List<CourseDto> cAllList) {
+        this.cAllList = cAllList;
+    }
+
+    public List<DeviceDto> getdAllList() {
+        return dAllList;
+    }
+
+    public void setdAllList(List<DeviceDto> dAllList) {
+        this.dAllList = dAllList;
     }
 }

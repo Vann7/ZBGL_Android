@@ -10,6 +10,7 @@ import com.cec.zbgl.utils.DtoUtils;
 
 import org.litepal.LitePal;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,16 +37,24 @@ public class CourseService {
     }
 
     /**
-     * 批量插入服务器端数据
+     * 批量插入服务器端数据 如果存在则进行删除（存在数据为isValid 为false 的数据）
      * @param list
      */
     public void batchInsert(List<CourseDto> list) {
 //        LitePal.deleteAll(DeviceCourse.class);
         for (CourseDto courseDto : list) {
             DeviceCourse course = DtoUtils.toCourse(courseDto);
-            course.setUpload(true);
-            course.setValid(true);
-            course.save();
+            List<DeviceCourse> temps = LitePal.where("mid = ?", course.getmId())
+                    .find(DeviceCourse.class);
+            if (temps.size() > 0) {
+                temps.stream().forEach(c -> c.delete());
+            } else {
+                if (course.isValid()) {
+                    course.setUpload(true);
+//                    course.setValid(true);
+                    course.save();
+                }
+            }
         }
     }
 
@@ -61,8 +70,17 @@ public class CourseService {
     }
 
     public List<DeviceCourse> getAll() {
-        return LitePal.where("isEdited = ? and isValid = ?", "1", "1").find(DeviceCourse.class);
+        return LitePal.where("isEdited = ? and isValid = ?", "1", "1")
+                .find(DeviceCourse.class);
     }
+
+    //加载pad端全部教程信息
+    public List<DeviceCourse> loadPadAll() {
+        List<DeviceCourse> courses = LitePal.select("mId","createTime","isValid")
+                .find(DeviceCourse.class);
+        return courses;
+    }
+
 
     public List<DeviceCourse> loadByDid(String deviceId, int type){
         List<DeviceCourse> courses = LitePal
@@ -104,7 +122,7 @@ public class CourseService {
 
     public List<DeviceCourse> loadByPage(int page) {
 
-        List<DeviceCourse> list = LitePal.where("isEdited = ? and isValid = ? ", "1", "1")
+        List<DeviceCourse> list = LitePal.where("isEdited = ? ", "1")
                 .order("id asc")
                 .limit(20)
                 .offset(page)
@@ -124,5 +142,13 @@ public class CourseService {
                 LitePal.update(DeviceCourse.class, values,course.getId());
             });
         }
+    }
+
+    public void hasEdiited(DeviceCourse course) {
+        ContentValues values = new ContentValues();
+        values.put("isValid", true);
+        values.put("isEdited", false);
+        values.put("isUpload",false);
+        LitePal.update(DeviceCourse.class, values,course.getId());
     }
 }

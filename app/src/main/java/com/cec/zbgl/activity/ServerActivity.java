@@ -1,5 +1,6 @@
 package com.cec.zbgl.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -11,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cec.zbgl.R;
+import com.cec.zbgl.event.MessageEvent;
 import com.cec.zbgl.model.ServerConfig;
 import com.cec.zbgl.service.ServerService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -43,7 +47,6 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
-
     private void initView() {
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
@@ -54,13 +57,12 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
         head_tv.setText("服务器信息设置");
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     private void initData() {
-//        SharedPreferences setting = getSharedPreferences("server", 0);
-//        ip = setting.getString("ip","");
-//        port = setting.getString("port","");
-//        ftp = setting.getString("ftp", "");
 
         ServerConfig config = service.load();
         if (config != null) {
@@ -84,25 +86,27 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bar_back_iv :
-                finish();
+                quit();
                 break;
             case R.id.server_submit_tv :
                 ip = ip_et.getText().toString();
                 port = port_et.getText().toString();
                 ftp = ftp_et.getText().toString();
                 setConfig(ip, port, ftp);
-                finish();
+                quit();
                 break;
         }
     }
 
+    private void quit() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra("server_back",2);
+        startActivity(intent);
+        this.finish();
+    }
+
     private void setConfig(String ip, String port, String ftp) {
-//        SharedPreferences setting = getSharedPreferences("server", 0);
-//        SharedPreferences.Editor editor = setting.edit();
-//        editor.putString("ip", ip);
-//        editor.putString("port", port);
-//        editor.putString("ftp", ftp);
-//        editor.commit();
+
         ServerConfig config;
         if (!port.equals("")){
             config = new ServerConfig(ip, Integer.valueOf(port), ftp);
@@ -115,7 +119,6 @@ public class ServerActivity extends AppCompatActivity implements View.OnClickLis
         } else {
             service.insert(config);
         }
-
 
     }
 

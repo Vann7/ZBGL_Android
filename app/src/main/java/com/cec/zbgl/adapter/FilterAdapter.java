@@ -91,18 +91,23 @@ public class FilterAdapter extends RecyclerView.Adapter {
             itemViewHolder.bindHolder(datas.get(position).get(TYPE_ITEM));
             if (selectedMaps.size() == 0) {
                 itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#ffffff"));
+                itemViewHolder.name_tv.setTextColor(Color.BLACK);
             } else {
                 if (mSelect == position) {
                     if (selectedMaps.get(datas.get(mSelect).get(TYPE_ITEM)) !=null) {
-                        itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#B3B3B3"));
+                        itemViewHolder.name_tv.setBackgroundColor(Color.rgb(23,130,210));
+                        itemViewHolder.name_tv.setTextColor(Color.WHITE);
                     }else {
                         itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#ffffff"));
+                        itemViewHolder.name_tv.setTextColor(Color.BLACK);
                     }
                 }else {
                     if (selectedMaps.get(datas.get(position).get(TYPE_ITEM)) != null){
-                        itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#B3B3B3"));
+                        itemViewHolder.name_tv.setBackgroundColor(Color.rgb(23,130,210));
+                        itemViewHolder.name_tv.setTextColor(Color.WHITE);
                     }else {
                         itemViewHolder.name_tv.setBackgroundColor(Color.parseColor("#ffffff"));
+                        itemViewHolder.name_tv.setTextColor(Color.BLACK);
                     }
                 }
             }

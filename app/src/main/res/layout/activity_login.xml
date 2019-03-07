@@ -74,8 +74,7 @@
                 android:hint="请输入账户名"
                 android:inputType="none"
                 android:padding="1dp"
-                android:textSize="12sp"
-                android:text="测试管理员">
+                android:textSize="12sp">
 
                 <requestFocus />
             </EditText>
@@ -141,8 +140,7 @@
                 android:hint="请输入密码"
                 android:inputType="textPassword"
                 android:padding="1dp"
-                android:textSize="12sp"
-                android:text="123456">
+                android:textSize="12sp">
 
                 <requestFocus />
             </EditText>
@@ -180,20 +178,6 @@
         android:background="@drawable/login_button_selector"
         android:padding="1dp"
         android:text="登录"
-        android:textColor="@color/white"
-        android:textSize="21sp" />
-
-    <Button
-        android:id="@+id/createDb_btn"
-        android:layout_width="160dp"
-        android:layout_height="40dp"
-        android:layout_alignLeft="@+id/relativeLayout2"
-        android:layout_alignRight="@+id/relativeLayout2"
-        android:layout_below="@+id/loginButton"
-        android:layout_marginTop="35dp"
-        android:background="@drawable/login_button_selector"
-        android:padding="1dp"
-        android:text="插入数据"
         android:textColor="@color/white"
         android:textSize="21sp" />
 

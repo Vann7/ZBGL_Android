@@ -156,6 +156,7 @@ public class DtoUtils {
         user.setmId(userDto.getId());
         user.setName(userDto.getName());
         user.setPassword(userDto.getPassword());
+        user.setAppUpdate(userDto.isAppUpdate());
         user.setEdited(false);
         return user;
     }
@@ -165,6 +166,7 @@ public class DtoUtils {
         userDto.setId(user.getmId());
         userDto.setName(user.getName());
         userDto.setPassword(user.getPassword());
+        userDto.setAppUpdate(user.isAppUpdate());
         return userDto;
     }
 
@@ -187,6 +189,23 @@ public class DtoUtils {
         releDto.setCreateTime(deviceRele.getCreateTime());
         releDto.setValid(deviceRele.isValid());
         return releDto;
+    }
+
+
+    public static CourseDto toCourseDto_short(DeviceCourse course) {
+        CourseDto courseDto = new CourseDto();
+        courseDto.setId(course.getmId());
+        courseDto.setCreateTime(course.getCreateTime());
+        courseDto.setValid(course.isValid());
+        return courseDto;
+    }
+
+    public static DeviceDto toDeviceDto_short(DeviceInfo device) {
+        DeviceDto deviceDto = new DeviceDto();
+        deviceDto.setId(device.getmId());
+        deviceDto.setCreateTime(device.getCreateTime());
+        deviceDto.setValid(device.isValid());
+        return deviceDto;
     }
 
 

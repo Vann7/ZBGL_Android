@@ -150,7 +150,7 @@ public class DeviceService {
     }
 
     /**
-     * 批量插入服务器端数据
+     * 批量插入服务器端数据 (如果数据已存在 则进行更新操作)
      * @param list
      */
     public void batchInsert(List<DeviceDto> list) {
@@ -163,7 +163,38 @@ public class DeviceService {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            device.save();
+           String mId = device.getmId();
+           List<DeviceInfo> temp =  LitePal.where("mId = ?", mId).find(DeviceInfo.class);
+
+           if (temp.size() > 0) {
+               if (device.isValid()) { //如果该设备存在，并且标识为true，则进行更新操作
+                   for (DeviceInfo d : temp) {
+                       d.setName(device.getName());
+                       d.setUpload(true);
+                       d.setCode(device.getCode());
+                       d.setImage(device.getImage());
+                       d.setBelongSys(device.getBelongSys());
+                       d.setCreaterName(device.getCreaterName());
+                       d.setCreaterId(device.getCreaterId());
+                       d.setCount(device.getCount());
+                       d.setStatus(device.getStatus());
+                       d.setDescription(device.getDescription());
+                       d.setType(device.getType());
+                       d.update(d.getId());
+                   }
+               } else { //如果该设备存在，并且标识为false，则进行删除操作
+                   temp.stream().forEach(d -> {
+                       d.delete();
+                       CourseService courseService = new CourseService();
+                       courseService.deleteByDid(d.getmId()); //删除设备关联教程信息
+                   });
+               }
+           } else {
+               if(device.isValid() == true) {
+                   device.save();
+               }
+           }
+
         }
 
     }
@@ -181,6 +212,14 @@ public class DeviceService {
         device.setUpload(true);
         device.setEdited(true);
         return device.update(device.getId());
+    }
+
+    public int hasEdited(DeviceInfo device) {
+        ContentValues values = new ContentValues();
+        values.put("isEdited",false);
+        values.put("isUpload", false);
+        values.put("isValid", true);
+        return LitePal.update(DeviceInfo.class, values, device.getId());
     }
 
     public DeviceInfo getDevice(long id) {
@@ -225,6 +264,7 @@ public class DeviceService {
         return LitePal.where("isEdited = ? ", "1")
                 .count(DeviceInfo.class);
     }
+
 
     public List<DeviceInfo> loadByPage(int page) {
         List<DeviceInfo> list = LitePal.where("isEdited = ? ", "1")
@@ -326,5 +366,22 @@ public class DeviceService {
         list2.stream().forEach(rele -> {
             LitePal.update(DeviceRele.class, values, rele.getId());
         });
+    }
+
+    public boolean hasRele(String id) {
+        List<DeviceRele> list1 = LitePal.where("deviceId = ? and isValid = ?", id, "1")
+                .find(DeviceRele.class);
+        List<DeviceRele> list2 = LitePal.where("releDeviceId = ? and isValid = ?", id, "1")
+                .find(DeviceRele.class);
+        if (list1.size() > 0 || list2.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public List<DeviceInfo> loadPadAll() {
+        return LitePal.select("mId","createTime","isValid")
+                .find(DeviceInfo.class);
     }
 }

@@ -28,6 +28,7 @@ import com.cec.zbgl.R;
 import com.cec.zbgl.common.Constant;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
 import com.cec.zbgl.utils.ImageUtil;
@@ -72,6 +73,7 @@ public class ContentOrgActivity extends AppCompatActivity implements View.OnClic
     private String sysId; //系统mid
     private OrgsService orgsService;
     private String icons[] = {"从相册选取","拍摄"};
+    private User user;
 
 
     @Override
@@ -87,6 +89,7 @@ public class ContentOrgActivity extends AppCompatActivity implements View.OnClic
 //        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
         orgsService = new OrgsService();
+        getSession();
         initView();
         initData();
         initEvent();
@@ -156,7 +159,9 @@ public class ContentOrgActivity extends AppCompatActivity implements View.OnClic
                 this.finish();
                 break;
             case R.id.id_org_image :
-                popView(icons);
+                if (user.isAppUpdate()) {
+                    popView(icons);
+                }
                 break;
         }
     }
@@ -299,5 +304,14 @@ public class ContentOrgActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+    /**
+     * 获取当前用户session信息
+     */
+    private void getSession() {
+        SharedPreferences setting = this.getSharedPreferences("User", 0);
+        user = new User(setting.getString("name",""),setting.getString("password",""));
+        user.setId(Integer.valueOf(setting.getString("id","0")));
+        user.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
+    }
 
 }

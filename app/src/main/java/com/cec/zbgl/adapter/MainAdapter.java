@@ -28,6 +28,10 @@ public class MainAdapter extends FragmentPagerAdapter {
         fm.beginTransaction().commitAllowingStateLoss();
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
 
     @Override
     public Fragment getItem(int position) {
@@ -47,7 +51,5 @@ public class MainAdapter extends FragmentPagerAdapter {
         mCurTransaction.detach((Fragment)object);
 
     }
-
-
 
 }

@@ -15,6 +15,7 @@ public class User extends LitePalSupport implements Serializable {
     private String name;
     private String password;
     private boolean isEdited; //是否已编辑
+    private boolean appUpdate; //是否可以更新信息
 
     public User(){}
 
@@ -71,5 +72,13 @@ public class User extends LitePalSupport implements Serializable {
 
     public void setEdited(boolean edited) {
         isEdited = edited;
+    }
+
+    public boolean isAppUpdate() {
+        return appUpdate;
+    }
+
+    public void setAppUpdate(boolean appUpdate) {
+        this.appUpdate = appUpdate;
     }
 }

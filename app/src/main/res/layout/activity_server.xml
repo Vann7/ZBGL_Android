@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_user"
-    tools:context=".activity.UserActivity">
+    android:background="@color/background_user">
 
     <include layout="@layout/bar_back"/>
 
@@ -127,7 +126,6 @@
             android:visibility="invisible" />
     </RelativeLayout>
 
-
     <RelativeLayout
         android:id="@+id/ftp_ip_rl"
         android:layout_width="300dp"
@@ -186,8 +184,6 @@
             android:src="@mipmap/text_del"
             android:visibility="invisible" />
     </RelativeLayout>
-
-
 
     <TextView
         android:id="@+id/server_submit_tv"

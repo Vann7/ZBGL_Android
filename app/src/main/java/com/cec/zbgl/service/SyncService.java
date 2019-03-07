@@ -69,6 +69,9 @@ public class SyncService {
     private int port;
     private List<String> mList;
 
+    private List<DeviceInfo> dTemps;
+    private List<DeviceCourse> cTemps;
+
 
 
     public SyncService(Activity activity){
@@ -190,6 +193,13 @@ public class SyncService {
                 EventBus.getDefault().post(new MessageEvent("failed"));
                 return;
             }
+            if (mList.contains("device")) {
+                dTemps = deviceService.getAll();
+            }
+            if (mList.contains("course")) {
+                cTemps = courseService.getAll();
+            }
+
             os = socket.getOutputStream();
             is = socket.getInputStream();
             InputStreamReader reader = new InputStreamReader(is, "UTF-8");
@@ -224,13 +234,36 @@ public class SyncService {
      * @param out
      */
     public void sendMsg(PrintStream out) {
-
+       //判定当前同步哪些类数据
         if (mList.size() > 0) {
             SyncDto syncDto = new SyncDto();
             syncDto.setmList(mList);
             out.println(gson.toJson(syncDto));
             out.flush();
         }
+
+        //将pad端已有装备、教程信息（id、createTime、isValid）发送至服务器端，减少不必要的数据同步
+        SyncDto syncDto1 = new SyncDto();
+        if (mList.contains("course")) {
+            List<DeviceCourse> cAllList = courseService.loadPadAll();
+            List<CourseDto> cDtoList_temp = new ArrayList<>();
+            cAllList.stream().forEach( c -> {
+                cDtoList_temp.add(DtoUtils.toCourseDto_short(c));
+            });
+            syncDto1.setcAllList(cDtoList_temp);
+        }
+        if (mList.contains("device")) {
+            List<DeviceInfo> dAllList = deviceService.loadPadAll();
+            List<DeviceDto> dDtoList_temp = new ArrayList<>();
+            dAllList.stream().forEach( d -> {
+                dDtoList_temp.add(DtoUtils.toDeviceDto_short(d));
+            });
+            syncDto1.setdAllList(dDtoList_temp);
+        }
+        out.println(gson.toJson(syncDto1));
+        out.flush();
+
+
         int flag = 0; int flag0 = 0; int count = 0; int count0 = 0;
 
         //发送设备信息
@@ -311,11 +344,8 @@ public class SyncService {
      */
     public void receiveMsg(BufferedReader br) throws IOException {
         String result = "";
-       /* if (mList.contains("orgnization")) {
-            orgsService.deleteAll();
-        }
 
-        if (mList.contains("device")) {
+      /*  if (mList.contains("device")) {
             deviceService.deleteAll();
             deviceService.deleteReleAll();
         }
@@ -328,39 +358,72 @@ public class SyncService {
             //TODO 删除人员信息
         }*/
 
+       //删除已上传（标识为删除）的设备信息 并设定已编辑为false
+        if (dTemps != null) {
+            dTemps.stream().forEach( d -> {
+                if (!d.isValid()) {
+                    d.delete();
+                } else {
+                    deviceService.hasEdited(d);
+                }
+            });
+        }
+
+        //删除已上传（标识为删除）的教程信息
+        if (cTemps != null) {
+            cTemps.stream().forEach(c -> {
+                if (!c.isValid()) {
+                    c.delete();
+                } else {
+                    courseService.hasEdiited(c);
+                }
+            });
+        }
+
+        //删除现有组织机构信息
+        if (mList.contains("orgnization")) {
+            orgsService.deleteAll();
+        }
+
         //插入服务端同步数据
         while ( (result = br.readLine()) != null) {
            SyncDto syncDto = gson.fromJson(result, SyncDto.class);
+           //同步服务器端教程数据（当前设备中没有的数据）
             if (syncDto.getcList() != null && syncDto.getcList().size() > 0) {
                 cList = syncDto.getcList();
-                courseService.deleteAll();
+//                courseService.deleteAll();
                 courseService.batchInsert(cList);
                 LogUtil.i("cList", String.valueOf(cList.size()));
             }
+            //同步服务器端装备数据（当前设备中没有的数据）
             if (syncDto.getdList() != null && syncDto.getdList().size() > 0) {
                 dList = syncDto.getdList();
-                deviceService.deleteAll();
+//                deviceService.deleteAll();
                 deviceService.batchInsert(dList);
                 LogUtil.i("dList", String.valueOf(dList.size()));
             }
+            //同步服务器端组织机构数据
             if (syncDto.getoList() != null && syncDto.getoList().size() > 0) {
                 oList = syncDto.getoList();
-                orgsService.deleteAll();
+//                orgsService.deleteAll();
                 orgsService.batchInsert(oList);
                 LogUtil.i("oList", String.valueOf(oList.size()));
             }
+            //同步服务器端人员数据
             if(syncDto.getuList() != null && syncDto.getuList().size() > 0) {
                 uList = syncDto.getuList();
-                //Todo 添加人员批量插入接口
+                userService.deleteAll();
+                userService.batchInsert(uList);
+                LogUtil.i("uList", String.valueOf(uList.size()));
 
             }
             if (syncDto.getrList() != null && syncDto.getrList().size() > 0) {
                 rList = syncDto.getrList();
+
                 deviceService.deleteReleAll();
                 deviceService.batchInsertRele(rList);
             }
         }
-
         br.close();
     }
 

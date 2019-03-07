@@ -135,10 +135,19 @@ public class VideoDownloadActivity extends AppCompatActivity implements View.OnC
         initiData();
         initView();
         initEvent();
+        connectFTP();
 
+
+    }
+
+    private void connectFTP() {
+        client = new FTPClient();
+        if ("".equals(hostName)) {
+            ToastUtils.showShort("请对FTP服务器进行配置！");
+            return;
+        }
         FtpTask ftpTask = new FtpTask();
         ftpTask.execute();
-
     }
 
 
@@ -237,11 +246,13 @@ public class VideoDownloadActivity extends AppCompatActivity implements View.OnC
     private List<FileFtp> loginFtp() {
         List<FileFtp> list = new ArrayList<>();
         try {
-            if (client == null) {
+         /*   if (client == null) {
                 client = new FTPClient();
                 client.connect(hostName,serverPort);
                 client.login(userName,password);
-            }
+            }*/
+            client.connect(hostName,serverPort);
+            client.login(userName,password);
             int reply = client.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
                 client.disconnect();
@@ -251,6 +262,7 @@ public class VideoDownloadActivity extends AppCompatActivity implements View.OnC
             list = loadFile(videoPath);
         } catch (IOException e) {
             e.printStackTrace();
+
         }
         return list;
     }

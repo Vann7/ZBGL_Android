@@ -2,6 +2,7 @@ package com.cec.zbgl.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,6 +21,7 @@ import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.SyncAdapter;
 import com.cec.zbgl.adapter.UploadAdapter;
 import com.cec.zbgl.event.MessageEvent;
+import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.SyncService;
 import com.cec.zbgl.utils.TimeUtils;
 import com.cec.zbgl.utils.ToastUtils;
@@ -39,8 +41,12 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import me.nereo.multi_image_selector.bean.Video;
 
@@ -59,14 +65,18 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
 //    private View masker;
     private ProgressBar sync_bar;
     private TextView sync_value_tv;
-    private List<String> mSyncList = new ArrayList<>();
-    private List<String> mList = new ArrayList<>();
+
     private SyncAdapter mAdapter;
     private static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 110;
     private static final int WRITE_PERMISSION = 0x01;
     private SyncService syncService;
     private boolean flag = false;  //数据同步判定标识
     private boolean has_synced = false;
+    private User user;
+    private LinkedHashMap<String, String> dicts;
+    private List<String> mSyncList;
+    private List<String> mList;
+    private List<String> mSelectList;
 
 
     @Override
@@ -78,6 +88,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         }
 
         requestWritePermission();
+        getSession();
         initView();
         initEvent();
     }
@@ -90,7 +101,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         String str = loadTime();
-        if (str != null) {
+        if (str != "") {
             head_tv.setText("数据同步( " + str +" )");
         } else {
             head_tv.setText("数据同步");
@@ -108,10 +119,29 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         masker_rl.setBackgroundColor(Color.alpha(10));
         sync_value_tv = (TextView) findViewById(R.id.sync_ProgressBar_tv);
 
-        mList.add("orgnization"); //系统信息
-        mList.add("device");      //设备信息
-        mList.add("course");      //教程信息
-        mList.add("user");        //人员信息
+        dicts = new LinkedHashMap<>();
+        mSyncList = new ArrayList<>();
+        mSelectList = new ArrayList<>();
+
+        if (!user.getName().equals("root")) {
+            dicts.put("组织信息","orgnization" );
+            dicts.put("设备信息","device");
+            dicts.put("教程信息","course");
+//            mList.add("orgnization"); //系统信息
+//            mList.add("device");      //设备信息
+//            mList.add("course");      //教程信息
+        }
+
+//        mList.add("user");        //人员信息
+        dicts.put("人员信息","user");
+//        Collection values = dicts.values();
+        Set<String> keys = dicts.keySet();
+        mList = new ArrayList<>(keys);
+//        if (values instanceof List) {
+//            mList = (List<String>) values;
+//        } else {
+//            mList = new ArrayList<>(values);
+//        }
         mAdapter = new SyncAdapter(mList, this,sync_lv);
     }
 
@@ -128,11 +158,29 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         mAdapter.setOnListClickListener((name, position) -> {
 
             if (flag == true) return;
-            if (!mSyncList.contains(name)) {
-                mSyncList.add(name);
-            }else {
-                mSyncList.remove(name);
+
+            if (!mSyncList.contains(dicts.get(name)) && (name.equals("组织信息") || name.equals("设备信息") || name.equals("教程信息"))) {
+                mSyncList.add(dicts.get("组织信息"));
+                mSyncList.add(dicts.get("设备信息"));
+                mSyncList.add(dicts.get("教程信息"));
+                mSelectList.add("组织信息");
+                mSelectList.add("设备信息");
+                mSelectList.add("教程信息");
+            }  else if (!mSyncList.contains(dicts.get(name)) && name.equals("人员信息")) {
+                mSyncList.add(dicts.get(name));
+                mSelectList.add(name);
+            } else if (mSyncList.contains(dicts.get(name)) && (name.equals("组织信息") || name.equals("设备信息") || name.equals("教程信息"))) {
+                mSyncList.remove(dicts.get("组织信息"));
+                mSyncList.remove(dicts.get("设备信息"));
+                mSyncList.remove(dicts.get("教程信息"));
+                mSelectList.remove("组织信息");
+                mSelectList.remove("设备信息");
+                mSelectList.remove("教程信息");
+            } else if (mSyncList.contains(dicts.get(name)) && name.equals("人员信息")) {
+                mSyncList.remove(dicts.get(name));
+                mSelectList.remove(name);
             }
+
             uploadSum(2);
         });
     }
@@ -143,13 +191,17 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
             checked_tv.setVisibility(GONE);
             unchecked_tv.setVisibility(VISIBLE);
             mSyncList.clear();
-            mSyncList.addAll(mList);
+            mSelectList.clear();
+            mSyncList.addAll(dicts.values());
+            mSelectList.addAll(new ArrayList<>(dicts.keySet()));
         } else if (flag == 1) {
             checked_tv.setVisibility(VISIBLE);
             unchecked_tv.setVisibility(GONE);
             mSyncList.clear();
+            mSelectList.clear();
         } else if (flag == 3) {
             mSyncList.clear();
+            mSelectList.clear();
             return;
         }
 
@@ -159,7 +211,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
             sync_btn.setBackgroundColor(Color.rgb(108,108,108));
         }
         sync_btn.setText("同步");
-        mAdapter.syncData(mSyncList);
+        mAdapter.syncData(mSelectList);
     }
 
     @Override
@@ -172,7 +224,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
                 }else {
                     this.setResult(0);
                 }
-                this.finish();
+                quit();
                 break;
             case R.id.select_tv :
                 uploadSum(0);
@@ -189,6 +241,12 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    private void quit() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra("server_back",1);
+        startActivity(intent);
+        this.finish();
+    }
 
     public void syncData() {
 
@@ -238,8 +296,7 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
             flag = true;
             syncService.socketSync(mSyncList);
             //EventBus 发送事件
-            EventBus.getDefault().post(new MessageEvent("刷新UI"));
-
+//            EventBus.getDefault().post(new MessageEvent("刷新UI"));
             return null;
         }
 
@@ -344,6 +401,16 @@ public class SyncDataActivity extends AppCompatActivity implements View.OnClickL
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 获取当前用户session信息
+     */
+    private void getSession() {
+        SharedPreferences setting = this.getSharedPreferences("User", 0);
+        user = new User(setting.getString("name",""),setting.getString("password",""));
+        user.setId(Integer.valueOf(setting.getString("id","0")));
+        user.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
     }
 
 }

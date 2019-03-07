@@ -6,36 +6,10 @@
     android:background="@color/background_user"
     tools:context=".fragment.SyncFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout
-        android:id="@+id/sync_ll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:gravity="center"
-        android:orientation="vertical">
 
 
-        <ProgressBar
-            android:id="@+id/sync_progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:indeterminateTint="@color/salmon" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="正在同步中，请不要退出应用"
-            android:textSize="22sp" />
-    </LinearLayout>
-
-
-    <TextView
+  <!--  <TextView
         android:id="@+id/sync_data"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -47,6 +21,7 @@
         android:text="数据同步"
         android:textSize="22sp"
         android:textStyle="bold" />
+
 
     <TextView
         android:id="@+id/sync_upload_file"
@@ -73,8 +48,38 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:background="@color/lightgray"
-        android:text="文件下载"/>
+        android:text="文件下载"/>-->
 
+
+
+
+    <ImageView
+        android:id="@+id/upload_data"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="100dp"
+
+
+        android:src="@mipmap/upload_data"/>
+
+    <ImageView
+        android:id="@+id/download_data"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_toRightOf="@+id/upload_data"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="200dp"
+        android:src="@mipmap/download_data"/>
+
+    <ImageView
+        android:id="@+id/sync_data"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/upload_data"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/sync_data"/>
 
 
 </RelativeLayout>

@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,6 +117,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private GridView rele_gv;
     private ReleAdapter releAdapter;
     private Bitmap icon_bitmap;
+    private User user;
 
 
     @Override
@@ -132,6 +134,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         deviceService = new DeviceService();
         orgsService = new OrgsService();
+        getSession();
         initView();
         initData();
         initEvent();
@@ -160,6 +163,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         delete_tv = (TextView) findViewById(R.id.device_delete);
+
         type_ll = (LinearLayout)findViewById(R.id.device_type_ll);
         status_ll = (LinearLayout)findViewById(R.id.device_status_ll);
         belongSys_ll = (LinearLayout)findViewById(R.id.device_belongSys_ll);
@@ -168,6 +172,14 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         rele_temp_list = new ArrayList<>();
         rele_dList = new ArrayList<>();
         rele_delete_list = new ArrayList<>();
+        if (!user.isAppUpdate()) {
+            rele_device_iv.setVisibility(GONE);
+            save_btn.setVisibility(GONE);
+            //调整教程按钮位置 居中
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(250, 80);
+            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            course_btn.setLayoutParams(params);
+        }
     }
 
     /**
@@ -208,7 +220,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 description_Et.setText(device.getDescription());
                 head_tv.setText("设备详情");
-                delete_tv.setVisibility(VISIBLE);
+                if (user.isAppUpdate()) {
+                    delete_tv.setVisibility(VISIBLE);
+                }
                 if (device.getImage() != null) {
                     byte[] bytes = device.getImage();
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -257,6 +271,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onLongClick(DeviceRele deviceRele, int position) {
+                if (!user.isAppUpdate()) {
+                    return;
+                }
                 deleteItem(deviceRele.getId(), position);
             }
         });
@@ -312,12 +329,19 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
                 break;
             case R.id.id_device_image :
-                popView(CONTENT_ICON, icons);
+                if (user.isAppUpdate()) {
+                    popView(CONTENT_ICON, icons);
+                }
                 break;
             case R.id.bar_back_iv :
                 this.finish();
                 break;
             case R.id.device_delete :
+                boolean flag = deviceService.hasRele(device.getmId());
+                if (flag) {
+                    ToastUtils.showShort("当前装备已被关联, 无法删除!");
+                    return;
+                }
                 deleteItem(0L,0);
                 break;
             case R.id.device_save_btn :
@@ -449,7 +473,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
      * @param type 弹出层类型
      */
     private void popView(String type, String[] list) {
-//
+        if (!user.isAppUpdate()) return;
         builder = new AlertDialog.Builder(ContentActivity.this,R.style.appalertdialog);
         switch (type) {
             case CONTENT_TYPE :
@@ -503,9 +527,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 .setMessage(title)
                 .setPositiveButton("删除", (dialog, which) -> {
                     if (id == 0L) {
-                        deviceService.delete(device.getId());
+                        deviceService.delete(device.getId()); //删除设备信息
                         CourseService courseService = new CourseService();
-                        courseService.deleteByDid(device.getmId());
+                        courseService.deleteByDid(device.getmId()); //删除设备关联教程信息
                         Intent intent1 = new Intent();
                         setResult(-3, intent1);
                         finish();
@@ -587,7 +611,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         }
         if (rele_delete_list.size() > 0) {
             rele_delete_list.stream().forEach(rele -> {
-                    deviceService.unReleDevice(rele.getId());
+                    deviceService.unReleDevice(rele.getId()); //解绑相关设备关联信息
             });
         }
     }
@@ -660,6 +684,14 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
+    /**
+     * 获取当前用户session信息
+     */
+    private void getSession() {
+        SharedPreferences setting = this.getSharedPreferences("User", 0);
+        user = new User(setting.getString("name",""),setting.getString("password",""));
+        user.setId(Integer.valueOf(setting.getString("id","0")));
+        user.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
+    }
 
 }

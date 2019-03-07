@@ -1,6 +1,5 @@
 package com.cec.zbgl.fragment;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +17,7 @@ import com.cec.zbgl.activity.ServerActivity;
 import com.cec.zbgl.activity.UserActivity;
 import com.cec.zbgl.model.User;
 import com.cec.zbgl.utils.CacheUtil;
+import com.cec.zbgl.utils.ToastUtils;
 
 import java.lang.reflect.Field;
 
@@ -65,6 +65,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         getSession();
         logout_tv = (TextView) getActivity().findViewById(R.id.mine_out_tv);
         password_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_user_rl);
+        password_rl.setVisibility(View.GONE);
         server_rl = (RelativeLayout) getActivity().findViewById(R.id.server_rl);
         clearCache_rl = (RelativeLayout) getActivity().findViewById(R.id.mine_clear_cache_rl);
         cacheSize_tv = (TextView) getActivity().findViewById(R.id.cache_size);
@@ -79,9 +80,6 @@ public class MineFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -94,6 +92,10 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 logout();
                 break;
             case R.id.mine_user_rl :
+                if (!user.isAppUpdate()) {
+                    ToastUtils.showShort("当前用户没有操作权限!");
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), UserActivity.class);
                 intent.putExtra("user",user);
                 getActivity().startActivity(intent);
@@ -102,25 +104,33 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 clean();
                 break;
             case R.id.server_rl :
+                if (!user.isAppUpdate() && !user.getName().equals("root")) {
+                    ToastUtils.showShort("当前用户没有操作权限!");
+                    return;
+                }
                 Intent intent1 = new Intent(getActivity(), ServerActivity.class);
+//                Intent intent1 = new Intent(getActivity(), SearchActivity.class);
                 getActivity().startActivity(intent1);
                 break;
         }
     }
 
     /**
-     *
+     * 清除缓存
      */
     private void clean() {
         CacheUtil.clearAllCache(getContext());
         cacheSize_tv.setText("0MB");
     }
 
-
+    /**
+     * 获取当前用户session信息
+     */
     private void getSession() {
         SharedPreferences setting = getActivity().getSharedPreferences("User", 0);
         user = new User(setting.getString("name",""),setting.getString("password",""));
         user.setId(Integer.valueOf(setting.getString("id","0")));
+        user.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
     }
 
 

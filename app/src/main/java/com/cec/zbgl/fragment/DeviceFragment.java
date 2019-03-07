@@ -3,6 +3,7 @@ package com.cec.zbgl.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -48,6 +49,7 @@ import com.cec.zbgl.holder.FilterItemViewHolder;
 import com.cec.zbgl.listener.ItemClickListener;
 import com.cec.zbgl.model.DeviceInfo;
 import com.cec.zbgl.model.SpOrgnization;
+import com.cec.zbgl.model.User;
 import com.cec.zbgl.service.CourseService;
 import com.cec.zbgl.service.DeviceService;
 import com.cec.zbgl.service.OrgsService;
@@ -132,6 +134,8 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     private String types[] = {"移动Pad","交换机","服务器","磁盘阵列","计算机","显示终端","笔记本","打印机","网线","水晶头"};
 //    private String systems[] = {"系统1","系统2","系统3","系统4"};
     private int page;
+    private User user;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -149,6 +153,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         deviceService = new DeviceService();
+        getSession();
         initView();
         initData();
         initListener();
@@ -178,6 +183,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
                     startActivityForResult(intent,1);
                 }else {
 //                    ToastUtils.showShort("装备信息不存在");
+                    if (!user.isAppUpdate()) {
+                        ToastUtils.showShort("当前用户没有新增设备权限!");
+                        return;
+                    }
                     Intent intent = new Intent(getActivity(), ContentActivity.class);
                     intent.putExtra("mid", mid);
                     intent.putExtra("add",true);
@@ -247,6 +256,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
         //确定
         confirm_tv = (TextView) getActivity().findViewById(R.id.filter_confirm);
+        confirm_tv.setTextColor(Color.WHITE);
 //        confirm_tv.setVisibility(GONE);
         //筛选条件 RelativeLayout
         filter_rl = (RelativeLayout) getActivity().findViewById(R.id.filter_rl);
@@ -351,8 +361,11 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onItemLongClick(View v, int position) {
 //                deviceService.delete(devices.get(position).getId());
-                deleteItem(position);
-                LogUtil.i("position", String.valueOf(position));
+                if (user.isAppUpdate()) {
+                    deleteItem(position);
+                    LogUtil.i("position", String.valueOf(position));
+                }
+
             }
 
         });
@@ -695,6 +708,13 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
 
     //删除指定item
     private void deleteItem(int position) {
+
+        boolean flag = deviceService.hasRele(devices.get(position).getmId());
+        if (flag) {
+//            ToastUtils.showShort("当前装备已被关联, 无法删除!");
+            return;
+        }
+
         alertDialog = new AlertDialog.Builder(getContext(),R.style.appalertdialog)
                 .setMessage("删除本条信息")
                 .setPositiveButton("删除", (dialog, which) -> {
@@ -725,49 +745,14 @@ public class DeviceFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    /**
-     * 数据同步完成后刷新界面UI
-     * @param messageEvent
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void Event(MessageEvent messageEvent) {
-        if (messageEvent.getMessage().equals("UI")) {
-            initOrgs();
-            try {
-                mAdapter = new OrgsAdapter<>(mTreeView, getContext(),
-                        orgs, 0);
-                mTreeView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            devices = deviceService.loadList(0,sysId);
-            showData();
-            mRefreshAdapter.changeData(devices);
-//        initData();
-            initEvent();
-        }
 
+    /**
+     * 获取当前用户session信息
+     */
+    private void getSession() {
+        SharedPreferences setting = getActivity().getSharedPreferences("User", 0);
+        user = new User(setting.getString("name",""),setting.getString("password",""));
+        user.setId(Integer.valueOf(setting.getString("id","0")));
+        user.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
     }
-
-    /**
-     * 绑定EventBus
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-
-    }
-
-    /**
-     * 解除绑定EventBus
-     */
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        EventBus.getDefault().unregister(this);
-//    }
 }

@@ -49,12 +49,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * 登录活动页
+ */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
+   private SharedPreferences setting;
+   private Boolean is_first;
    private DatabaseHelper helper;
    private EditText e1,e2;
    private ImageView m1,m2;
-   private Button btn,db_btn;
+   private Button btn;
    private UserService userService;
     // 要申请的权限
     private String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -62,6 +67,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String[] permission_write_storage = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private  byte[] images;
+    private User sessionUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +78,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             getWindow().setStatusBarColor(Color.argb(255, 0, 113, 188));
 //            getWindow().setStatusBarColor(Color.BLACK);
         }
+
+
+        saveConfig();
+        getSession();
         authority();
         init();
     }
@@ -79,14 +89,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void init() {
         btn = (Button)findViewById(R.id.loginButton);
         btn.setOnClickListener(this);
-        db_btn = (Button) findViewById(R.id.createDb_btn);
-        db_btn.setOnClickListener(this);
         e1=(EditText)findViewById(R.id.phonenumber);
         e2=(EditText)findViewById(R.id.password);
         m1=(ImageView)findViewById(R.id.del_phonenumber);
         m2=(ImageView)findViewById(R.id.del_password);
         EditTextClearUtil.addclerListener(e1, m1);
         EditTextClearUtil.addclerListener(e2, m2);
+        if (sessionUser.getName() == "") {
+            e1.setText("root");
+        } else {
+            e1.setText(sessionUser.getName());
+        }
+
+        e2.setText("123456");
+//        e2.setText(sessionUser.getPassword());
 
 
 //        ImageUtil imageUtil = new ImageUtil(this);
@@ -107,10 +123,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     return;
                 }
                 List<User> list = userService.checkUser(user);
-                if (list.size() == 1){
-                    user.setId(list.get(0).getId());
-                    user.setmId(list.get(0).getmId());
-                    saveSession(user);
+                if (list.size() > 0){
+                    saveSession(list.get(0));
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     intent.putExtra("user", user);
                     setResult(RESULT_OK, intent);
@@ -121,13 +135,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     ToastUtils.showShort("当前用户名或密码错误");
                 }
                 break;
-            case R.id.createDb_btn:
-                new MyAsyncTask().execute(user);
-                break;
         }
 
     }
 
+
+    /**
+     * 第一次登录系统 保存root用户信息
+     */
+    private void saveConfig(){
+        setting = getSharedPreferences("setting", MODE_PRIVATE);
+        SharedPreferences.Editor editor = setting.edit();
+        is_first = setting.getBoolean("FIRST", true);
+        if (is_first) {
+            editor.putString("name", "root");
+            editor.putString("password", "123456");
+            editor.putBoolean("FIRST", false);
+            boolean flag = editor.commit();
+            if (flag) {
+                userService = new UserService(this);
+                userService.insert(new User("root","123456"));
+            }
+        }
+    }
+
+    /**
+     * 保存当前用户session用于"我的"界面显示用户信息
+     * @param user
+     */
     private void saveSession(User user) {
         SharedPreferences setting = getSharedPreferences("User", 0);
         SharedPreferences.Editor editor = setting.edit();
@@ -135,6 +170,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         editor.putString("name", user.getName());
         editor.putString("mid",user.getmId());
         editor.putString("password", user.getPassword());
+        editor.putBoolean("appUpdate", user.isAppUpdate());
         editor.commit();
     }
 
@@ -163,147 +199,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void initData(User user) {
-        OrgsService orgsService = new OrgsService(this);
-        CourseService courseService = new CourseService();
-        DeviceService deviceService = new DeviceService();
-
-        //初始化用户
-        userService.insert(user);
-
-        //初始化组织机构
-
-       /* List<SpOrgnization> orgs2 = new ArrayList<>();
-        SpOrgnization org2 = new SpOrgnization("1","0","根目录1");
-        org2.setmId(UUID.randomUUID().toString());
-        orgs2.add(org2);
-        org2 = new SpOrgnization("2","0","根目录2");
-        org2.setmId(UUID.randomUUID().toString());
-        orgs2.add(org2);
-        org2 = new SpOrgnization("3","0","根目录3");
-        org2.setmId(UUID.randomUUID().toString());
-        orgs2.add(org2);
-        org2 = new SpOrgnization("4","0","根目录4");
-        org2.setmId(UUID.randomUUID().toString());
-        orgs2.add(org2);
-        org2 = new SpOrgnization("4","1","根目录1-1");
-        org2.setmId(UUID.randomUUID().toString());
-        orgs2.add(org2);
-        org2 = new SpOrgnization("5","1","根目录1-2");
-        org2.setmId(UUID.randomUUID().toString());
-        orgs2.add(org2);
-        for (SpOrgnization o : orgs2) {
-            orgsService.insert(o);
-        }*/
-
-/*
-
-        //初始化装备信息
-        Random random = new Random();
-        for (int i=0; i< 15; i++) {
-            DeviceInfo device;
-            String name,typyName;
-            name = "装备";
-            typyName = "笔记本电脑";
-            int r = random.nextInt(100);
-            if ( i % 2 == 0){
-                device = new DeviceInfo(String.valueOf(r) + name,
-                        "根目录2",  "系统装备类别为:"+typyName );
-//                device.setImage(images);
-
-            }else {
-                device = new DeviceInfo(String.valueOf(r)+ name,
-                        "根目录3",  "系统装备类别为:"+typyName );
-            }
-            device.setValid(true);
-            device.setCreateTime(new Date());
-            device.setmId(UUID.randomUUID().toString());
-            deviceService.insertFromServer(device);
-        }
-
-        DeviceInfo device = new DeviceInfo(String.valueOf(123) + " 测试装备01",
-                "根目录2",  "系统装备存放位置" );
-        device.setmId("2bb9a8d2-08ad-418b-993b-46c02bdf3efe");
-        device.setImage(images);
-        device.setValid(true);
-        device.setCreateTime(new Date());
-        deviceService.insertFromServer(device);
-
-        DeviceInfo device2 = new DeviceInfo(String.valueOf(1234) + " 测试装备02",
-                "根目录1",  "系统装备存放位置2" );
-        device2.setmId("0208d702-a388-480c-9c20-ecf727476103");
-        device2.setImage(images);
-        device2.setValid(true);
-        device2.setCreateTime(new Date());
-        deviceService.insertFromServer(device2);
-
-
-        //初始化教程信息
-        for (int i=0; i< 25; i++) {
-            String name,typyName;
-            int type;
-            if (i < 9) {
-                type = Constant.COURSE_IMAGE;
-                name = "图片教程";
-                typyName = "图片";
-                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                        "教程类别为:"+typyName,false,"item "+(i+1));
-                c0.setmId(UUID.randomUUID().toString());
-                c0.setValid(true);
-                c0.setImage(images);
-
-                if (i %2 ==0){
-                    c0.setDeviceId("2bb9a8d2-08ad-418b-993b-46c02bdf3efe");
-                }else {
-                    c0.setDeviceId("0208d702-a388-480c-9c20-ecf727476103");
-                }
-
-                courseService.insertFromServer(c0);
-            }else if (i < 18){
-                type = Constant.COURSE_VIDEO;
-                name = "视频教程";
-                typyName = "视频";
-                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                        "教程类别为:"+typyName,false,"item "+(i+1));
-                c0.setmId(UUID.randomUUID().toString());
-                c0.setValid(true);
-                if (i %2 ==0){
-                    c0.setDeviceId("2bb9a8d2-08ad-418b-993b-46c02bdf3efe");
-                }else {
-                    c0.setDeviceId("0208d702-a388-480c-9c20-ecf727476103");
-                }
-                courseService.insertFromServer(c0);
-            } else {
-                type = Constant.COURSE_DOCUMENT;
-                name = "文档教程";
-                typyName = "文档";
-                DeviceCourse c0 = new DeviceCourse(String.valueOf(i),name,type,
-                        "教程类别为:"+typyName,false,"item "+(i+1));
-                c0.setValid(true);
-                c0.setmId(UUID.randomUUID().toString());
-                c0.setImage(images);
-                if (i %2 ==0){
-                    c0.setDeviceId("2bb9a8d2-08ad-418b-993b-46c02bdf3efe");
-                }else {
-                    c0.setDeviceId("0208d702-a388-480c-9c20-ecf727476103");
-                }
-                courseService.insertFromServer(c0);
-            }
-        }
-
-*/
-
-    }
-
-
-    class MyAsyncTask extends AsyncTask<User, Void, Void> {
-
-
-        @Override
-        protected Void doInBackground(User... users) {
-            initData(users[0]);
-            return null;
-        }
+    /**
+     * 获取当前用户session信息
+     */
+    private void getSession() {
+        SharedPreferences setting = this.getSharedPreferences("User", 0);
+        sessionUser = new User(setting.getString("name",""),setting.getString("password",""));
+        sessionUser.setId(Integer.valueOf(setting.getString("id","0")));
+        sessionUser.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
     }
 
 }

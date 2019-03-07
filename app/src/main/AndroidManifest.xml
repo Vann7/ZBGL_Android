@@ -35,8 +35,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ContentActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".thirdLibs.zxing.activity.CaptureActivity"
             android:screenOrientation="portrait" />
@@ -74,14 +74,15 @@
         <activity
             android:name=".activity.MediaActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-
-        <activity android:name=".activity.ContentOrgActivity"
+        <activity
+            android:name=".activity.ContentOrgActivity"
             android:screenOrientation="portrait" />
         <!-- Image Selector Entry -->
         <activity
             android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".activity.ServerActivity" />
+        <activity android:name=".activity.ServerActivity"
+            android:screenOrientation="portrait"/>
 
         <receiver
             android:name=".receiver.MyBroadcastReceiver"
@@ -93,7 +94,7 @@
         </receiver>
 
         <activity android:name=".activity.PhotoActivity" />
-        <activity android:name=".activity.SyncDataActivity"></activity>
+        <activity android:name=".activity.SyncDataActivity" />
     </application>
 
 </manifest>

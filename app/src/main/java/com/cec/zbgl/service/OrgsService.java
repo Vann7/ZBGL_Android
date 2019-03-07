@@ -65,7 +65,7 @@ public class OrgsService {
      * @param list
      */
     public void batchInsert(List<OrgnizationDto> list) {
-        LitePal.deleteAll(SpOrgnization.class);
+//        LitePal.deleteAll(SpOrgnization.class);
         for (OrgnizationDto orgDto : list) {
             SpOrgnization org = DtoUtils.toOrgnization(orgDto);
             org.save();

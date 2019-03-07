@@ -5,6 +5,7 @@ public class UserDto {
     private String id;
     private String name;
     private String password;
+    private boolean appUpdate;
 
     @Override
     public String toString() {
@@ -37,5 +38,13 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isAppUpdate() {
+        return appUpdate;
+    }
+
+    public void setAppUpdate(boolean appUpdate) {
+        this.appUpdate = appUpdate;
     }
 }

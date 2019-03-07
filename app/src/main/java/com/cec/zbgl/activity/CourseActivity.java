@@ -146,6 +146,7 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
         head_tv = (TextView) findViewById(R.id.bar_back_tv);
         deviceId = getIntent().getStringExtra("deviceId");
+        getSession();
         initWidth();
         initView();
         initEvent();
@@ -172,7 +173,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 
         back_iv = (ImageView) findViewById(R.id.bar_back_iv);
         add_iv = (ImageView) findViewById(R.id.device_media_add);
-        add_iv.setVisibility(VISIBLE);
+        if (user.isAppUpdate()) {
+            add_iv.setVisibility(VISIBLE);
+        }
         mAdapter = new CourseAdapter(this,mData);
         progressBar = (ProgressBar) findViewById(R.id.course_progressBar);
         progressBar.bringToFront();
@@ -217,7 +220,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void initData() {
         OrgsService orgsService = new OrgsService();
-        getSession();
         deviceId = getIntent().getStringExtra("deviceId");
 
         sysId = getIntent().getStringExtra("sysId");
@@ -321,7 +323,9 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
 //
                         break;
                 }
-                deleteItem(position);
+                if (user.isAppUpdate()) {
+                    deleteItem(position);
+                }
             }
         });
 
@@ -657,18 +661,15 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         mAdapter.onDateChange(mData);
     }
 
-
-
-
-
+    /**
+     * 获取当前用户session信息
+     */
     private void getSession() {
-        SharedPreferences setting = getSharedPreferences("User", 0);
+        SharedPreferences setting = this.getSharedPreferences("User", 0);
         user = new User(setting.getString("name",""),setting.getString("password",""));
-        user.setmId(setting.getString("mid","0"));
+        user.setId(Integer.valueOf(setting.getString("id","0")));
+        user.setAppUpdate(Boolean.valueOf(setting.getBoolean("appUpdate", false)));
     }
-
-
-
 
 
 

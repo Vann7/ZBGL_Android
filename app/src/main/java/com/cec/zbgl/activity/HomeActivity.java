@@ -1,6 +1,7 @@
 package com.cec.zbgl.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.Fragment;
@@ -20,13 +21,23 @@ import android.widget.TextView;
 
 import com.cec.zbgl.R;
 import com.cec.zbgl.adapter.MainAdapter;
+import com.cec.zbgl.event.MessageEvent;
 import com.cec.zbgl.fragment.DeviceFragment;
 import com.cec.zbgl.fragment.MineFragment;
 import com.cec.zbgl.fragment.SyncFragment;
+import com.cec.zbgl.model.User;
+import com.cec.zbgl.utils.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 首页活动页
+ */
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
@@ -51,6 +62,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private int mCurrentPageIndex;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +77,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         initTabLine();
         initView();
         initEvent();
+        int flag = getIntent().getIntExtra("server_back",0);
+        setSelect(flag);
     }
 
 //    private void transition() {
@@ -82,6 +97,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(home);
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -149,6 +170,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     lp.leftMargin = (int) (positionOffset * mScreen1_3 + mCurrentPageIndex
                             * mScreen1_3);
                 } else if (mCurrentPageIndex == 1 && position == 0){// 1->0
+
                     lp.leftMargin = (int) (mCurrentPageIndex * mScreen1_3 + (positionOffset - 1)
                             * mScreen1_3);
                 } else if (mCurrentPageIndex == 1 && position == 1){ // 1->2
@@ -180,8 +202,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      */
     protected void resetTextView() {
         iv_device.setImageResource(R.mipmap.home);
-        iv_sync.setImageResource(R.mipmap.round_transfer);
         iv_mine.setImageResource(R.mipmap.my);
+        iv_sync.setImageResource(R.mipmap.round_transfer);
 
     }
 
@@ -224,4 +246,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         mCurrentPageIndex = position;
     }
+
+    /**
+     * 数据同步完成后刷新界面UI
+     * @param messageEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(MessageEvent messageEvent) {
+        if (messageEvent.getMessage().equals("刷新DeviceFragment")) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+
 }
